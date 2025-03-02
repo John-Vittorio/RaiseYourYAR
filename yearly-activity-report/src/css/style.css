@@ -1,0 +1,49 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar {
+    height: 100%;
+    width: 258px;
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    background-color: #323232;
+}
+
+.nav-bar ul {
+    padding-top: 100px;
+}
+
+.nav-bar ul li {
+    flex: 1 0 0;
+    position: relative;
+    padding: 25px 0 25px 25px;
+    color: #EDEDED;
+    font-family: "Plus Jakarta Sans";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.nav-bar ul li:hover {
+    color: #B7C018;
+    cursor: pointer;
+}
+
+.nav-bar ul li i {
+    padding-right: 16px;
+}
+
+hr {
+    width: 200px;
+    height: 0px;
+    flex-shrink: 0;
+    stroke-width: 1px;
+    stroke: #C4C4C4;
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
