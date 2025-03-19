@@ -4,45 +4,76 @@
 }
 
 .nav-bar {
-    height: 100%;
+    height: 100vh;
     width: 258px;
     margin: 0;
     padding: 0;
     position: fixed;
-    background-color: #323232;
+    background-color: #FFFFFF;
+    box-shadow: 8px 0 20px rgba(0, 0, 0, 0.17);
+    z-index: 100;
+}
+
+.nav-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.logo {
+    margin-top: 38px;
+    margin-left: 29px;
+    display: block;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.second-logo {
+    width: 254px;
+    height: auto;
+    max-height: 234px;
 }
 
 .nav-bar ul {
-    padding-top: 100px;
+    padding-top: 50px;
 }
 
 .nav-bar ul li {
     flex: 1 0 0;
     position: relative;
     padding: 25px 0 25px 25px;
-    color: #EDEDED;
+    color: #5b5b5b;
     font-family: "Plus Jakarta Sans";
     font-size: 18px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
 }
 
 .nav-bar ul li:hover {
-    color: #B7C018;
+    color: rebeccapurple;
     cursor: pointer;
 }
 
-.nav-bar ul li i {
-    padding-right: 16px;
-}
-
-.nav-bar ul li #privacy-statement, #help, #faculty, #report, #dashboard {
-    position: relative;
-    top: 3px;
+.nav-icon {
     width: 20px;
     height: 20px;
-    padding-right: 16px;
+    margin-right: 16px;
+    flex-shrink: 0;
+    stroke: #5b5b5b;
+    transition: stroke 0.2s ease;
+}
+
+.nav-bar ul li:hover .nav-icon {
+    stroke: rebeccapurple;
 }
 
 hr {
