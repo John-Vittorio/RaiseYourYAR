@@ -30,7 +30,7 @@ const YARMain = () => {
     switch (currentView) {
       case 'main':
         return (
-          <div className="visual-container" style={{ padding: '20px' }}>
+          <div className="yar-container">
             <YARArchive onStart={handleStartYAR} />
           </div>
         );

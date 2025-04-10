@@ -24,27 +24,15 @@ const YARForm = ({ onSubmit }) => {
   };
 
   return (
-    <div style={{ padding: '20px 40px' }}>
-      <h1 style={{ 
-        color: '#4B2E83', 
-        fontSize: '32px', 
-        marginBottom: '30px',
-        fontFamily: 'sans-serif'
-      }}>
-        Yearly Activity Report
-      </h1>
+    <div className="yar-form-container">
+      <h1 className="yar-title">Yearly Activity Report</h1>
       
-      <div style={{ maxWidth: '550px' }}>
+      <div className="yar-form-wrapper">
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
+          <div className="yar-form-group">
             <label 
               htmlFor="netId" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '10px', 
-                fontWeight: 'normal',
-                fontSize: '16px'
-              }}
+              className="yar-form-label"
             >
               Please enter your NetId
             </label>
@@ -56,26 +44,14 @@ const YARForm = ({ onSubmit }) => {
               onChange={handleChange}
               required
               placeholder="billhowe123"
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '5px',
-                border: '1px solid #ddd',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              className="yar-form-input"
             />
           </div>
           
-          <div style={{ marginBottom: '30px' }}>
+          <div className="yar-form-group">
             <label 
               htmlFor="fullName" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '10px', 
-                fontWeight: 'normal',
-                fontSize: '16px'
-              }}
+              className="yar-form-label"
             >
               Full Name
             </label>
@@ -87,46 +63,21 @@ const YARForm = ({ onSubmit }) => {
               onChange={handleChange}
               required
               placeholder="Bill J. Howe"
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '5px',
-                border: '1px solid #ddd',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              className="yar-form-input"
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="yar-button-group">
             <button 
               type="button" 
               onClick={handleCancel}
-              style={{
-                padding: '8px 20px',
-                borderRadius: '5px',
-                border: '1px solid #4B2E83',
-                backgroundColor: 'white',
-                color: '#333',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'normal'
-              }}
+              className="yar-button-cancel"
             >
               Cancel
             </button>
             <button 
               type="submit"
-              style={{
-                padding: '8px 20px',
-                borderRadius: '5px',
-                border: 'none',
-                backgroundColor: '#32006E',
-                color: 'white',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'normal'
-              }}
+              className="yar-button-primary"
             >
               Start
             </button>

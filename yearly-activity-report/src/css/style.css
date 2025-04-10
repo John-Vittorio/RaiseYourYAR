@@ -3,12 +3,17 @@
     padding: 0;
 }
 
+body {
+    font-family: sans-serif;
+}
+
 .App {
     display: flex;
     height: 100vh;
     gap: 30px;
 }
 
+/* Navigation Styles */
 .nav-bar {
     min-width: 258px;
     width: auto;
@@ -66,11 +71,16 @@
     display: flex;
     align-items: center;
     transition: color 0.2s ease;
+    cursor: pointer;
 }
 
 .nav-bar ul li:hover {
     color: rebeccapurple;
-    cursor: pointer;
+}
+
+.nav-bar ul li.active {
+    color: #4B2E83;
+    font-weight: bold;
 }
 
 .nav-icon {
@@ -98,13 +108,12 @@ hr {
     margin-bottom: 25px;
 }
 
+/* Visualization Styles */
 .visual-container {
     display: grid;
     gap: 30px;
     width: 100%;
-    padding-right: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding: 30px 30px 30px 0;
     overflow-y: auto;
     flex-grow: 1;
     grid-template-columns: 2fr 1fr;
@@ -299,4 +308,302 @@ hr {
     max-height: 100%;
     object-fit: contain;
     display: block;
+}
+
+/* YAR Styles */
+.yar-container {
+    padding: 20px;
+}
+
+.yar-start-button {
+    background-color: #32006E;
+    padding: 20px 30px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.yar-start-button h2 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+}
+
+.yar-start-button .arrow {
+    color: white;
+    font-size: 24px;
+}
+
+.yar-archive-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.yar-archive-title {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.yar-archive-item {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+}
+
+.yar-archive-item svg {
+    margin-right: 10px;
+}
+
+.yar-form-container {
+    padding: 20px 40px;
+}
+
+.yar-title {
+    color: #4B2E83;
+    font-size: 32px;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+}
+
+.yar-form-wrapper {
+    max-width: 550px;
+}
+
+.yar-form-group {
+    margin-bottom: 20px;
+}
+
+.yar-form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.yar-form-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.yar-button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.yar-button-cancel {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: 1px solid #4B2E83;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.yar-button-primary {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #32006E;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.yar-button-secondary {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.yar-button-next {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #94989c;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Teaching Form Styles */
+.teaching-container {
+    padding: 20px 40px;
+}
+
+.teaching-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.teaching-header h1 {
+    color: #4B2E83;
+    font-size: 32px;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.teaching-breadcrumb {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.teaching-breadcrumb .inactive {
+    color: #888;
+    margin-right: 10px;
+}
+
+.teaching-breadcrumb .separator {
+    margin: 0 5px;
+}
+
+.teaching-breadcrumb .active {
+    font-weight: bold;
+}
+
+.course-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.course-title {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.course-field {
+    margin-bottom: 10px;
+}
+
+.course-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.course-value {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.course-radio-group {
+    margin-bottom: 15px;
+}
+
+.course-radio-question {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.course-radio-options {
+    display: flex;
+    gap: 15px;
+}
+
+.course-radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.course-radio {
+    margin-right: 5px;
+}
+
+.course-notes {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    background-color: #f9f9f9;
+}
+
+.course-form-input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.course-form-textarea {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    resize: vertical;
+}
+
+.add-course-button {
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-course-button svg {
+    margin-right: 10px;
+}
+
+.outside-dept-question {
+    margin-bottom: 20px;
+}
+
+.outside-dept-label {
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+}
+
+.required-indicator {
+    color: red;
+    margin-left: 5px;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
 }
