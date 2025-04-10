@@ -21,8 +21,10 @@ body {
     box-shadow: 20px 0 20px rgba(93, 0, 93, 0.15);
     position: relative;
     z-index: 100;
-    overflow-y: auto;
+    overflow-y: auto; /* Allow scrolling within nav if needed */
     overflow-x: visible;
+    height: 100vh; /* Full viewport height */
+    flex-shrink: 0; /* Prevent the nav from shrinking */
 }
 
 .nav-content {
@@ -447,6 +449,10 @@ hr {
 /* Teaching Form Styles */
 .teaching-container {
     padding: 20px 40px;
+    height: 100vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+    flex-grow: 1; /* Allow the content area to grow */
+    max-height: 100vh; /* Limit to viewport height */
 }
 
 .teaching-header {
@@ -606,4 +612,19 @@ hr {
     display: flex;
     justify-content: space-between;
     margin-top: 30px;
+}
+
+.visual-container,
+.yar-container {
+    height: 100vh;
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: 100vh;
+}
+
+/* You may want to adjust padding to ensure content isn't cut off at the bottom */
+.teaching-container,
+.visual-container,
+.yar-container {
+    padding-bottom: 60px;
 }
