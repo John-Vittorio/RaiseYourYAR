@@ -11,9 +11,9 @@ body {
     display: flex;
     height: 100vh;
     gap: 30px;
+    overflow: hidden;
 }
 
-/* Navigation Styles */
 .nav-bar {
     min-width: 258px;
     width: auto;
@@ -21,10 +21,10 @@ body {
     box-shadow: 20px 0 20px rgba(93, 0, 93, 0.15);
     position: relative;
     z-index: 100;
-    overflow-y: auto; /* Allow scrolling within nav if needed */
+    overflow-y: auto;
     overflow-x: visible;
-    height: 100vh; /* Full viewport height */
-    flex-shrink: 0; /* Prevent the nav from shrinking */
+    height: 100vh;
+    flex-shrink: 0;
 }
 
 .nav-content {
@@ -110,7 +110,6 @@ hr {
     margin-bottom: 25px;
 }
 
-/* Visualization Styles */
 .visual-container {
     display: grid;
     gap: 30px;
@@ -312,9 +311,11 @@ hr {
     display: block;
 }
 
-/* YAR Styles */
 .yar-container {
-    padding: 20px;
+    padding: 20px 40px 60px 40px;
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: 100vh;
 }
 
 .yar-start-button {
@@ -446,13 +447,11 @@ hr {
     font-size: 14px;
 }
 
-/* Teaching Form Styles */
 .teaching-container {
-    padding: 20px 40px;
-    height: 100vh;
-    overflow-y: auto; /* Enable vertical scrolling */
-    flex-grow: 1; /* Allow the content area to grow */
-    max-height: 100vh; /* Limit to viewport height */
+    padding: 20px 40px 60px 40px;
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: 100vh;
 }
 
 .teaching-header {
@@ -614,17 +613,10 @@ hr {
     margin-top: 30px;
 }
 
-.visual-container,
-.yar-container {
-    height: 100vh;
-    overflow-y: auto;
-    flex-grow: 1;
-    max-height: 100vh;
-}
-
-/* You may want to adjust padding to ensure content isn't cut off at the bottom */
-.teaching-container,
-.visual-container,
-.yar-container {
-    padding-bottom: 60px;
+.visual-container:after,
+.teaching-container:after,
+.yar-container:after {
+    content: "";
+    display: block;
+    height: 30px;
 }
