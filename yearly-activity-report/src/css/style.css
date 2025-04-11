@@ -598,3 +598,60 @@ hr {
     display: block;
 
 }
+
+/* Research form styles */
+.research-publication {
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+  
+.research-publication:last-child {
+    border-bottom: none;
+}
+
+.research-publication p {
+    line-height: 1.6;
+    color: #333;
+}
+
+.section-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.section-buttons .add-course-button {
+    background-color: #f9f9f9;
+}
+
+.section-buttons .add-course-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Service form styles */
+.service-item {
+    margin-bottom: 20px;
+}
+
+.service-item h3 {
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.service-item p {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+    font-size: 14px;
+}
