@@ -374,9 +374,7 @@ hr {
 
 .yar-title {
     color: #4B2E83;
-    font-size: 32px;
-    margin-bottom: 30px;
-    font-family: sans-serif;
+    font-family: "Encode Sans";
 }
 
 .yar-form-wrapper {
@@ -452,7 +450,9 @@ hr {
 }
 
 .teaching-container {
-    padding: 20px 40px 60px 40px;
+    padding-right: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     overflow-y: auto;
     flex-grow: 1;
     max-height: 100vh;
@@ -461,14 +461,13 @@ hr {
 .teaching-header {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .teaching-header h1 {
     color: #4B2E83;
-    font-size: 32px;
     margin: 0;
-    font-family: sans-serif;
+    font-family: "Encode Sans";
 }
 
 .teaching-breadcrumb {
@@ -492,9 +491,9 @@ hr {
 
 .course-card {
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     border: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
@@ -518,7 +517,7 @@ hr {
 .course-label {
     display: block;
     margin-bottom: 5px;
-    color: #666;
+    color: #595959;
 }
 
 .course-value {
@@ -554,7 +553,7 @@ hr {
 
 .course-notes {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     border-radius: 4px;
     border: 1px solid #ccc;
     resize: vertical;
@@ -617,10 +616,9 @@ hr {
     margin-top: 30px;
 }
 
-.visual-container:after,
 .teaching-container:after,
 .yar-container:after {
     content: "";
     display: block;
-    height: 30px;
+    height: 60px;
 }

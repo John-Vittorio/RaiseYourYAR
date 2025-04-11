@@ -24,7 +24,7 @@ const YARForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="yar-form-container">
+    <div className="yar-container">
       <h1 className="yar-title">Yearly Activity Report</h1>
       
       <div className="yar-form-wrapper">
