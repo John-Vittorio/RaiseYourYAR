@@ -34,7 +34,7 @@ const YARForm = ({ onSubmit }) => {
               htmlFor="netId" 
               className="yar-form-label"
             >
-              Please enter your NetId
+              Enter NetID
             </label>
             <input
               type="text"
