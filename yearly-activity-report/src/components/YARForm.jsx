@@ -28,7 +28,7 @@ const YARForm = ({ onSubmit }) => {
       <h1 className="yar-title">Yearly Activity Report</h1>
       
       <div className="yar-form-wrapper">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="actual-form">
           <div className="yar-form-group">
             <label 
               htmlFor="netId" 
@@ -43,7 +43,7 @@ const YARForm = ({ onSubmit }) => {
               value={formData.netId}
               onChange={handleChange}
               required
-              placeholder="billhowe123"
+              placeholder="billhowe@uw.edu"
               className="yar-form-input"
             />
           </div>

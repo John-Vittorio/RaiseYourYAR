@@ -196,6 +196,12 @@ hr {
     gap: 20px;
 }
 
+.yar-button-group {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
 @keyframes glow {
     0% {
         box-shadow: 0 0 5px rgba(50, 0, 110, 0.5), 0 0 10px rgba(50, 0, 110, 0.4);
@@ -208,7 +214,7 @@ hr {
     }
 }
 
-.cancelButton {
+.cancelButton, .yar-button-cancel, .yar-button-secondary {
     font-weight: 700;
     font-size: 14px;
     padding: 10px;
@@ -222,13 +228,13 @@ hr {
     transition: all 0.3s ease;
 }
 
-.generateButton {
+.generateButton, .yar-button-primary, .yar-button-next {
     font-weight: 700;
     font-size: 14px;
     cursor: pointer;
     padding: 10px;
     border-radius: 10px;
-    border: 2px solid #e5e5e5;
+    border: 1px solid #e5e5e5;
     width: 100px;
     font-family: "Montserrat";
     background-color: #32006E;
@@ -237,13 +243,11 @@ hr {
 }
 
 .cancelButton:hover,
-.generateButton:hover {
-    animation: glow 2s infinite alternate;
-}
-
-.cancelButton:focus,
-.generateButton:focus {
-    outline: none;
+.generateButton:hover,
+.yar-button-cancel:hover,
+.yar-button-primary:hover,
+.yar-button-secondary:hover,
+.yar-button-next:hover {
     animation: glow 2s infinite alternate;
 }
 
@@ -384,7 +388,7 @@ hr {
 }
 
 .yar-form-wrapper {
-    max-width: 550px;
+    max-width: 600px;
 }
 
 .yar-form-group {
@@ -400,16 +404,10 @@ hr {
 }
 
 #netId, #fullName {
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.08);
+    box-shadow: 8px 8px 8px rgba(93, 0, 93, 0.15);
     border: 1px solid rgba(171, 171, 171, 0.25);
-}
-
-#netId:focus, #fullName:focus {
-    border-color: rgba(150, 100, 200, 0.3);
-    box-shadow: 0 0 4px rgba(93, 0, 93, 0.1);
     outline: none;
 }
-
 
 .yar-form-input {
     width: 100%;
@@ -418,54 +416,6 @@ hr {
     border: 1px solid #ddd;
     font-size: 16px;
     box-sizing: border-box;
-}
-
-.yar-button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-.yar-button-cancel {
-    padding: 8px 20px;
-    border-radius: 5px;
-    border: 1px solid #4B2E83;
-    background-color: white;
-    color: #333;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.yar-button-primary {
-    padding: 8px 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #32006E;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.yar-button-secondary {
-    padding: 8px 20px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: white;
-    color: #333;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.yar-button-next {
-    padding: 8px 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #94989c;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
 }
 
 .teaching-container {
@@ -518,7 +468,7 @@ hr {
     border-radius: 8px;
     margin-bottom: 30px;
     border: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
 }
 
 .course-title {
@@ -635,13 +585,13 @@ hr {
 
 .navigation-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 30px;
+    justify-content: flex-end;
+    gap: 20px;
 }
 
 .teaching-container:after,
 .yar-container:after {
     content: "";
     display: block;
-    height: 60px;
+
 }
