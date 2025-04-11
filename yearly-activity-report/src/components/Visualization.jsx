@@ -10,7 +10,7 @@ export default function Visualization(props) {
                 <select className="visualization-dropdown">
                     <option value="" disabled selected>Select Type</option>
                 </select>
-                <textarea className="visualization-prompt" placeholder="Describe visualization, include x and y values!"></textarea>
+                <textarea className="visualization-prompt" placeholder="Describe the visualization. Include x and y values!"></textarea>
                 <div className="visual-buttons-container">
                     <button className="cancelButton">Cancel</button>
                     <button className="generateButton">Generate</button>

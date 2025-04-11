@@ -362,10 +362,11 @@ hr {
 }
 
 .yar-archive-title {
-    font-size: 24px;
     margin-top: 0;
     margin-bottom: 20px;
-    color: #333;
+    color: #333333;
+    font-family: "Montserrat";
+    font-weight: 500;
 }
 
 .yar-archive-item {

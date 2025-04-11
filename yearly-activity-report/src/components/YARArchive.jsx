@@ -16,7 +16,7 @@ const YARArchive = ({ onStart }) => {
         className="yar-start-button"
         onClick={onStart}
       >
-        <h2>Begin Yearly Activity Report</h2>
+        <h2>Access Yearly Activity Report</h2>
         <div className="arrow">›</div>
       </div>
 
