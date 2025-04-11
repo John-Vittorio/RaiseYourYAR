@@ -10,7 +10,7 @@ const YARArchive = ({ onStart }) => {
   ];
 
   return (
-    <div>
+    <div className="yar-container">
       {/* Top section - Start button */}
       <div 
         className="yar-start-button"

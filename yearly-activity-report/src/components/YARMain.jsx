@@ -29,11 +29,7 @@ const YARMain = () => {
   const renderView = () => {
     switch (currentView) {
       case 'main':
-        return (
-          <div className="yar-container">
-            <YARArchive onStart={handleStartYAR} />
-          </div>
-        );
+        return <YARArchive onStart={handleStartYAR} />;
       case 'form':
         return <YARForm onSubmit={handleFormSubmit} />;
       case 'teaching':
@@ -43,7 +39,8 @@ const YARMain = () => {
     }
   };
 
-  return <div>{renderView()}</div>;
+  /* Converted into a fragment. */
+  return <>{renderView()}</>;
 };
 
 export default YARMain;
