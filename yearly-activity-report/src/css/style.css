@@ -312,10 +312,14 @@ hr {
 }
 
 .yar-container {
-    padding: 20px 40px 60px 40px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 30px 30px 30px 0;
     overflow-y: auto;
     flex-grow: 1;
     max-height: 100vh;
+    gap: 30px;
 }
 
 .yar-start-button {
