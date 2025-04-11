@@ -318,23 +318,22 @@ hr {
     padding: 30px 30px 30px 0;
     overflow-y: auto;
     max-height: 100vh;
-    gap: 15px;
+    gap: 30px;
     display: flex;
     flex-direction: column;
 }
 
-
 .yar-start-button {
     background-color: #32006E;
     padding: 20px 30px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    border-radius: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
 }
 
 .yar-start-button h2 {
@@ -345,17 +344,17 @@ hr {
 
 .yar-start-button .arrow {
     color: white;
-    font-size: 24px;
+    font-size: 30px;
 }
 
 .yar-archive-container {
-    padding: 20px 30px;
+    padding:  30px;
     border-radius: 10px;
     border: 1px solid #f3f3f3;
     background-color: #FFFFFF;
     box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
-    width: 100%; /* Added to make it take full width */
-    box-sizing: border-box; /* Added to include padding in width calculation */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .yar-archive-title {
@@ -397,7 +396,20 @@ hr {
     margin-bottom: 10px;
     font-weight: normal;
     font-size: 16px;
+    font-family: "Encode Sans";
 }
+
+#netId, #fullName {
+    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.08);
+    border: 1px solid rgba(171, 171, 171, 0.25);
+}
+
+#netId:focus, #fullName:focus {
+    border-color: rgba(150, 100, 200, 0.3);
+    box-shadow: 0 0 4px rgba(93, 0, 93, 0.1);
+    outline: none;
+}
+
 
 .yar-form-input {
     width: 100%;
@@ -485,15 +497,19 @@ hr {
 
 .teaching-breadcrumb .inactive {
     color: #888;
-    margin-right: 10px;
+    margin-right: 7px;
+    font-family: "Encode Sans";
 }
 
 .teaching-breadcrumb .separator {
-    margin: 0 5px;
+    margin: 0 7px;
+    font-family: "Encode Sans";
 }
 
 .teaching-breadcrumb .active {
     font-weight: bold;
+    margin-left: 7px;
+    font-family: "Encode Sans";
 }
 
 .course-card {
