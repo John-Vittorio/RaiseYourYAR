@@ -25,7 +25,7 @@ const TeachingForm = ({ onNext }) => {
       notes: 'N/A'
     }
   ]);
-  
+
   const [showForm, setShowForm] = useState(false);
   const [taughtOutsideDept, setTaughtOutsideDept] = useState(false);
   const [newCourse, setNewCourse] = useState({
@@ -41,8 +41,8 @@ const TeachingForm = ({ onNext }) => {
 
   // Handle radio button changes for existing courses
   const handleRadioChange = (courseId, field, value) => {
-    setCourses(prevCourses => 
-      prevCourses.map(course => 
+    setCourses(prevCourses =>
+      prevCourses.map(course =>
         course.id === courseId ? { ...course, [field]: value } : course
       )
     );
@@ -60,17 +60,17 @@ const TeachingForm = ({ onNext }) => {
     if (!studentCreditHours && newCourse.credits && newCourse.enrollment) {
       studentCreditHours = newCourse.credits * newCourse.enrollment;
     }
-    
+
     // Create new course object with generated ID
     const courseToAdd = {
       ...newCourse,
       id: courses.length + 1,
       studentCreditHours: studentCreditHours || ''
     };
-    
+
     // Add the new course to the courses array
     setCourses(prev => [...prev, courseToAdd]);
-    
+
     // Reset the new course form
     setNewCourse({
       name: '',
@@ -82,7 +82,7 @@ const TeachingForm = ({ onNext }) => {
       updatedCourse: false,
       notes: ''
     });
-    
+
     // Hide the form
     setShowForm(false);
   };
@@ -103,29 +103,29 @@ const TeachingForm = ({ onNext }) => {
         {courses.map(course => (
           <div key={course.id} className="course-card">
             <h3 className="course-title">{course.name}</h3>
-            
+
             <div className="course-grid">
               <div className="course-field">
                 <label className="course-label">Credits:</label>
                 <div className="course-value">{course.credits}</div>
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Enrollment:</label>
                 <div className="course-value">{course.enrollment}</div>
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Student Credit Hours:</label>
                 <div className="course-value">{course.studentCreditHours}</div>
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Course Evaluations Score:</label>
                 <div className="course-value">{course.evaluationScore}</div>
               </div>
             </div>
-            
+
             <div className="course-radio-group">
               <p className="course-radio-question">Did this course have Community - Engaged Pedagogy?</p>
               <div className="course-radio-options">
@@ -151,7 +151,7 @@ const TeachingForm = ({ onNext }) => {
                 </label>
               </div>
             </div>
-            
+
             <div className="course-radio-group">
               <p className="course-radio-question">Did you make significant course updates/changes?</p>
               <div className="course-radio-options">
@@ -177,8 +177,8 @@ const TeachingForm = ({ onNext }) => {
                 </label>
               </div>
             </div>
-            
-            <div>
+
+            <div className="course-field" style={{ gridColumn: 'span 2' }}>
               <label className="course-label">Notes:</label>
               <textarea
                 value={course.notes}
@@ -187,6 +187,7 @@ const TeachingForm = ({ onNext }) => {
                 className="course-notes"
               ></textarea>
             </div>
+
           </div>
         ))}
 
@@ -194,7 +195,7 @@ const TeachingForm = ({ onNext }) => {
         {showForm ? (
           <div className="course-card">
             <h3 className="course-title">Add New Course</h3>
-            
+
             <div className="yar-form-group">
               <label className="course-label">Course Name:</label>
               <input
@@ -205,7 +206,7 @@ const TeachingForm = ({ onNext }) => {
                 placeholder="e.g., URBAN 400 - Advanced Urban Planning"
               />
             </div>
-            
+
             <div className="course-grid">
               <div className="course-field">
                 <label className="course-label">Credits:</label>
@@ -216,7 +217,7 @@ const TeachingForm = ({ onNext }) => {
                   className="course-form-input"
                 />
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Enrollment:</label>
                 <input
@@ -226,7 +227,7 @@ const TeachingForm = ({ onNext }) => {
                   className="course-form-input"
                 />
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Student Credit Hours:</label>
                 <input
@@ -237,7 +238,7 @@ const TeachingForm = ({ onNext }) => {
                   placeholder="Will calculate automatically if left empty"
                 />
               </div>
-              
+
               <div className="course-field">
                 <label className="course-label">Course Evaluations Score:</label>
                 <input
@@ -249,7 +250,7 @@ const TeachingForm = ({ onNext }) => {
                 />
               </div>
             </div>
-            
+
             <div className="course-radio-group">
               <p className="course-radio-question">Did this course have Community - Engaged Pedagogy?</p>
               <div className="course-radio-options">
@@ -275,7 +276,7 @@ const TeachingForm = ({ onNext }) => {
                 </label>
               </div>
             </div>
-            
+
             <div className="course-radio-group">
               <p className="course-radio-question">Did you make significant course updates/changes?</p>
               <div className="course-radio-options">
@@ -301,7 +302,7 @@ const TeachingForm = ({ onNext }) => {
                 </label>
               </div>
             </div>
-            
+
             <div className="yar-form-group">
               <label className="course-label">Notes:</label>
               <textarea
@@ -312,15 +313,15 @@ const TeachingForm = ({ onNext }) => {
                 placeholder="N/A"
               ></textarea>
             </div>
-            
+
             <div className="yar-button-group">
-              <button 
+              <button
                 onClick={() => setShowForm(false)}
                 className="yar-button-secondary"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleAddCourse}
                 disabled={!newCourse.name || !newCourse.credits || !newCourse.enrollment}
                 className="yar-button-primary"
@@ -334,7 +335,7 @@ const TeachingForm = ({ onNext }) => {
           </div>
         ) : (
           // Add Course Button
-          <div 
+          <div
             className="add-course-button"
             onClick={() => setShowForm(true)}
           >
@@ -381,7 +382,7 @@ const TeachingForm = ({ onNext }) => {
           <button className="yar-button-secondary">
             Previous
           </button>
-          <button 
+          <button
             onClick={onNext}
             className="yar-button-next"
           >
