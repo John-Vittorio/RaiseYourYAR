@@ -561,6 +561,7 @@ hr {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: "Montserrat";
 }
 
 .add-course-button svg {
@@ -569,6 +570,7 @@ hr {
 
 .outside-dept-question {
     margin-bottom: 20px;
+    font-family: "Montserrat";
 }
 
 .outside-dept-label {
