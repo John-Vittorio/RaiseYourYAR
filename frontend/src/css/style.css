@@ -431,8 +431,13 @@ hr {
     flex-direction: column;
 }
 
-.yar-start-button {
-    background-color: #32006E;
+.yar-buttons-container {
+    display: flex;
+    gap: 20px;
+}
+
+.yar-start-button,
+.yar-archive-button {
     padding: 20px 30px;
     border-radius: 10px;
     display: flex;
@@ -442,6 +447,11 @@ hr {
     width: 100%;
     box-sizing: border-box;
     box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    height: 70px;
+}
+
+.yar-start-button {
+    background-color: #32006E;
 }
 
 .yar-start-button h2 {
@@ -453,6 +463,22 @@ hr {
 .yar-start-button .arrow {
     color: white;
     font-size: 30px;
+}
+
+.yar-archive-button {
+    background-color: #f9f6ff;
+}
+
+.yar-archive-button h2 {
+    color: #4B2E83;
+    margin: 0;
+    font-size: 24px;
+}
+
+.yar-archive-button img {
+    width: 50px;
+    height: auto;
+    object-fit: contain;
 }
 
 .yar-archive-container {
