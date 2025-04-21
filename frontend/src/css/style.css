@@ -273,6 +273,110 @@ hr {
     padding-bottom: 20px;
 }
 
+.privacy {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    max-height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    border: 1px solid #f3f3f3;
+    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    overflow: hidden;
+    margin-right: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.privacy-heading {
+    font-family: "Encode Sans";
+    color: #4B2E83;
+    font-size: clamp(24px, 4vw, 32px);
+    margin-bottom: 20px;
+}
+
+.privacy-content {
+    overflow-y: auto;
+    max-height: calc(100% - 60px);
+    padding-right: 15px;
+}
+
+.opening-paragraph {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-family: "Encode Sans";
+    color: #495057;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.section-header {
+    font-size: clamp(16px, 1.8vw, 20px);
+    font-family: "Encode Sans";
+    color: #4B2E83;
+    font-weight: 600;
+    margin: 20px 0 15px 0;
+}
+
+.privacy-list {
+    margin-left: 10px;
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.privacy-list li {
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 15px;
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-family: "Encode Sans";
+    color: #495057;
+    line-height: 1.6;
+}
+
+.privacy-list li::before {
+    content: "•";
+    position: absolute;
+    left: -15px;
+    color: #4B2E83;
+    font-weight: bold;
+}
+
+.privacy-list li strong {
+    color: #4B2E83;
+    font-weight: 600;
+}
+
+.ending-paragraph {
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-family: "Encode Sans";
+    color: #495057;
+    font-weight: 400;
+    line-height: 1.6;
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+
+@media (min-width: 1440px) {
+    .privacy {
+        padding: 40px;
+    }
+    
+    .privacy-heading {
+        margin-bottom: 30px;
+    }
+    
+    .privacy-list li, 
+    .opening-paragraph, 
+    .ending-paragraph {
+        font-size: 16px;
+    }
+}
+
 .publication-distribution {
     flex-direction: column;
     display: flex;
