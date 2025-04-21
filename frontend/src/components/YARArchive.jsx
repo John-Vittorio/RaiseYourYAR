@@ -1,5 +1,5 @@
 import React from "react";
-import image from "../images/drive.png"
+import image from "../images/drive.png";
 
 const YARArchive = ({ onStart }) => {
   const yarArchive = [
@@ -23,30 +23,54 @@ const YARArchive = ({ onStart }) => {
           <img src={image} />
         </div>
       </div>
-
-      {/* Archive section */}
-      <div className="yar-archive-container">
-        <h2 className="yar-archive-title">Yearly Activity Report Archive</h2>
-
-        <div>
-          {yarArchive.map((item) => (
-            <div key={item.id} className="yar-archive-item">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V21C21 22.1046 20.1046 23 19 23H5C3.89543 23 3 22.1046 3 21V5Z"
-                  stroke="#4B2E83"
-                  strokeWidth="2"
-                />
-              </svg>
-              <span>{item.year}</span>
-            </div>
-          ))}
+      <div className="privacy-form-version">
+        <h2 className="privacy-heading">Privacy Statement</h2>
+        <div className="privacy-content">
+          <p className="opening-paragraph">
+            Our Yearly Activity Report (YAR) tool, RaiseYourYAR, is designed to
+            support department leadership in making strategic, data-informed
+            decisions related to faculty activities such as tenure, promotion,
+            and resource allocation. To accomplish this, YAR uses class
+            enrollment data and associated metrics—such as enrollment credit
+            hours—presented in aggregate form through visualizations and
+            dashboards. We are committed to ensuring transparency, security, and
+            ethical handling of all data. YAR adheres to all University of
+            Washington data governance policies and complies fully with FERPA
+            (Family Educational Rights and Privacy Act) and any relevant faculty
+            confidentiality regulations.
+          </p>
+          <h3 className="section-header">Key Privacy Practices</h3>
+          <ul className="privacy-list">
+            <li>
+              <strong>Data Sources:</strong> Data is securely pulled from
+              institutional sources including the UW Registrar and
+              ORCID-integrated faculty profiles. All access is read-only and
+              authorized through university-approved APIs or exports.
+            </li>
+            <li>
+              <strong>Aggregate Metrics Only:</strong> We do not display
+              individual student information or personally identifiable data.
+              Enrollment and teaching metrics are anonymized and shown in
+              summary formats.
+            </li>
+            <li>
+              <strong>Data Use Limitation:</strong> The data is used exclusively
+              to visualize instructional contributions and departmental trends
+              for academic planning—not for performance evaluation outside
+              established university review procedures.
+            </li>
+            <li>
+              <strong>Role Based Access Control:</strong> Access to dashboards
+              and reports is restricted to authorized faculty leadership (e.g.,
+              department chairs, associate deans) and the faculty member to whom
+              the data pertains, where applicable.
+            </li>
+          </ul>
+          <p className="ending-paragraph">
+            We are committed to open communication. Faculty are welcome to
+            review how their data is presented and can reach out with questions
+            or concerns at any point during the process.
+          </p>
         </div>
       </div>
     </div>

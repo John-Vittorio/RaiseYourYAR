@@ -291,10 +291,34 @@ hr {
     box-sizing: border-box;
 }
 
+.privacy-form-version {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    max-height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    border: 1px solid #f3f3f3;
+    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    overflow: hidden;
+    margin-right: 30px;
+    margin-top: 30px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
 .privacy-heading {
     font-family: "Encode Sans";
     color: #4B2E83;
     font-size: clamp(24px, 4vw, 32px);
+    margin-bottom: 20px;
+}
+
+.privacy-heading-yar-version {
+    font-family: "Encode Sans";
+    color: #4B2E83;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -320,6 +344,14 @@ hr {
     color: #4B2E83;
     font-weight: 600;
     margin: 20px 0 15px 0;
+}
+
+.section-header-form-version {
+    font-family: "Encode Sans";
+    color: #4B2E83;
+    font-weight: 600;
+    margin: 20px 0 15px 0;
+    font-size: 17px;
 }
 
 .privacy-list {
@@ -373,7 +405,7 @@ hr {
     .privacy-list li, 
     .opening-paragraph, 
     .ending-paragraph {
-        font-size: 16px;
+        font-size: 20px;
     }
 }
 
@@ -397,6 +429,7 @@ hr {
     color: #495057;
     font-family: "Montserrat";
     font-weight: 700;
+    padding: 10px;
 }
 
 .image-container {
@@ -426,7 +459,6 @@ hr {
     padding: 30px 30px 30px 0;
     overflow-y: auto;
     max-height: 100vh;
-    gap: 30px;
     display: flex;
     flex-direction: column;
 }
@@ -457,7 +489,7 @@ hr {
 .yar-start-button h2 {
     color: white;
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .yar-start-button .arrow {
@@ -472,7 +504,7 @@ hr {
 .yar-archive-button h2 {
     color: #4B2E83;
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .yar-archive-button img {
@@ -639,7 +671,7 @@ hr {
 
 .course-radio-question {
     margin-bottom: 10px;
-    color: #666;
+    color: #616060;
 }
 
 .course-radio-options {
@@ -782,6 +814,6 @@ hr {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    color: #666;
+    color: #616060;
     font-size: 14px;
 }
