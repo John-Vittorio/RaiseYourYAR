@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 const app = express();
+import reportRoutes from "./routes/report.route.js"
 
 /* Middleware */
 /* This middleware allows us to accept and parse JSON data from req.body. */
@@ -12,16 +13,15 @@ app.use(express.json());
 
 /* Provides access to the variables in the .env file. */
 dotenv.config();
+const PORT = process.env.PORT || 5000
 
-app.get("/report", (req, res) => {
-    res.send("Report Endpoint Active")
-})
+app.use("/api/reports", reportRoutes)
 
 /* 
 POST Handler
 */
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
     connectDB();
-    console.log("Server started at http://localhost:5000")
+    console.log("Server started at http://localhost:", PORT)
 })
