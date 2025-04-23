@@ -16,6 +16,11 @@ const YARForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Store in localStorage
+    localStorage.setItem('netId', formData.netId);
+    localStorage.setItem('fullName', formData.fullName);
+
     onSubmit(formData);
   };
 

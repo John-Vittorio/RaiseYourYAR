@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
 const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResearch, onAddFundedResearch, onAddOtherFunding, onAddConference }) => {
+
+  
   const actions = [
     { label: "Add Publication", onClick: onAddPublication },
     { label: "Add Research Grants/Contract", onClick: onAddGrant },
@@ -17,6 +19,7 @@ const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResear
           key={index}
           className="add-course-button"
           onClick={action.onClick}
+          style = {{ position : 'relative'}}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -396,7 +399,22 @@ const ResearchForm = ({ onNext, onPrevious }) => {
         onAddOtherFunding={() => setShowOtherFundingForm(true)} 
         onAddConference={() => setShowConferenceForm(true)}
       />
+      <div className="navigation-buttons">
+          <button 
+            onClick={onPrevious}
+            className="yar-button-secondary"
+          >
+            Previous
+          </button>
+          <button
+            onClick={onNext}
+            className="yar-button-next"
+          >
+            Next
+          </button>
+      </div>
     </div>
+
   );
 };
 
