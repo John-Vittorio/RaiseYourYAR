@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 const app = express();
 import reportRoutes from "./routes/report.route.js";
 import userRoutes from "./routes/user.route.js";
+import dummyRoute from "./routes/dummy.route.js"
 import cors from 'cors';
 
 /* Middleware */
@@ -22,6 +23,7 @@ const PORT = process.env.PORT || 5000;
 /* API Routes */
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
+app.use('/api/dummy', dummyRoute);
 
 app.listen(PORT, () => {
     connectDB();

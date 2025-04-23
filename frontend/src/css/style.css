@@ -80,6 +80,10 @@ body {
     color: rebeccapurple;
 }
 
+.actual-form {
+    margin-top: 30px;
+}
+
 .nav-bar ul li.active {
     color: #4B2E83;
     font-weight: bold;

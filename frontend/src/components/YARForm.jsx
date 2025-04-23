@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { userService, reportService } from '../services/api.service';
+import React, { useState } from "react";
+import { userService, reportService } from "../services/api.service";
 
 const YARForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    netId: '',
-    fullName: ''
+    netId: "",
+    fullName: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -33,7 +33,7 @@ const YARForm = ({ onSubmit }) => {
         user = await userService.createUser({
           netId: formData.netId,
           fullName: formData.fullName,
-          email: `${formData.netId}@uw.edu`
+          email: `${formData.netId}@uw.edu`,
         });
       }
 
@@ -42,26 +42,26 @@ const YARForm = ({ onSubmit }) => {
       const year = now.getFullYear();
       const month = now.getMonth();
       // Determine academic year
-      const academicYear = month >= 8 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+      const academicYear =
+        month >= 8 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
       const report = await reportService.createReport({
         userId: user._id,
-        academicYear
+        academicYear,
       });
 
       // Store in localStorage for state persistence
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('currentReport', JSON.stringify(report.report));
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.setItem("currentReport", JSON.stringify(report.report));
 
       // Call onSubmit callback with user and report data
       onSubmit({
         user,
-        report: report.report
+        report: report.report,
       });
-
     } catch (err) {
-      console.error('Error starting YAR process:', err);
-      setError('Failed to start the YAR process. Please try again.');
+      console.error("Error starting YAR process:", err);
+      setError("Failed to start the YAR process. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -74,16 +74,13 @@ const YARForm = ({ onSubmit }) => {
   return (
     <div className="yar-container">
       <h1 className="yar-title">Yearly Activity Report</h1>
-      
+
       <div className="yar-form-wrapper">
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit} className="actual-form">
           <div className="yar-form-group">
-            <label 
-              htmlFor="netId" 
-              className="yar-form-label"
-            >
+            <label htmlFor="netId" className="yar-form-label">
               Enter NetID
             </label>
             <input
@@ -98,12 +95,9 @@ const YARForm = ({ onSubmit }) => {
               disabled={loading}
             />
           </div>
-          
+
           <div className="yar-form-group">
-            <label 
-              htmlFor="fullName" 
-              className="yar-form-label"
-            >
+            <label htmlFor="fullName" className="yar-form-label">
               Full Name
             </label>
             <input
@@ -118,22 +112,22 @@ const YARForm = ({ onSubmit }) => {
               disabled={loading}
             />
           </div>
-          
+
           <div className="yar-button-group">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={handleCancel}
               className="yar-button-cancel"
               disabled={loading}
             >
               Cancel
             </button>
-            <button 
+            <button
               type="submit"
               className="yar-button-primary"
               disabled={loading}
             >
-              {loading ? 'Starting...' : 'Start'}
+              {loading ? "Starting..." : "Start"}
             </button>
           </div>
         </form>
