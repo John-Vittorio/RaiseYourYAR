@@ -1,33 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { reportService } from '../services/api.service';
 
 const TeachingForm = ({ onNext }) => {
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      name: 'URBAN 200 - Intro to Urbanization',
-      credits: 5,
-      enrollment: 30,
-      studentCreditHours: 150,
-      evaluationScore: '3.4 (67%)',
-      commEngaged: false,
-      updatedCourse: false,
-      notes: 'N/A'
-    },
-    {
-      id: 2,
-      name: 'URBAN 300 - Intro to Urban Planning',
-      credits: 5,
-      enrollment: 30,
-      studentCreditHours: 150,
-      evaluationScore: '3.4 (67%)',
-      commEngaged: false,
-      updatedCourse: false,
-      notes: 'N/A'
-    }
-  ]);
-
+  const [courses, setCourses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [taughtOutsideDept, setTaughtOutsideDept] = useState(false);
+  const [outsideDeptCourses, setOutsideDeptCourses] = useState('');
   const [newCourse, setNewCourse] = useState({
     name: '',
     credits: '',
@@ -36,8 +14,46 @@ const TeachingForm = ({ onNext }) => {
     evaluationScore: '',
     commEngaged: false,
     updatedCourse: false,
-    notes: ''
+    notes: '',
+    quarter: 'Autumn',
+    year: new Date().getFullYear()
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentReport, setCurrentReport] = useState(null);
+
+  // Load the current report from localStorage
+  useEffect(() => {
+    const reportData = localStorage.getItem('currentReport');
+    if (reportData) {
+      const report = JSON.parse(reportData);
+      setCurrentReport(report);
+      
+      // If the report already has teaching data, load it
+      if (report.teachingSection) {
+        loadTeachingData(report._id);
+      }
+    }
+  }, []);
+
+  // Load existing teaching data if available
+  const loadTeachingData = async (reportId) => {
+    try {
+      setLoading(true);
+      const report = await reportService.getReport(reportId);
+      
+      if (report.teachingSection) {
+        setCourses(report.teachingSection.courses || []);
+        setTaughtOutsideDept(report.teachingSection.taughtOutsideDept || false);
+        setOutsideDeptCourses(report.teachingSection.outsideDeptCourses || '');
+      }
+    } catch (err) {
+      console.error('Error loading teaching data:', err);
+      setError('Failed to load existing teaching data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle radio button changes for existing courses
   const handleRadioChange = (courseId, field, value) => {
@@ -80,11 +96,55 @@ const TeachingForm = ({ onNext }) => {
       evaluationScore: '',
       commEngaged: false,
       updatedCourse: false,
-      notes: ''
+      notes: '',
+      quarter: 'Autumn',
+      year: new Date().getFullYear()
     });
 
     // Hide the form
     setShowForm(false);
+  };
+
+  // Handle form submission when Next is clicked
+  const handleNext = async () => {
+    if (!currentReport) {
+      setError('No active report found. Please start a new report.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Prepare teaching data to submit
+      const teachingData = {
+        courses: courses.map(course => ({
+          name: course.name,
+          credits: course.credits,
+          enrollment: course.enrollment,
+          studentCreditHours: course.studentCreditHours,
+          evaluationScore: course.evaluationScore,
+          commEngaged: course.commEngaged,
+          updatedCourse: course.updatedCourse,
+          notes: course.notes,
+          quarter: course.quarter || 'Autumn',
+          year: course.year || new Date().getFullYear()
+        })),
+        taughtOutsideDept,
+        outsideDeptCourses: taughtOutsideDept ? outsideDeptCourses : ''
+      };
+
+      // Submit teaching data to API
+      await reportService.submitTeachingData(currentReport._id, teachingData);
+
+      // Call onNext to move to research section
+      onNext();
+    } catch (err) {
+      console.error('Error submitting teaching data:', err);
+      setError('Failed to save teaching data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,6 +158,9 @@ const TeachingForm = ({ onNext }) => {
             <span className="active">Teaching</span>
           </div>
         </div>
+
+        {loading && <div className="loading-indicator">Loading...</div>}
+        {error && <div className="error-message">{error}</div>}
 
         {/* Course Listings */}
         {courses.map(course => (
@@ -250,6 +313,30 @@ const TeachingForm = ({ onNext }) => {
                 />
               </div>
             </div>
+            
+            <div className="yar-form-group">
+              <label className="course-label">Quarter:</label>
+              <select
+                value={newCourse.quarter}
+                onChange={(e) => handleNewCourseChange('quarter', e.target.value)}
+                className="course-form-input"
+              >
+                <option value="Autumn">Autumn</option>
+                <option value="Winter">Winter</option>
+                <option value="Spring">Spring</option>
+                <option value="Summer">Summer</option>
+              </select>
+            </div>
+            
+            <div className="yar-form-group">
+              <label className="course-label">Year:</label>
+              <input
+                type="number"
+                value={newCourse.year}
+                onChange={(e) => handleNewCourseChange('year', e.target.value)}
+                className="course-form-input"
+              />
+            </div>
 
             <div className="course-radio-group">
               <p className="course-radio-question">Did this course have Community - Engaged Pedagogy?</p>
@@ -310,7 +397,7 @@ const TeachingForm = ({ onNext }) => {
                 onChange={(e) => handleNewCourseChange('notes', e.target.value)}
                 rows="4"
                 className="course-form-textarea"
-                placeholder="N/A"
+                placeholder="Enter any notes about this course"
               ></textarea>
             </div>
 
@@ -376,6 +463,20 @@ const TeachingForm = ({ onNext }) => {
             </label>
           </div>
         </div>
+        
+        {/* Conditional field for outside department courses */}
+        {taughtOutsideDept && (
+          <div className="yar-form-group">
+            <label className="course-label">Please list courses taught outside the department:</label>
+            <textarea
+              value={outsideDeptCourses}
+              onChange={(e) => setOutsideDeptCourses(e.target.value)}
+              rows="4"
+              className="course-form-textarea"
+              placeholder="List courses taught in other departments"
+            ></textarea>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
@@ -383,10 +484,11 @@ const TeachingForm = ({ onNext }) => {
             Previous
           </button>
           <button
-            onClick={onNext}
+            onClick={handleNext}
             className="yar-button-next"
+            disabled={loading}
           >
-            Next
+            {loading ? 'Saving...' : 'Next'}
           </button>
         </div>
       </div>
