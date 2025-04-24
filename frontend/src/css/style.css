@@ -18,7 +18,8 @@ body {
     min-width: 258px;
     width: auto;
     background-color: #FFFFFF;
-    box-shadow: 20px 0 20px rgba(93, 0, 93, 0.15);
+    box-shadow: 0 0 20px rgba(93, 0, 93, 0.15);
+    border-right: 1px solid #e0e0e0;
     position: relative;
     z-index: 100;
     overflow-y: auto;
@@ -133,9 +134,9 @@ hr {
     width: auto;
     grid-column: span 2;
     border-radius: 10px;
-    border: 1px solid #f3f3f3;
+    border: 1px solid #d9d9d9;
     background-color: #FFFFFF;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     padding: 20px;
 }
 
@@ -150,9 +151,9 @@ hr {
     max-width: 300px;
     height: 60px;
     background-color: #FFFFFF;
-    border: 1px solid #f3f3f3;
+    border: 1px solid #c0c0c0;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(93, 0, 93, 0.1);
+    box-shadow: 0px 4px 10px rgba(93, 0, 93, 0.12);
     font-family: "Montserrat";
     font-size: 20px;
     padding-left: 10px;
@@ -181,9 +182,9 @@ hr {
     padding: 15px;
     font-size: 16px;
     color: #4d4d4d;
-    border: 1px solid #f3f3f3;
+    border: 1px solid #c0c0c0;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(93, 0, 93, 0.1);
+    box-shadow: 0px 4px 10px rgba(93, 0, 93, 0.12);
     background-color: #FFFFFF;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     height: 190px;
@@ -191,7 +192,7 @@ hr {
 
 .visualization-prompt:focus {
     border-color: rebeccapurple;
-    box-shadow: 0px 0px 5px rgba(93, 0, 93, 0.2);
+    box-shadow: 0px 0px 5px rgba(93, 0, 93, 0.3);
     outline: none;
 }
 
@@ -208,13 +209,13 @@ hr {
 
 @keyframes glow {
     0% {
-        box-shadow: 0 0 5px rgba(50, 0, 110, 0.5), 0 0 10px rgba(50, 0, 110, 0.4);
+        box-shadow: 0 0 8px rgba(50, 0, 110, 0.6), 0 0 12px rgba(50, 0, 110, 0.5);
     }
     50% {
-        box-shadow: 0 0 8px rgba(50, 0, 110, 0.7), 0 0 15px rgba(50, 0, 110, 0.5);
+        box-shadow: 0 0 12px rgba(50, 0, 110, 0.8), 0 0 20px rgba(50, 0, 110, 0.6);
     }
     100% {
-        box-shadow: 0 0 5px rgba(50, 0, 110, 0.5), 0 0 10px rgba(50, 0, 110, 0.4);
+        box-shadow: 0 0 8px rgba(50, 0, 110, 0.6), 0 0 12px rgba(50, 0, 110, 0.5);
     }
 }
 
@@ -271,8 +272,8 @@ hr {
     min-height: 400px;
     width: 100%;
     background-color: #FFFFFF;
-    border: 1px solid #f3f3f3;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     overflow: hidden;
     padding-bottom: 20px;
 }
@@ -285,8 +286,8 @@ hr {
     width: 100%;
     border-radius: 10px;
     background-color: #FFFFFF;
-    border: 1px solid #f3f3f3;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     overflow: hidden;
     margin-right: 30px;
     margin-top: 30px;
@@ -303,8 +304,8 @@ hr {
     width: 100%;
     border-radius: 10px;
     background-color: #FFFFFF;
-    border: 1px solid #f3f3f3;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     overflow: hidden;
     margin-right: 30px;
     margin-top: 30px;
@@ -420,9 +421,9 @@ hr {
     min-height: 400px;
     width: 100%;
     border-radius: 10px;
-    border: 1px solid #f1efef;
+    border: 1px solid #d9d9d9;
     background-color: #FFFFFF;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     overflow: hidden;
     padding-bottom: 20px;
 }
@@ -482,7 +483,7 @@ hr {
     cursor: pointer;
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     height: 70px;
 }
 
@@ -503,6 +504,7 @@ hr {
 
 .yar-archive-button {
     background-color: #f9f6ff;
+    border: 1px solid #d9d9d9;
 }
 
 .yar-archive-button h2 {
@@ -518,11 +520,11 @@ hr {
 }
 
 .yar-archive-container {
-    padding:  30px;
+    padding: 30px;
     border-radius: 10px;
-    border: 1px solid #f3f3f3;
+    border: 1px solid #d9d9d9;
     background-color: #FFFFFF;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     width: 100%;
     box-sizing: border-box;
 }
@@ -571,8 +573,8 @@ hr {
 }
 
 #netId, #fullName {
-    box-shadow: 8px 8px 8px rgba(93, 0, 93, 0.15);
-    border: 1px solid rgba(171, 171, 171, 0.25);
+    box-shadow: 0 4px 10px rgba(93, 0, 93, 0.12);
+    border: 1px solid #c0c0c0;
     outline: none;
 }
 
@@ -580,7 +582,7 @@ hr {
     width: 100%;
     padding: 12px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #c0c0c0;
     font-size: 16px;
     box-sizing: border-box;
 }
@@ -634,8 +636,8 @@ hr {
     padding: 30px;
     border-radius: 8px;
     margin-bottom: 30px;
-    border: 1px solid #eee;
-    box-shadow: 20px 20px 20px rgba(93, 0, 93, 0.15);
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     font-family: "Montserrat";
 }
 
@@ -664,7 +666,7 @@ hr {
 
 .course-value {
     padding: 5px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #c0c0c0;
     border-radius: 5px;
     background-color: #f9f9f9;
 }
@@ -698,12 +700,13 @@ hr {
     border-radius: 4px;
     resize: vertical;
     background-color: #f9f9f9;
+    border: 1px solid #c0c0c0;
 }
 
 .course-form-input {
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #c0c0c0;
     width: 100%;
     box-sizing: border-box;
 }
@@ -711,7 +714,7 @@ hr {
 .course-form-textarea {
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #c0c0c0;
     width: 100%;
     resize: vertical;
 }
@@ -719,7 +722,7 @@ hr {
 .add-course-button {
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #c0c0c0;
     background-color: white;
     text-align: center;
     cursor: pointer;
@@ -728,6 +731,7 @@ hr {
     justify-content: center;
     align-items: center;
     font-family: "Montserrat";
+    box-shadow: 0 2px 8px rgba(93, 0, 93, 0.1);
 }
 
 .add-course-button svg {
@@ -762,13 +766,12 @@ hr {
 .yar-container:after {
     content: "";
     display: block;
-
 }
 
 .research-publication {
     margin-bottom: 15px;
     padding: 10px 0;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid #e0e0e0;
 }
   
 .research-publication:last-child {
@@ -788,7 +791,8 @@ hr {
 }
 
 .section-buttons .add-course-button {
-    background-color: #f9f9f9;
+    background-color: #f7f7f7;
+    border: 1px solid #d9d9d9;
 }
 
 .section-buttons .add-course-button:hover {
