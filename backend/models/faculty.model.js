@@ -1,4 +1,5 @@
 import mongoose, { mongo } from "mongoose";
+import bcrypt from "bcryptjs";
 
 const facultySchema = new mongoose.Schema({
     netID: {

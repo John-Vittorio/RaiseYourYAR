@@ -8,11 +8,16 @@ import cors from 'cors';
 /* Middleware */
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: ['*', 'http://localhost:5173', 'http://localhost:3000', 'http://localhost:5001', 'http://localhost:5000'], // Add any frontend URLs that need access
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 /* Provides access to the variables in the .env file. */
 dotenv.config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 /* Important Note: Make sure to import all models */
 /* Model Imports Section */

@@ -1,5 +1,6 @@
 import Faculty from "../models/faculty.model.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -46,7 +47,6 @@ export const registerUser = async (req, res) => {
 };
 
 // Login user
-let user = "";
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
