@@ -41,7 +41,7 @@ const Signup = () => {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = formData;
       await signup(userData);
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       setError(error.message);
     } finally {

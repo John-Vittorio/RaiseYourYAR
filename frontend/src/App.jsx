@@ -1,6 +1,6 @@
 // App.jsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute, FacultyRoute } from './components/ProtectedRoute';
 import Navigation from './components/Navigation';
@@ -53,8 +53,19 @@ function App() {
                   <PrivacyStatement />
                 </>
               } />
+              
+              {/* Default route for faculty users */}
+              <Route index element={
+                <>
+                  <Navigation />
+                  <YARMain />
+                </>
+              } />
             </Route>
           </Route>
+          
+          {/* Catch-all redirect to login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </AuthProvider>

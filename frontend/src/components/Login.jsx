@@ -28,8 +28,12 @@ const Login = () => {
     setLoading(true);
     
     try {
-      await login(formData.email, formData.password);
-      navigate('/');
+      const userData = await login(formData.email, formData.password);
+      if (userData.role === 'admin') {
+        navigate('/'); // Admins go to dashboard
+      } else {
+        navigate('/yar'); // Faculty go to YAR page
+      }
     } catch (error) {
       setError(error.message);
     } finally {
