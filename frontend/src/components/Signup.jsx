@@ -146,10 +146,6 @@ const Signup = () => {
             Already have an account? <Link to="/login" className="auth-link">Login</Link>
           </p>
         </div>
-        
-        <div className="auth-footer">
-          <img src={secondLogo} alt="Second Logo" className="auth-second-logo" />
-        </div>
       </div>
     </div>
   );

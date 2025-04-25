@@ -1,5 +1,6 @@
+// App.jsx
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute, FacultyRoute } from './components/ProtectedRoute';
 import Navigation from './components/Navigation';
@@ -8,6 +9,8 @@ import YARMain from './components/YARMain';
 import PrivacyStatement from './components/PrivacyStatement';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import './css/style.css';
+import './css/auth-styles.css';
 
 function App() {
   return (

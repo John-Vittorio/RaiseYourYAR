@@ -92,10 +92,6 @@ const Login = () => {
             Don't have an account? <Link to="/signup" className="auth-link">Sign up</Link>
           </p>
         </div>
-        
-        <div className="auth-footer">
-          <img src={secondLogo} alt="Second Logo" className="auth-second-logo" />
-        </div>
       </div>
     </div>
   );
