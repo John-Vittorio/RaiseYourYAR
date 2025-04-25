@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
 import YARArchive from './YARArchive';
-import YARForm from './YARForm';
 import TeachingForm from './TeachingForm';
 import ResearchForm from './ResearchForm';
 import ServiceForm from './ServiceForm';
 
 const YARMain = () => {
   // State to track the current view
-  const [currentView, setCurrentView] = useState('main'); // main, form, teaching, research, service
+  const [currentView, setCurrentView] = useState('main'); // main, teaching, research, service
   const [userData, setUserData] = useState({ netId: '', fullName: '' });
 
-  // handle starting a new YAR
+  // handle starting a new YAR - go directly to teaching form
   const handleStartYAR = () => {
-    setCurrentView('form');
-  };
-
-  // handle form submission
-  const handleFormSubmit = (data) => {
-    setUserData(data);
+    // Skip the YARForm and go directly to teaching
     setCurrentView('teaching');
   };
 
@@ -31,7 +25,7 @@ const YARMain = () => {
         setCurrentView('service');
         break;
       case 'service':
-        setCurrentView('main'); // Go back to main view FOR NOW after completing
+        setCurrentView('main'); // Go back to main view after completing
         break;
       default:
         setCurrentView('main');
@@ -56,8 +50,6 @@ const YARMain = () => {
     switch (currentView) {
       case 'main':
         return <YARArchive onStart={handleStartYAR} />;
-      case 'form':
-        return <YARForm onSubmit={handleFormSubmit} />;
       case 'teaching':
         return <TeachingForm onNext={() => handleNext('teaching')} userData={userData} />;
       case 'research':
