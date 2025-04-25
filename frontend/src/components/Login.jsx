@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../images/logo.svg';
-import secondLogo from '../images/second-logo.svg';
 
 const Login = () => {
   const [formData, setFormData] = useState({

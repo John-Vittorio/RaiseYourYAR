@@ -14,13 +14,13 @@ export const registerUser = async (req, res) => {
     const { netID, name, email, password, role } = req.body;
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await Faculty.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     // Create new user
-    const user = await User.create({
+    const user = await Faculty.create({
       netID,
       name,
       email,
@@ -46,12 +46,13 @@ export const registerUser = async (req, res) => {
 };
 
 // Login user
+let user = "";
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await User.findOne({ email });
+    const user = await Faculty.findOne({ email });
 
     // Check if user exists and password matches
     if (user && (await user.matchPassword(password))) {
@@ -74,7 +75,7 @@ export const loginUser = async (req, res) => {
 // Get user profile
 export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await Faculty.findById(req.user._id).select("-password");
     if (user) {
       res.json(user);
     } else {
