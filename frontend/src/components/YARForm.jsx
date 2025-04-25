@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'
 
 const YARForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -14,14 +15,14 @@ const YARForm = ({ onSubmit }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Store in localStorage
-    localStorage.setItem('netId', formData.netId);
-    localStorage.setItem('fullName', formData.fullName);
-
-    onSubmit(formData);
+    try {
+      await axios.post("http://localhost:5000/api/reports", formData)
+      console.log("The data was sent successfully...")
+    } catch (error) {
+      console.error('Failed to send data:', error);
+    }
   };
 
   const handleCancel = () => {

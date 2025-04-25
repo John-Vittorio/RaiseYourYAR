@@ -1,9 +1,11 @@
 import express from "express"
 const router = express.Router();
 
-import { getResource } from "../controllers/report.controller.js";
+import { getReport, postReport } from "../controllers/report.controller.js";
 
 /* Dummy Route */
-router.get("/", getResource);
+router.get("/", getReport);
+
+router.post("/", postReport)
 
 export default router
