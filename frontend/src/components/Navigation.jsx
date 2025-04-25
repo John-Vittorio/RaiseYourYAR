@@ -1,11 +1,13 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import logo from '../images/logo.svg';
 import secondLogo from '../images/second-logo.svg';
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser, logout } = useContext(AuthContext);
 
   const [activeItem, setActiveItem] = useState('dashboard');
 
@@ -14,6 +16,8 @@ export default function Navigation() {
       setActiveItem('yar');
     } else if (location.pathname.startsWith('/privacy')) {
       setActiveItem('privacy');
+    } else if (location.pathname.startsWith('/faculty')) {
+      setActiveItem('faculty');
     } else {
       setActiveItem('dashboard');
     }
@@ -24,24 +28,38 @@ export default function Navigation() {
     navigate(path);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  // Check if user is logged in
+  if (!currentUser) {
+    return null; // Don't show navigation if not logged in
+  }
+
   return (
     <nav className="nav-bar">
       <div className="nav-content">
         <div>
           <img src={logo} alt="Company Logo" className="logo" />
           <ul>
-            <li
-              onClick={() => handleNavClick('dashboard', '/')}
-              className={activeItem === 'dashboard' ? 'active' : ''}
-            >
-              <svg className="nav-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                viewBox="0 0 24 24" fill="none" stroke="#5b5b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18M9 21V9" />
-              </svg>
-              Dashboard
-            </li>
+            {/* Dashboard - Admin only */}
+            {currentUser.role === 'admin' && (
+              <li
+                onClick={() => handleNavClick('dashboard', '/')}
+                className={activeItem === 'dashboard' ? 'active' : ''}
+              >
+                <svg className="nav-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="#5b5b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+                Dashboard
+              </li>
+            )}
 
+            {/* YAR - All users */}
             <li
               onClick={() => handleNavClick('yar', '/yar')}
               className={activeItem === 'yar' ? 'active' : ''}
@@ -54,19 +72,26 @@ export default function Navigation() {
               YAR
             </li>
 
-            <li>
-              <svg className="nav-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                viewBox="0 0 24 24" fill="none" stroke="#5b5b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              Faculty
-            </li>
+            {/* Faculty - Admin only */}
+            {currentUser.role === 'admin' && (
+              <li
+                onClick={() => handleNavClick('faculty', '/faculty')}
+                className={activeItem === 'faculty' ? 'active' : ''}
+              >
+                <svg className="nav-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="#5b5b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Faculty
+              </li>
+            )}
 
             <hr />
 
+            {/* Privacy - All users */}
             <li
               onClick={() => handleNavClick('privacy', '/privacy')}
               className={activeItem === 'privacy' ? 'active' : ''}
@@ -77,6 +102,20 @@ export default function Navigation() {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
               Privacy Statement
+            </li>
+            
+            {/* Logout - All users */}
+            <li
+              onClick={handleLogout}
+              className="logout-item"
+            >
+              <svg className="nav-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="#5b5b5b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Logout
             </li>
           </ul>
         </div>
