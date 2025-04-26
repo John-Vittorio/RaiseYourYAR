@@ -17,7 +17,7 @@ const YARMain = () => {
 
   // navigate to the next section
   const handleNext = (currentSection) => {
-    switch(currentSection) {
+    switch (currentSection) {
       case 'teaching':
         setCurrentView('research');
         break;
@@ -34,7 +34,7 @@ const YARMain = () => {
 
   // navigate to the previous section
   const handlePrevious = (currentSection) => {
-    switch(currentSection) {
+    switch (currentSection) {
       case 'research':
         setCurrentView('teaching');
         break;
@@ -53,15 +53,15 @@ const YARMain = () => {
       case 'teaching':
         return <TeachingForm onNext={() => handleNext('teaching')} userData={userData} />;
       case 'research':
-        return <ResearchForm 
-                 onNext={() => handleNext('research')} 
-                 onPrevious={() => handlePrevious('research')} 
-               />;
+        return <ResearchForm
+          onNext={() => handleNext('research')}
+          onPrevious={() => handlePrevious('research')}
+        />;
       case 'service':
-        return <ServiceForm 
-                 onNext={() => handleNext('service')} 
-                 onPrevious={() => handlePrevious('service')} 
-               />;
+        return <ServiceForm
+          onNext={() => handleNext('service')}
+          onPrevious={() => handlePrevious('service')}
+        />;
       default:
         return <div>Invalid view state</div>;
     }
