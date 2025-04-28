@@ -1,7 +1,6 @@
 /* Import Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;500;600&family=Playfair+Display:wght@600&display=swap');
 
-/* Modern Auth Container - University Theme */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -13,7 +12,6 @@
   overflow-y: auto;
 }
 
-/* Card Layout */
 .auth-inner {
   max-height: 100%;
   overflow-y: auto;
@@ -29,7 +27,6 @@
   box-sizing: border-box;
 }
 
-/* Logo */
 .auth-logo-container {
   text-align: center;
   margin-bottom: 30px;
@@ -48,7 +45,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Academic Title */
 .auth-title {
   font-family: "Playfair Display", serif;
   font-size: 28px;
@@ -72,7 +68,6 @@
   border-radius: 3px;
 }
 
-/* Error Box */
 .auth-error {
   background-color: #ffe8e8;
   color: #9b1b1b;
@@ -93,7 +88,6 @@
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* Form */
 .auth-form {
   margin-bottom: 30px;
   width: 100%;
@@ -138,7 +132,6 @@
   color: #32006E;
 }
 
-/* Button */
 .auth-button {
   width: 100%;
   background-color: #4B2E83;
@@ -244,7 +237,6 @@
   opacity: 1;
 }
 
-/* Loading */
 .loading {
   display: flex;
   justify-content: center;
@@ -269,7 +261,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Logout Styling */
 .logout-item {
   color: #d32f2f !important;
   transition: color 0.3s ease;
@@ -288,7 +279,6 @@
   stroke: #b71c1c;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 650px) {
   .auth-inner {
     padding: 35px 25px;
