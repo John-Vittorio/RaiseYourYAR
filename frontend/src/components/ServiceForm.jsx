@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 
 const ServiceForm = ({ onNext, onPrevious }) => {
-  const [services, setServices] = useState([
-    {
-      id: 1,
-      type: 'Admissions Committee',
-      department: 'Department of Urban Design and Planning',
-      description: 'Served on the admissions committee for MUPS'
-    }
-  ]);
+  const [services, setServices] = useState([]);
   
   const [showForm, setShowForm] = useState(false);
   const [newService, setNewService] = useState({
