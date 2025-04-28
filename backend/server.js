@@ -13,7 +13,13 @@ const app = express();
 /* Middleware */
 app.use(express.json());
 app.use(cors({
-    origin: ['*', 'http://localhost:5173', 'http://localhost:3000', 'http://localhost:5001', 'http://localhost:5000', 'yearlyactivityreport.netlify.app', 'https://raiseyouryar-3.onrender.com/api/auth/login'],
+    origin: [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'http://localhost:5001',
+        'http://localhost:5000',
+        'https://yearlyactivityreport.netlify.app'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
