@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/register', userData);
 
-      const { data } = await axios.post('http://localhost:5001/api/auth/register', userData);
+      const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/register', userData);
       
       // Save to localStorage
       localStorage.setItem('userInfo', JSON.stringify(data));
