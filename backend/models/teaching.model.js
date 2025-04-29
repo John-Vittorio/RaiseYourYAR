@@ -47,20 +47,38 @@ const courseSchema = new mongoose.Schema({
     year: {
         type: Number,
         required: true
-    },
-    reportID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Report"
     }
-})
+});
 
 const teachingSchema = new mongoose.Schema({
+    facultyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faculty",
+        required: true
+    },
+    reportId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Report",
+        required: true
+    },
     courses: {
         type: [courseSchema],
     },
-    /* Needs Account ID */
-    /* Associates faculty with their courses taught. */
-})
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    },
+    updatedAt: { 
+        type: Date, 
+        default: Date.now 
+    }
+});
 
-const Teaching = mongoose.model("Teaching", teachingSchema)
-export default Teaching
+// Update the 'updatedAt' field on save
+teachingSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+const Teaching = mongoose.model("Teaching", teachingSchema);
+export default Teaching;

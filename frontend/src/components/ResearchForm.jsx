@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResearch, onAddFundedResearch, onAddOtherFunding, onAddConference }) => {
-
   const actions = [
     { label: "Add Publication", onClick: onAddPublication },
     { label: "Add Research Grants/Contract", onClick: onAddGrant },
@@ -30,14 +31,23 @@ const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResear
   );
 };
 
-const ResearchForm = ({ onNext, onPrevious }) => {
+const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const [publications, setPublications] = useState([]);
+  const [grants, setGrants] = useState([]);
+  const [conferences, setConferences] = useState([]);
+  
   const [showPublicationForm, setShowPublicationForm] = useState(false);
   const [showGrantForm, setShowGrantForm] = useState(false);
   const [showNonFundedResearchForm, setShowNonFundedResearchForm] = useState(false);
   const [showFundedResearchForm, setShowFundedResearchForm] = useState(false);
   const [showOtherFundingForm, setShowOtherFundingForm] = useState(false);
   const [showConferenceForm, setShowConferenceForm] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const { currentUser } = useContext(AuthContext);
 
   const [newPublication, setNewPublication] = useState({
     publicationType: 'Journal',
@@ -48,6 +58,7 @@ const ResearchForm = ({ onNext, onPrevious }) => {
   });
 
   const [grant, setGrant] = useState({
+    type: 'Grant',
     client: '',
     title: '',
     contractNumber: '',
@@ -60,12 +71,123 @@ const ResearchForm = ({ onNext, onPrevious }) => {
     notes: ''
   });
 
+  const [conference, setConference] = useState({
+    name: '',
+    startDate: '',
+    endDate: '',
+    notes: ''
+  });
+
+  // Fetch existing research data if available
+  useEffect(() => {
+    if (reportId) {
+      fetchResearchData();
+    }
+  }, [reportId]);
+
+  const fetchResearchData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      // const { data } = await axios.get(
+      //   `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+      //   config
+      // );
+
+      const { data } = await axios.get(
+        `http://localhost:5001/api/research/${reportId}`,
+        config
+      );
+      
+      if (data) {
+        if (data.publications) {
+          setPublications(data.publications);
+        }
+        
+        if (data.grants) {
+          setGrants(data.grants);
+        }
+        
+        if (data.conferences) {
+          setConferences(data.conferences);
+        }
+      }
+    } catch (error) {
+      // If 404, it means no research data exists yet, which is fine
+      if (error.response?.status !== 404) {
+        setError(error.response?.data?.message || 'Failed to fetch research data');
+        console.error('Error fetching research data:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Save research data and proceed to next section
+  const handleSaveAndNext = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      setSuccessMessage('');
+      
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      // await axios.post(
+      //   `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+      //   { 
+      //     publications, 
+      //     grants,
+      //     conferences,
+      //     reportId: reportId
+      //   },
+      //   config
+      // );
+
+      await axios.post(
+        `http://localhost:5001/api/research/${reportId}`,
+        { 
+          publications, 
+          grants,
+          conferences,
+          reportId: reportId
+        },
+        config
+      );
+      
+      setSuccessMessage('Research data saved successfully!');
+      
+      // Proceed to next section
+      onNext();
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to save research data');
+      console.error('Error saving research data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePublicationChange = (field, value) => {
     setNewPublication(prev => ({ ...prev, [field]: value }));
   };
 
   const handleGrantChange = (field, value) => {
     setGrant(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleConferenceChange = (field, value) => {
+    setConference(prev => ({ ...prev, [field]: value }));
   };
 
   const updateCoPI = (index, field, value) => {
@@ -91,8 +213,9 @@ const ResearchForm = ({ onNext, onPrevious }) => {
   };
 
   const handleSaveGrant = () => {
-    console.log('Saving grant:', grant); // Replace with actual save
+    setGrants([...grants, grant]);
     setGrant({
+      type: 'Grant',
       client: '',
       title: '',
       contractNumber: '',
@@ -108,24 +231,85 @@ const ResearchForm = ({ onNext, onPrevious }) => {
   };
 
   const handleSaveNonFundedResearch = () => {
-    console.log('Saving non-funded research:', grant);
+    const nonFundedResearch = {
+      ...grant,
+      type: 'NonFundedResearch'
+    };
+    setGrants([...grants, nonFundedResearch]);
+    setGrant({
+      type: 'Grant',
+      client: '',
+      title: '',
+      contractNumber: '',
+      role: '',
+      totalAmount: '',
+      yourShare: '',
+      startDate: '',
+      endDate: '',
+      coPIs: [{ name: '', affiliation: '' }],
+      notes: ''
+    });
     setShowNonFundedResearchForm(false);
   };
 
   const handleSaveFundedResearch = () => {
-    console.log('Saving funded research:', grant);
+    const fundedResearch = {
+      ...grant,
+      type: 'FundedResearch'
+    };
+    setGrants([...grants, fundedResearch]);
+    setGrant({
+      type: 'Grant',
+      client: '',
+      title: '',
+      contractNumber: '',
+      role: '',
+      totalAmount: '',
+      yourShare: '',
+      startDate: '',
+      endDate: '',
+      coPIs: [{ name: '', affiliation: '' }],
+      notes: ''
+    });
     setShowFundedResearchForm(false);
   };
 
   const handleSaveOtherFunding = () => {
-    console.log('Saving other funding awards:', grant);
+    const otherFunding = {
+      ...grant,
+      type: 'OtherFunding'
+    };
+    setGrants([...grants, otherFunding]);
+    setGrant({
+      type: 'Grant',
+      client: '',
+      title: '',
+      contractNumber: '',
+      role: '',
+      totalAmount: '',
+      yourShare: '',
+      startDate: '',
+      endDate: '',
+      coPIs: [{ name: '', affiliation: '' }],
+      notes: ''
+    });
     setShowOtherFundingForm(false);
   };
 
   const handleSaveConference = () => {
-    console.log('Saving conference participation:', grant);
+    setConferences([...conferences, conference]);
+    setConference({
+      name: '',
+      startDate: '',
+      endDate: '',
+      notes: ''
+    });
     setShowConferenceForm(false);
   };
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div className="teaching-container">
@@ -141,15 +325,54 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           </div>
         </div>
 
+        {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
+
+        {/* Display saved publications */}
         {publications.map((pub, index) => (
           <div key={index} className="course-card">
-            <p>{pub.title} ({pub.publicationType}) - {pub.journalName}</p>
+            <h3>{pub.title} ({pub.publicationType})</h3>
+            <p>Journal: {pub.journalName}</p>
+            <p>Status: {pub.status}</p>
+            <p>Publication Status: {pub.publicationStatus}</p>
           </div>
         ))}
 
+        {/* Display saved grants */}
+        {grants.map((g, index) => (
+          <div key={index} className="course-card">
+            <h3>{g.title} ({g.type})</h3>
+            <p>Client/Sponsor: {g.client}</p>
+            <p>Role: {g.role}</p>
+            <p>Amount: ${g.totalAmount} (Your share: ${g.yourShare})</p>
+            <p>Duration: {g.startDate ? new Date(g.startDate).toLocaleDateString() : 'N/A'} to {g.endDate ? new Date(g.endDate).toLocaleDateString() : 'N/A'}</p>
+            {g.coPIs && g.coPIs.length > 0 && (
+              <div>
+                <p>Co-PIs:</p>
+                <ul>
+                  {g.coPIs.map((coPI, i) => (
+                    <li key={i}>{coPI.name} ({coPI.affiliation})</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {g.notes && <p>Notes: {g.notes}</p>}
+          </div>
+        ))}
+
+        {/* Display saved conferences */}
+        {conferences.map((conf, index) => (
+          <div key={index} className="course-card">
+            <h3>{conf.name}</h3>
+            <p>Duration: {conf.startDate ? new Date(conf.startDate).toLocaleDateString() : 'N/A'} to {conf.endDate ? new Date(conf.endDate).toLocaleDateString() : 'N/A'}</p>
+            {conf.notes && <p>Notes: {conf.notes}</p>}
+          </div>
+        ))}
+
+        {/* Publication Form */}
         {showPublicationForm && (
           <div className="course-card">
-            {/* Publication Form Fields */}
+            <h3>Add Publication</h3>
             <div className="yar-form-group"><label className="course-label">Publication Type *</label>
               <select className="course-form-input" value={newPublication.publicationType} onChange={(e) => handlePublicationChange('publicationType', e.target.value)}>
                 <option value="Journal">Journal</option>
@@ -186,17 +409,17 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           </div>
         )}
 
+        {/* Grant Form */}
         {showGrantForm && (
           <div className="course-card">
-            {/* Grant Form Fields */}
+            <h3>Add Research Grant/Contract</h3>
             <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
             <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
             <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
             <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" type="number" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" type="number" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
 
-            {/* Split Date Fields */}
             <div className="yar-form-group">
               <label>Start Date</label>
               <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
@@ -228,19 +451,14 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           </div>
         )}
 
-        {/* Non Funded Research Form */}
+        {/* Non-Funded Research Form */}
         {showNonFundedResearchForm && (
           <div className="course-card">
             <h3>Non-Funded Research/Creative Work</h3>
-            {/* Same content as the Grant form */}
             <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
             <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
             <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
 
-            {/* Split Date Fields */}
             <div className="yar-form-group">
               <label>Start Date</label>
               <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
@@ -276,15 +494,13 @@ const ResearchForm = ({ onNext, onPrevious }) => {
         {showFundedResearchForm && (
           <div className="course-card">
             <h3>Funded Research/Creative Work</h3>
-            {/* Same content as the Grant form */}
             <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
             <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
             <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
             <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" type="number" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" type="number" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
 
-            {/* Split Date Fields */}
             <div className="yar-form-group">
               <label>Start Date</label>
               <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
@@ -316,19 +532,17 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           </div>
         )}
 
-        {/* Other Funding Awards Form */}
+        {/* Other Funding Form */}
         {showOtherFundingForm && (
           <div className="course-card">
             <h3>Other Funding Awards</h3>
-            {/* Same content as the Grant form */}
             <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
             <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
             <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
             <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" type="number" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" type="number" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
 
-            {/* Split Date Fields */}
             <div className="yar-form-group">
               <label>Start Date</label>
               <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
@@ -360,27 +574,24 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           </div>
         )}
 
-        {/* Conference Participation Form */}
+        {/* Conference Form */}
         {showConferenceForm && (
           <div className="course-card">
             <h3>Conference Participation</h3>
-            {/* Same content as the Grant form */}
-            <div className="yar-form-group"><label>Name</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Name</label><input className="course-form-input" value={conference.name} onChange={e => handleConferenceChange('name', e.target.value)} /></div>
 
-
-            {/* Split Date Fields */}
             <div className="yar-form-group">
               <label>Start Date</label>
-              <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
+              <input type="date" className="course-form-input" value={conference.startDate} onChange={e => handleConferenceChange('startDate', e.target.value)} />
             </div>
             <div className="yar-form-group">
               <label>End Date</label>
-              <input type="date" className="course-form-input" value={grant.endDate} onChange={e => handleGrantChange('endDate', e.target.value)} />
+              <input type="date" className="course-form-input" value={conference.endDate} onChange={e => handleConferenceChange('endDate', e.target.value)} />
             </div>
 
             <div className="yar-form-group">
               <label>Additional Notes</label>
-              <textarea className="course-form-input" value={grant.notes} onChange={e => handleGrantChange('notes', e.target.value)} />
+              <textarea className="course-form-input" value={conference.notes} onChange={e => handleConferenceChange('notes', e.target.value)} />
             </div>
 
             <div className="yar-button-group">
@@ -402,14 +613,16 @@ const ResearchForm = ({ onNext, onPrevious }) => {
           <button
             onClick={onPrevious}
             className="yar-button-secondary"
+            disabled={loading}
           >
             Previous
           </button>
           <button
-            onClick={onNext}
+            onClick={handleSaveAndNext}
             className="yar-button-next"
+            disabled={loading}
           >
-            Next
+            {loading ? 'Saving...' : 'Next'}
           </button>
         </div>
       </div>

@@ -1,21 +1,155 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
-const TeachingForm = ({ onNext }) => {
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      name: '',
-      credits: '',
-      enrollment: '',
-      studentCreditHours: '',
-      evaluationScore: '',
-      commEngaged: false,
-      updatedCourse: false,
-      notes: ''
-    }
-  ]);
-
+const TeachingForm = ({ onNext, reportId }) => {
+  const [courses, setCourses] = useState([]);
   const [taughtOutsideDept, setTaughtOutsideDept] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const { currentUser } = useContext(AuthContext);
+
+  // Fetch existing teaching data if available
+  useEffect(() => {
+    if (reportId) {
+      fetchTeachingData();
+    } else {
+      // Initialize with a blank course if no existing data
+      setCourses([{
+        id: 1,
+        name: '',
+        credits: '',
+        enrollment: '',
+        studentCreditHours: '',
+        evaluationScore: '',
+        commEngaged: false,
+        updatedCourse: false,
+        notes: '',
+        quarter: 'Autumn',
+        year: new Date().getFullYear()
+      }]);
+    }
+  }, [reportId]);
+
+  const fetchTeachingData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+
+      // const { data } = await axios.get(
+      //   `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
+      //   config
+      // );
+
+      const { data } = await axios.get(
+        `http://localhost:5001/api/teaching/${reportId}`,
+        config
+      );
+
+      if (data && data.courses) {
+        // Transform courses from API format to component format
+        const formattedCourses = data.courses.map(course => ({
+          id: course._id || Math.random().toString(36).substr(2, 9),
+          name: course.name || '',
+          credits: course.credits || '',
+          enrollment: course.enrollment || '',
+          studentCreditHours: course.studentCreditHours || '',
+          evaluationScore: course.evaluationScore || '',
+          commEngaged: course.commEngaged || false,
+          updatedCourse: course.updatedCourse || false,
+          notes: course.notes || '',
+          quarter: course.quarter || 'Autumn',
+          year: course.year || new Date().getFullYear()
+        }));
+
+        setCourses(formattedCourses);
+      }
+    } catch (error) {
+      // If 404, it means no teaching data exists yet, which is fine
+      if (error.response?.status !== 404) {
+        setError(error.response?.data?.message || 'Failed to fetch teaching data');
+        console.error('Error fetching teaching data:', error);
+      }
+
+      // Initialize with a blank course if no existing data or error
+      setCourses([{
+        id: 1,
+        name: '',
+        credits: '',
+        enrollment: '',
+        studentCreditHours: '',
+        evaluationScore: '',
+        commEngaged: false,
+        updatedCourse: false,
+        notes: '',
+        quarter: 'Autumn',
+        year: new Date().getFullYear()
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Save teaching data and proceed to next section
+  const handleSaveAndNext = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      setSuccessMessage('');
+
+      // Format courses for API
+      const apiCourses = courses.map(course => ({
+        name: course.name,
+        credits: Number(course.credits),
+        enrollment: Number(course.enrollment),
+        studentCreditHours: Number(course.studentCreditHours),
+        evaluationScore: course.evaluationScore,
+        commEngaged: course.commEngaged,
+        updatedCourse: course.updatedCourse,
+        notes: course.notes,
+        quarter: course.quarter || 'Autumn',
+        year: Number(course.year) || new Date().getFullYear(),
+        reportId: reportId
+      }));
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+
+      // await axios.post(
+      //   `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
+      //   { courses: apiCourses, taughtOutsideDept },
+      //   config
+      // );
+
+      await axios.post(
+        `http://localhost:5001/api/teaching/${reportId}`,
+        { courses: apiCourses, taughtOutsideDept },
+        config
+      );
+
+      setSuccessMessage('Teaching data saved successfully!');
+
+      // Proceed to next section
+      onNext();
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to save teaching data');
+      console.error('Error saving teaching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle radio button changes for courses
   const handleRadioChange = (courseId, field, value) => {
@@ -41,7 +175,7 @@ const TeachingForm = ({ onNext }) => {
           if (course.id === courseId) {
             const credits = field === 'credits' ? value : course.credits;
             const enrollment = field === 'enrollment' ? value : course.enrollment;
-            
+
             // Only recalculate if both values are present and valid numbers
             if (credits && enrollment) {
               return {
@@ -75,11 +209,17 @@ const TeachingForm = ({ onNext }) => {
       evaluationScore: '',
       commEngaged: false,
       updatedCourse: false,
-      notes: ''
+      notes: '',
+      quarter: 'Autumn',
+      year: new Date().getFullYear()
     };
 
     setCourses(prev => [...prev, newCourse]);
   };
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div className="teaching-container">
@@ -92,6 +232,9 @@ const TeachingForm = ({ onNext }) => {
             <span className="active">Teaching</span>
           </div>
         </div>
+
+        {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
 
         {/* Course Listings */}
         {courses.map(course => (
@@ -150,13 +293,27 @@ const TeachingForm = ({ onNext }) => {
               </div>
 
               <div className="course-field">
-                <label className="course-label">Adjusted Evaluation Score:</label>
-                <input
-                  type="text"
-                  value={course.evaluationScore}
-                  onChange={(e) => handleCourseFieldChange(course.id, 'evaluationScore', e.target.value)}
+                <label className="course-label">Quarter:</label>
+                <select
+                  value={course.quarter}
+                  onChange={(e) => handleCourseFieldChange(course.id, 'quarter', e.target.value)}
                   className="course-form-input"
-                  placeholder="e.g., 3.4 (67%)"
+                >
+                  <option value="Autumn">Autumn</option>
+                  <option value="Winter">Winter</option>
+                  <option value="Spring">Spring</option>
+                  <option value="Summer">Summer</option>
+                </select>
+              </div>
+
+              <div className="course-field">
+                <label className="course-label">Year:</label>
+                <input
+                  type="number"
+                  value={course.year}
+                  onChange={(e) => handleCourseFieldChange(course.id, 'year', e.target.value)}
+                  className="course-form-input"
+                  placeholder="Enter year"
                 />
               </div>
             </div>
@@ -271,14 +428,15 @@ const TeachingForm = ({ onNext }) => {
 
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
-          <button className="yar-button-secondary">
+          <button className="yar-button-secondary" disabled>
             Previous
           </button>
           <button
-            onClick={onNext}
+            onClick={handleSaveAndNext}
             className="yar-button-next"
+            disabled={loading}
           >
-            Next
+            {loading ? 'Saving...' : 'Next'}
           </button>
         </div>
       </div>

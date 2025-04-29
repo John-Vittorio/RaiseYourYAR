@@ -1,10 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
+import cors from 'cors';
+import mongoose from "mongoose";
+
+// Route imports
 import reportRoutes from "./routes/report.route.js";
 import authRoutes from "./routes/auth.route.js";
-import cors from 'cors';
-import mongoose from "mongoose"; // You had this at the bottom, move it up
+import teachingRoutes from "./routes/teaching.route.js";
+import researchRoutes from "./routes/research.route.js";
+import serviceRoutes from "./routes/service.route.js";
+import facultyRoutes from "./routes/faculty.route.js";
 
 dotenv.config();
 
@@ -36,8 +42,13 @@ import "./models/teaching.model.js";
 const PORT = process.env.PORT || 5001;
 
 connectDB().then(() => {
-    app.use("/api/reports", reportRoutes);
+    // Routes
     app.use("/api/auth", authRoutes);
+    app.use("/api/reports", reportRoutes);
+    app.use("/api/teaching", teachingRoutes);
+    app.use("/api/research", researchRoutes);
+    app.use("/api/service", serviceRoutes);
+    app.use("/api/faculty", facultyRoutes);
 
     app.listen(PORT, () => {
         console.log("Server started at http://localhost:", PORT);

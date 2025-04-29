@@ -54,7 +54,16 @@ const ConferenceSchema = new mongoose.Schema({
 });
 
 const ResearchSchema = new mongoose.Schema({
-  reportID: { type: mongoose.Schema.Types.ObjectId, ref: "Report" },
+  facultyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Faculty",
+    required: true
+  },
+  reportId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Report",
+    required: true
+  },
   publications: [PublicationSchema],
   grants: [GrantSchema],
   conferences: [ConferenceSchema],

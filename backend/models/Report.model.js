@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
-    associatedFaculty: {
+    facultyId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "Faculty",
+        required: true
     },
     academicYear: {
         type: String,
@@ -14,10 +15,10 @@ const reportSchema = new mongoose.Schema({
             const month = now.getMonth();
             // If it's after September, then the academic year is current year to next year
             if (month >= 8) {
-                return `${year} -${year + 1}`;
+                return `${year}-${year + 1}`;
             }
             // If it's before September, then the academic year is previous year to current year
-            return `${year - 1} -${year}`;
+            return `${year - 1}-${year}`;
         },
     },
     status: {
@@ -40,31 +41,46 @@ const reportSchema = new mongoose.Schema({
         ref: "Research",
     },
     serviceSection: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: "Service",
+        default: []
     },
     notes: {
         type: String,
+    },
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    },
+    updatedAt: { 
+        type: Date, 
+        default: Date.now 
     }
+});
+
+// Update the 'updatedAt' field on save
+reportSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
 });
 
 reportSchema.methods.isComplete = function () {
     return (
       this.teachingSection !== undefined &&
       this.researchSection !== undefined &&
-      this.serviceSection !== undefined
+      this.serviceSection && this.serviceSection.length > 0
     );
-  };
+};
   
-  reportSchema.methods.submit = function () {
+reportSchema.methods.submit = function () {
     if (this.isComplete()) {
       this.status = "submitted";
       this.submittedDate = new Date();
       return true;
     }
     return false;
-  };
+};
   
-  const Report = mongoose.model("Report", reportSchema);
+const Report = mongoose.model("Report", reportSchema);
   
-  export default Report;
+export default Report;

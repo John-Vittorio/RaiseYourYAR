@@ -3,7 +3,12 @@ const Schema = mongoose.Schema;
 
 // Service Schema
 const ServiceSchema = new Schema({
-  reportID: { 
+  facultyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Faculty",
+    required: true
+  },
+  reportId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Report", 
     required: true 
@@ -16,7 +21,7 @@ const ServiceSchema = new Schema({
       'University Committee', 
       'Professional Service', 
       'Community Service',
-      'Admissions Committee', // Adding this since it was in your initial data
+      'Admissions Committee',
       'Other'
     ],
     required: true 
