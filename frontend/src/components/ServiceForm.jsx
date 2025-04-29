@@ -43,7 +43,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // );
 
       const { data } = await axios.get(
-        `http://localhost:5001/api/service/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
         config
       );
       
@@ -111,7 +111,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     // );
 
     const { data } = await axios.post(
-      `http://localhost:5001/api/service/${reportId}`,
+      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
       serviceData,
       config
     );
