@@ -229,7 +229,7 @@ const TeachingForm = ({ onNext }) => {
 
         {/* Add course button div */}
         <div
-          className="add-course-button"
+          className="add-course-button-teaching"
           onClick={handleAddCourse}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
