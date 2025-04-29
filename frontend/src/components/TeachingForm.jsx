@@ -4,121 +4,77 @@ import axios from 'axios';
 
 const TeachingForm = ({ onNext, reportId }) => {
   const [courses, setCourses] = useState([]);
-  const [taughtOutsideDept, setTaughtOutsideDept] = useState(false);
+  const [originalCourses, setOriginalCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState({});
+  const [validationErrors, setValidationErrors] = useState({});
 
   const { currentUser } = useContext(AuthContext);
 
-  // Fetch existing teaching data if available
+  // Initialize original courses for cancel functionality
   useEffect(() => {
-    if (reportId) {
-      fetchTeachingData();
-    } else {
-      // Initialize with a blank course if no existing data
-      setCourses([{
-        id: 1,
-        name: '',
-        credits: '',
-        enrollment: '',
-        studentCreditHours: '',
-        evaluationScore: '',
-        commEngaged: false,
-        updatedCourse: false,
-        notes: '',
-        quarter: 'Autumn',
-        year: new Date().getFullYear()
-      }]);
+    setOriginalCourses(JSON.parse(JSON.stringify(courses)));
+  }, []);
+
+  // Validate a single course
+  const validateCourse = (course) => {
+    const courseErrors = {};
+    let isValid = true;
+    
+    if (!course.name.trim()) {
+      courseErrors.name = "Course name is required";
+      isValid = false;
     }
-  }, [reportId]);
-
-  const fetchTeachingData = async () => {
-    try {
-      setLoading(true);
-      setError('');
-
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${currentUser.token}`
-        }
-      };
-
-      // const { data } = await axios.get(
-      //   `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
-      //   config
-      // );
-
-      const { data } = await axios.get(
-        `http://localhost:5001/api/teaching/${reportId}`,
-        config
-      );
-
-      if (data && data.courses) {
-        // Transform courses from API format to component format
-        const formattedCourses = data.courses.map(course => ({
-          id: course._id || Math.random().toString(36).substr(2, 9),
-          name: course.name || '',
-          credits: course.credits || '',
-          enrollment: course.enrollment || '',
-          studentCreditHours: course.studentCreditHours || '',
-          evaluationScore: course.evaluationScore || '',
-          commEngaged: course.commEngaged || false,
-          updatedCourse: course.updatedCourse || false,
-          notes: course.notes || '',
-          quarter: course.quarter || 'Autumn',
-          year: course.year || new Date().getFullYear()
-        }));
-
-        setCourses(formattedCourses);
-      }
-    } catch (error) {
-      // If 404, it means no teaching data exists yet, which is fine
-      if (error.response?.status !== 404) {
-        setError(error.response?.data?.message || 'Failed to fetch teaching data');
-        console.error('Error fetching teaching data:', error);
-      }
-
-      // Initialize with a blank course if no existing data or error
-      setCourses([{
-        id: 1,
-        name: '',
-        credits: '',
-        enrollment: '',
-        studentCreditHours: '',
-        evaluationScore: '',
-        commEngaged: false,
-        updatedCourse: false,
-        notes: '',
-        quarter: 'Autumn',
-        year: new Date().getFullYear()
-      }]);
-    } finally {
-      setLoading(false);
+    
+    if (isNaN(Number(course.credits)) || Number(course.credits) < 0) {
+      courseErrors.credits = "Credits must be a valid number";
+      isValid = false;
     }
+    
+    if (isNaN(Number(course.enrollment)) || Number(course.enrollment) < 0) {
+      courseErrors.enrollment = "Enrollment must be a valid number";
+      isValid = false;
+    }
+
+    return { isValid, courseErrors };
   };
 
-  // Save teaching data and proceed to next section
-  const handleSaveAndNext = async () => {
+  // Save a single course to the database
+  const handleSaveCourse = async (courseId) => {
     try {
-      setLoading(true);
+      // Clear previous messages for this course
+      setSuccessMessage(prev => ({ ...prev, [courseId]: '' }));
       setError('');
-      setSuccessMessage('');
+      
+      // Find the course to save
+      const courseToSave = courses.find(course => course.id === courseId);
+      
+      // Validate this course
+      const { isValid, courseErrors } = validateCourse(courseToSave);
+      
+      if (!isValid) {
+        setValidationErrors(prev => ({ ...prev, [courseId]: courseErrors }));
+        return;
+      }
+      
+      setLoading(true);
 
-      // Format courses for API
-      const apiCourses = courses.map(course => ({
-        name: course.name,
-        credits: Number(course.credits),
-        enrollment: Number(course.enrollment),
-        studentCreditHours: Number(course.studentCreditHours),
-        evaluationScore: course.evaluationScore,
-        commEngaged: course.commEngaged,
-        updatedCourse: course.updatedCourse,
-        notes: course.notes,
-        quarter: course.quarter || 'Autumn',
-        year: Number(course.year) || new Date().getFullYear(),
+      // Format course for API
+      const apiCourse = {
+        name: courseToSave.name.trim() || "Untitled Course",
+        credits: Number(courseToSave.credits) || 0,
+        enrollment: Number(courseToSave.enrollment) || 0,
+        studentCreditHours: Number(courseToSave.studentCreditHours) || 0,
+        evaluationScore: courseToSave.evaluationScore,
+        commEngaged: courseToSave.commEngaged || false,
+        updatedCourse: courseToSave.updatedCourse || false,
+        outsideDept: courseToSave.outsideDept || false,
+        notes: courseToSave.notes,
+        quarter: courseToSave.quarter || 'Autumn',
+        year: Number(courseToSave.year) || new Date().getFullYear(),
         reportId: reportId
-      }));
+      };
 
       const config = {
         headers: {
@@ -127,28 +83,66 @@ const TeachingForm = ({ onNext, reportId }) => {
         }
       };
 
-      // await axios.post(
-      //   `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
-      //   { courses: apiCourses, taughtOutsideDept },
-      //   config
-      // );
-
-      await axios.post(
-        `http://localhost:5001/api/teaching/${reportId}`,
-        { courses: apiCourses, taughtOutsideDept },
+      // Send individual course to API
+      const response = await axios.post(
+        `http://localhost:5001/api/teaching/course/${reportId}`,
+        apiCourse,
         config
       );
 
-      setSuccessMessage('Teaching data saved successfully!');
+      // Update original courses for cancel functionality
+      setOriginalCourses(prev => {
+        const updatedOriginals = [...prev];
+        const index = updatedOriginals.findIndex(c => c.id === courseId);
+        
+        if (index !== -1) {
+          updatedOriginals[index] = JSON.parse(JSON.stringify(courseToSave));
+        } else {
+          updatedOriginals.push(JSON.parse(JSON.stringify(courseToSave)));
+        }
+        
+        return updatedOriginals;
+      });
 
-      // Proceed to next section
-      onNext();
+      // Set success message for this specific course
+      setSuccessMessage(prev => ({ ...prev, [courseId]: 'Course saved successfully!' }));
+
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to save teaching data');
-      console.error('Error saving teaching data:', error);
+      console.error('Error saving course:', error);
+      
+      if (error.response?.data?.errors) {
+        setError(`Validation failed: ${error.response.data.errors.join(', ')}`);
+      } else {
+        setError(error.response?.data?.message || 'Failed to save course');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  // Remove a course
+  const handleCancelCourse = (courseId) => {
+    // Remove the course entirely
+    setCourses(prevCourses => prevCourses.filter(course => course.id !== courseId));
+    
+    // Remove this course from originalCourses too
+    setOriginalCourses(prev => prev.filter(course => course.id !== courseId));
+    
+    // Clear any validation errors for this course
+    if (validationErrors[courseId]) {
+      setValidationErrors(prev => {
+        const updated = { ...prev };
+        delete updated[courseId];
+        return updated;
+      });
+    }
+    
+    // Clear success message for this course
+    setSuccessMessage(prev => {
+      const updated = { ...prev };
+      delete updated[courseId];
+      return updated;
+    });
   };
 
   // Handle radio button changes for courses
@@ -177,17 +171,35 @@ const TeachingForm = ({ onNext, reportId }) => {
             const enrollment = field === 'enrollment' ? value : course.enrollment;
 
             // Only recalculate if both values are present and valid numbers
-            if (credits && enrollment) {
+            if (credits && enrollment && !isNaN(credits) && !isNaN(enrollment)) {
               return {
                 ...course,
                 [field]: value,
                 studentCreditHours: credits * enrollment
               };
             }
+            return {
+              ...course,
+              [field]: value
+            };
           }
           return course;
         })
       );
+    }
+    
+    // Clear validation error for this field if it exists
+    if (validationErrors[courseId]?.[field]) {
+      setValidationErrors(prev => {
+        const updated = { ...prev };
+        if (updated[courseId]) {
+          delete updated[courseId][field];
+          if (Object.keys(updated[courseId]).length === 0) {
+            delete updated[courseId];
+          }
+        }
+        return updated;
+      });
     }
   };
 
@@ -203,12 +215,13 @@ const TeachingForm = ({ onNext, reportId }) => {
     const newCourse = {
       id: generateUniqueId(),
       name: '',
-      credits: '',
-      enrollment: '',
-      studentCreditHours: '',
+      credits: '0',
+      enrollment: '0',
+      studentCreditHours: '0', 
       evaluationScore: '',
       commEngaged: false,
       updatedCourse: false,
+      outsideDept: false,
       notes: '',
       quarter: 'Autumn',
       year: new Date().getFullYear()
@@ -234,18 +247,23 @@ const TeachingForm = ({ onNext, reportId }) => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
 
         {/* Course Listings */}
-        {courses.map(course => (
+        {courses.map((course, index) => (
           <div key={course.id} className="course-card">
-            <input
-              type="text"
-              value={course.name}
-              onChange={(e) => handleCourseFieldChange(course.id, 'name', e.target.value)}
-              className="course-title-input"
-              placeholder="Enter course name (e.g., URBAN 400 - Advanced Urban Planning)"
-            />
+            <div className="course-header">
+              <input
+                type="text"
+                value={course.name}
+                onChange={(e) => handleCourseFieldChange(course.id, 'name', e.target.value)}
+                className={`course-title-input ${validationErrors[course.id]?.name ? 'input-error' : ''}`}
+                placeholder="Enter course name (e.g., URBAN 400 - Advanced Urban Planning)"
+              />
+              
+              {validationErrors[course.id]?.name && (
+                <div className="field-error">{validationErrors[course.id].name}</div>
+              )}
+            </div>
 
             <div className="course-grid">
               <div className="course-field">
@@ -254,9 +272,13 @@ const TeachingForm = ({ onNext, reportId }) => {
                   type="number"
                   value={course.credits}
                   onChange={(e) => handleCourseFieldChange(course.id, 'credits', e.target.value)}
-                  className="course-form-input"
+                  className={`course-form-input ${validationErrors[course.id]?.credits ? 'input-error' : ''}`}
                   placeholder="Enter credits"
+                  min="0"
                 />
+                {validationErrors[course.id]?.credits && (
+                  <div className="field-error">{validationErrors[course.id].credits}</div>
+                )}
               </div>
 
               <div className="course-field">
@@ -265,9 +287,13 @@ const TeachingForm = ({ onNext, reportId }) => {
                   type="number"
                   value={course.enrollment}
                   onChange={(e) => handleCourseFieldChange(course.id, 'enrollment', e.target.value)}
-                  className="course-form-input"
+                  className={`course-form-input ${validationErrors[course.id]?.enrollment ? 'input-error' : ''}`}
                   placeholder="Enter enrollment"
+                  min="0"
                 />
+                {validationErrors[course.id]?.enrollment && (
+                  <div className="field-error">{validationErrors[course.id].enrollment}</div>
+                )}
               </div>
 
               <div className="course-field">
@@ -278,6 +304,7 @@ const TeachingForm = ({ onNext, reportId }) => {
                   onChange={(e) => handleCourseFieldChange(course.id, 'studentCreditHours', e.target.value)}
                   className="course-form-input"
                   placeholder="Auto-calculated from credits × enrollment"
+                  readOnly
                 />
               </div>
 
@@ -370,6 +397,36 @@ const TeachingForm = ({ onNext, reportId }) => {
               </div>
             </div>
 
+            {/* Added outside department question inside each course card */}
+            <div className="course-radio-group">
+              <p className="course-radio-question">
+                Is this course outside of the Department of Urban Design and Planning?
+                <span className="required-indicator">*</span>
+              </p>
+              <div className="course-radio-options">
+                <label className="course-radio-label">
+                  <input
+                    type="radio"
+                    name={`outsideDept-${course.id}`}
+                    checked={course.outsideDept === true}
+                    onChange={() => handleRadioChange(course.id, 'outsideDept', true)}
+                    className="course-radio"
+                  />
+                  <span>Yes</span>
+                </label>
+                <label className="course-radio-label">
+                  <input
+                    type="radio"
+                    name={`outsideDept-${course.id}`}
+                    checked={course.outsideDept === false}
+                    onChange={() => handleRadioChange(course.id, 'outsideDept', false)}
+                    className="course-radio"
+                  />
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+
             <div className="course-field" style={{ gridColumn: 'span 2' }}>
               <label className="course-label">Notes:</label>
               <textarea
@@ -380,6 +437,53 @@ const TeachingForm = ({ onNext, reportId }) => {
                 placeholder="Enter any additional notes about this course"
                 style={{ width: '100%', padding: '8px' }}
               ></textarea>
+            </div>
+            
+            {/* Course action buttons */}
+            <div className="course-actions">
+              {successMessage[course.id] && (
+                <div className="success-message course-success">{successMessage[course.id]}</div>
+              )}
+              <div className="course-buttons">
+                {courses.length > 0 && (
+                  <button 
+                    onClick={() => handleCancelCourse(course.id)} 
+                    className="yar-button-secondary course-button"
+                  >
+                    Remove
+                  </button>
+                )}
+                <button 
+                  onClick={() => {
+                    // Reset to original values
+                    const originalCourse = originalCourses.find(c => c.id === course.id);
+                    if (originalCourse) {
+                      setCourses(prevCourses =>
+                        prevCourses.map(c =>
+                          c.id === course.id ? JSON.parse(JSON.stringify(originalCourse)) : c
+                        )
+                      );
+                    }
+                    // Clear validation errors
+                    if (validationErrors[course.id]) {
+                      setValidationErrors(prev => {
+                        const updated = { ...prev };
+                        delete updated[course.id];
+                        return updated;
+                      });
+                    }
+                  }} 
+                  className="yar-button-secondary course-button"
+                >
+                  Reset
+                </button>
+                <button 
+                  onClick={() => handleSaveCourse(course.id)} 
+                  className="yar-button-primary course-button"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -396,47 +500,17 @@ const TeachingForm = ({ onNext, reportId }) => {
           <span style={{ marginLeft: '8px', color: '#4B2E83' }}>Add course</span>
         </div>
 
-        {/* Outside Department Question */}
-        <div className="outside-dept-question">
-          <p className="outside-dept-label">
-            Did you teach any course outside of the Department of Urban Design and Planning?
-            <span className="required-indicator">*</span>
-          </p>
-          <div className="course-radio-options">
-            <label className="course-radio-label">
-              <input
-                type="radio"
-                name="outsideDept"
-                checked={taughtOutsideDept === true}
-                onChange={() => setTaughtOutsideDept(true)}
-                className="course-radio"
-              />
-              <span>Yes</span>
-            </label>
-            <label className="course-radio-label">
-              <input
-                type="radio"
-                name="outsideDept"
-                checked={taughtOutsideDept === false}
-                onChange={() => setTaughtOutsideDept(false)}
-                className="course-radio"
-              />
-              <span>No</span>
-            </label>
-          </div>
-        </div>
-
         {/* Navigation Buttons */}
         <div className="navigation-buttons">
           <button className="yar-button-secondary" disabled>
             Previous
           </button>
           <button
-            onClick={handleSaveAndNext}
+            onClick={onNext}
             className="yar-button-next"
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next'}
+            Next
           </button>
         </div>
       </div>
