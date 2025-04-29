@@ -702,8 +702,20 @@ hr {
 }
 
 .course-title {
-    margin: 0 0 15px 0;
+    margin: 0 0 20px 0;
     color: #333;
+}
+
+.course-title-input {
+    font-size: 1.17em;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .course-grid {

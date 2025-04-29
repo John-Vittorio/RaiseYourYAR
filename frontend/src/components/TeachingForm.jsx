@@ -101,15 +101,6 @@ const TeachingForm = ({ onNext }) => {
               value={course.name}
               onChange={(e) => handleCourseFieldChange(course.id, 'name', e.target.value)}
               className="course-title-input"
-              style={{ 
-                fontSize: '1.17em', 
-                fontWeight: 'bold', 
-                width: '100%', 
-                marginBottom: '10px',
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}
               placeholder="Enter course name (e.g., URBAN 400 - Advanced Urban Planning)"
             />
 
@@ -149,6 +140,17 @@ const TeachingForm = ({ onNext }) => {
 
               <div className="course-field">
                 <label className="course-label">Course Evaluations Score:</label>
+                <input
+                  type="text"
+                  value={course.evaluationScore}
+                  onChange={(e) => handleCourseFieldChange(course.id, 'evaluationScore', e.target.value)}
+                  className="course-form-input"
+                  placeholder="e.g., 3.4 (67%)"
+                />
+              </div>
+
+              <div className="course-field">
+                <label className="course-label">Adjusted Evaluation Score:</label>
                 <input
                   type="text"
                   value={course.evaluationScore}
