@@ -28,17 +28,17 @@ const YARMain = () => {
         }
       };
       
-      // const { data } = await axios.post(
-      //   'https://raiseyouryar-3.onrender.com/api/reports',
-      //   { academicYear: getCurrentAcademicYear() },
-      //   config
-      // );
-
       const { data } = await axios.post(
-        'http://localhost:5001/api/reports',
+        'https://raiseyouryar-3.onrender.com/api/reports',
         { academicYear: getCurrentAcademicYear() },
         config
       );
+
+      // const { data } = await axios.post(
+      //   'http://localhost:5001/api/reports',
+      //   { academicYear: getCurrentAcademicYear() },
+      //   config
+      // );
       
       setActiveReport(data);
       return data;
@@ -105,17 +105,17 @@ const YARMain = () => {
         }
       };
       
-      // await axios.put(
-      //   `https://raiseyouryar-3.onrender.com/api/reports/${activeReport._id}`,
-      //   { status: 'submitted' , facultyId: currentUser._id },
-      //   config
-      // );
-
       await axios.put(
-        `http://localhost:5001/api/reports/${activeReport._id}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/${activeReport._id}`,
         { status: 'submitted' , facultyId: currentUser._id },
         config
       );
+
+      // await axios.put(
+      //   `http://localhost:5001/api/reports/${activeReport._id}`,
+      //   { status: 'submitted' , facultyId: currentUser._id },
+      //   config
+      // );
       
       // Reset active report
       setActiveReport(null);
