@@ -1,0 +1,163 @@
+/* Report Review Component Styles */
+
+.report-review-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.report-review-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #4B2E83;
+  padding-bottom: 15px;
+}
+
+.report-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
+  margin-bottom: 30px;
+}
+
+.report-meta {
+  background-color: #f9f9ff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-left: 4px solid #4B2E83;
+}
+
+.review-section {
+  margin-top: 30px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.review-section-title {
+  color: #4B2E83;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.review-section-title:before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #4B2E83;
+  margin-right: 10px;
+  opacity: 0.7;
+}
+
+.review-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  padding: 15px;
+  background-color: #f9f9ff;
+  border-radius: 8px;
+  border-left: 3px solid #4B2E83;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(75, 46, 131, 0.12);
+}
+
+.review-item h4, .review-item h5 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.review-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.review-item-details p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.review-item-details strong {
+  color: #4B2E83;
+}
+
+.no-data-message {
+  color: #888;
+  font-style: italic;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px dashed #ccc;
+}
+
+.success-message {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4CAF50;
+  color: #2e7d32;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-family: "Encode Sans";
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.research-publications, .research-grants, .research-conferences {
+  margin-bottom: 25px;
+}
+
+.research-publications h4, 
+.research-grants h4, 
+.research-conferences h4 {
+  color: #4B2E83;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+/* Special styles for submit button */
+.submit-report-button {
+  background: linear-gradient(to right, #4B2E83, #32006E);
+  min-width: 130px;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submit-report-button:hover {
+  background: linear-gradient(to right, #32006E, #1B1B2F);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .report-card {
+    padding: 20px;
+  }
+  
+  .review-section-title {
+    font-size: 18px;
+  }
+  
+  .review-item {
+    padding: 12px;
+  }
+}

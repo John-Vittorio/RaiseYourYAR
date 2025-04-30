@@ -43,7 +43,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // );
 
       const { data } = await axios.get(
-        `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
+        `http://localhost:5001/api/service/${reportId}`,
         config
       );
       
@@ -79,8 +79,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       
       setSuccessMessage('Service data saved successfully!');
       
-      // Proceed to next section
-      onNext();
+      // Proceed to review page (instead of directly submitting)
+      setTimeout(() => {
+        onNext();
+      }, 1000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save service data');
       console.error('Error saving service data:', error);
@@ -111,7 +113,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     // );
 
     const { data } = await axios.post(
-      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
+      `http://localhost:5001/api/service/${reportId}`,
       serviceData,
       config
     );
@@ -295,7 +297,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next'}
+            {loading ? 'Saving...' : 'Next: Review'} {/* Updated button text */}
           </button>
         </div>
       </div>

@@ -84,8 +84,14 @@ const TeachingForm = ({ onNext, reportId }) => {
       };
 
       // Send individual course to API
+      // const response = await axios.post(
+      //   `https://raiseyouryar-3.onrender.com/api/teaching/course/${reportId}`,
+      //   apiCourse,
+      //   config
+      // );
+
       const response = await axios.post(
-        `https://raiseyouryar-3.onrender.com/api/teaching/course/${reportId}`,
+        `http://localhost:5001/api/teaching/course/${reportId}`,
         apiCourse,
         config
       );
