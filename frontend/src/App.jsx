@@ -7,10 +7,12 @@ import Navigation from './components/Navigation';
 import Visualization from './components/Visualization';
 import YARMain from './components/YARMain';
 import PrivacyStatement from './components/PrivacyStatement';
+import ReportViewPage from './components/ReportViewPage';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import './css/style.css';
 import './css/auth-styles.css';
+import './css/report-cards.css';
 
 function App() {
   return (
@@ -53,6 +55,9 @@ function App() {
                   <PrivacyStatement />
                 </>
               } />
+              
+              {/* Route to view individual reports */}
+              <Route path="/report/:reportId" element={<ReportViewPage />} />
               
               {/* Default route for faculty users */}
               <Route index element={

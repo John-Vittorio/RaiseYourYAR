@@ -1,7 +1,50 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from '../context/AuthContext';
+import axios from "axios";
 import image from "../images/drive.png";
+import ReportCard from "./ReportCard";
 
 const YARArchive = ({ onStart }) => {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      const { data } = await axios.get(
+        'http://localhost:5001/api/reports',
+        config
+      );
+      
+      setReports(data);
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      setError('Failed to load reports');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle navigation to a specific report
+  const viewReport = (reportId) => {
+    navigate(`/report/${reportId}`);
+  };
+
   return (
     <div className="yar-container">
       {/* Top section - Start button */}
@@ -12,9 +55,31 @@ const YARArchive = ({ onStart }) => {
         </div>
         <div className="yar-archive-button">
           <h2>View YAR Archive</h2>
-          <img src={image} />
+          <img src={image} alt="Archive icon" />
         </div>
       </div>
+
+      {/* Display reports if available */}
+      {loading ? (
+        <div className="loading">Loading your reports...</div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : reports.length > 0 ? (
+        <div className="reports-grid">
+          {reports.map(report => (
+            <ReportCard 
+              key={report._id} 
+              report={report} 
+              onClick={() => viewReport(report._id)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="no-reports-message">
+          <p>You haven't submitted any reports yet. Click "Access Yearly Activity Report" to create your first report.</p>
+        </div>
+      )}
+
       <div className="privacy-form-version">
         <h2 className="privacy-heading">Privacy Statement</h2>
         <div className="privacy-content">

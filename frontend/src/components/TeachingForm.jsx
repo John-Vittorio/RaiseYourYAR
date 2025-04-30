@@ -9,8 +9,156 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState({});
   const [validationErrors, setValidationErrors] = useState({});
+  const [autoSaveStatus, setAutoSaveStatus] = useState('');
+  const [autoSaveTimer, setAutoSaveTimer] = useState(null);
 
   const { currentUser } = useContext(AuthContext);
+
+  // Fetch existing teaching data if available
+  useEffect(() => {
+    if (reportId) {
+      fetchTeachingData();
+    } else {
+      // Initialize with an empty course if no data exists
+      handleAddCourse();
+    }
+  }, [reportId]);
+
+  // Set up auto-save whenever courses data changes
+  useEffect(() => {
+    // Only set up auto-save if we have courses and they're not the initial empty state
+    if (courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) {
+      // Clear any existing timer
+      if (autoSaveTimer) {
+        clearTimeout(autoSaveTimer);
+      }
+      
+      // Set auto-save status to pending
+      setAutoSaveStatus('pending');
+      
+      // Set a new timer for auto-save
+      const timer = setTimeout(() => {
+        autoSaveTeachingData();
+      }, 3000); // Auto-save after 3 seconds of inactivity
+      
+      setAutoSaveTimer(timer);
+    }
+    
+    // Clean up timer on component unmount
+    return () => {
+      if (autoSaveTimer) {
+        clearTimeout(autoSaveTimer);
+      }
+    };
+  }, [courses]);
+
+  const fetchTeachingData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      try {
+        const { data } = await axios.get(
+          `http://localhost:5001/api/teaching/${reportId}`,
+          config
+        );
+        
+        if (data && data.courses && data.courses.length > 0) {
+          // Map API data to component state format
+          const mappedCourses = data.courses.map((course, index) => ({
+            id: index + 1,
+            name: course.name || '',
+            credits: course.credits || '0',
+            enrollment: course.enrollment || '0',
+            studentCreditHours: course.studentCreditHours || '0',
+            evaluationScore: course.evaluationScore || '',
+            commEngaged: course.commEngaged || false,
+            updatedCourse: course.updatedCourse || false,
+            outsideDept: course.outsideDept || false,
+            notes: course.notes || '',
+            quarter: course.quarter || 'Autumn',
+            year: course.year || new Date().getFullYear()
+          }));
+          
+          setCourses(mappedCourses);
+          setOriginalCourses(JSON.parse(JSON.stringify(mappedCourses)));
+        } else {
+          // Initialize with empty course if no data
+          handleAddCourse();
+        }
+      } catch (error) {
+        // If 404, it means no teaching data exists yet, which is fine
+        if (error.response?.status !== 404) {
+          setError(error.response?.data?.message || 'Failed to fetch teaching data');
+        }
+        // Add an empty course anyway
+        handleAddCourse();
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to fetch teaching data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Auto-save functionality
+  const autoSaveTeachingData = async () => {
+    try {
+      // Format courses for API
+      const apiCourses = courses.map(course => ({
+        name: course.name.trim() || "Untitled Course",
+        credits: Number(course.credits) || 0,
+        enrollment: Number(course.enrollment) || 0,
+        studentCreditHours: Number(course.studentCreditHours) || 0,
+        evaluationScore: course.evaluationScore,
+        commEngaged: course.commEngaged || false,
+        updatedCourse: course.updatedCourse || false,
+        outsideDept: course.outsideDept || false,
+        notes: course.notes,
+        quarter: course.quarter || 'Autumn',
+        year: Number(course.year) || new Date().getFullYear()
+      }));
+      
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      await axios.post(
+        `http://localhost:5001/api/teaching/${reportId}`,
+        { 
+          courses: apiCourses,
+          taughtOutsideDept: apiCourses.some(course => course.outsideDept)
+        },
+        config
+      );
+      
+      // Update original courses to match current state
+      setOriginalCourses(JSON.parse(JSON.stringify(courses)));
+      setAutoSaveStatus('saved');
+      
+      // Clear auto-save status after 3 seconds
+      setTimeout(() => {
+        setAutoSaveStatus('');
+      }, 3000);
+    } catch (error) {
+      console.error('Auto-save error:', error);
+      setAutoSaveStatus('error');
+      
+      // Clear error status after 3 seconds
+      setTimeout(() => {
+        setAutoSaveStatus('');
+      }, 3000);
+    }
+  };
 
   // Initialize original courses for cancel functionality
   useEffect(() => {
@@ -84,12 +232,6 @@ const TeachingForm = ({ onNext, reportId }) => {
       };
 
       // Send individual course to API
-      // const response = await axios.post(
-      //   `https://raiseyouryar-3.onrender.com/api/teaching/course/${reportId}`,
-      //   apiCourse,
-      //   config
-      // );
-
       const response = await axios.post(
         `http://localhost:5001/api/teaching/course/${reportId}`,
         apiCourse,
@@ -236,7 +378,22 @@ const TeachingForm = ({ onNext, reportId }) => {
     setCourses(prev => [...prev, newCourse]);
   };
 
-  if (loading) {
+  // Continue to next section
+  const handleNext = async () => {
+    try {
+      // If there are any unsaved changes, save them before proceeding
+      if (JSON.stringify(courses) !== JSON.stringify(originalCourses)) {
+        await autoSaveTeachingData();
+      }
+      
+      // Call the onNext prop to navigate to the next section
+      onNext();
+    } catch (error) {
+      setError('Failed to save your data before proceeding. Please try again.');
+    }
+  };
+
+  if (loading && courses.length === 0) {
     return <div className="loading">Loading...</div>;
   }
 
@@ -250,6 +407,15 @@ const TeachingForm = ({ onNext, reportId }) => {
             <span className="separator">›</span>
             <span className="active">Teaching</span>
           </div>
+          
+          {/* Auto-save status indicator */}
+          {autoSaveStatus && (
+            <div className={`auto-save-status ${autoSaveStatus}`}>
+              {autoSaveStatus === 'pending' && 'Saving...'}
+              {autoSaveStatus === 'saved' && 'Changes saved'}
+              {autoSaveStatus === 'error' && 'Error saving changes'}
+            </div>
+          )}
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -451,7 +617,7 @@ const TeachingForm = ({ onNext, reportId }) => {
                 <div className="success-message course-success">{successMessage[course.id]}</div>
               )}
               <div className="course-buttons">
-                {courses.length > 0 && (
+                {courses.length > 1 && (
                   <button 
                     onClick={() => handleCancelCourse(course.id)} 
                     className="yar-button-secondary course-button"
@@ -512,7 +678,7 @@ const TeachingForm = ({ onNext, reportId }) => {
             Previous
           </button>
           <button
-            onClick={onNext}
+            onClick={handleNext}
             className="yar-button-next"
             disabled={loading}
           >
