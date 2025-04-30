@@ -27,7 +27,7 @@ const YARArchive = ({ onStart }) => {
       };
       
       const { data } = await axios.get(
-        'http://localhost:5001/api/reports',
+        'https://raiseyouryar-3.onrender.com/api/reports',
         config
       );
       

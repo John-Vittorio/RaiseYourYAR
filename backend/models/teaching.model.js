@@ -30,6 +30,11 @@ const courseSchema = new mongoose.Schema({
     trim: true,
     default: "" // Provide a default value
   },
+  adjustedEvaluationScore: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   commEngaged: {
     type: Boolean,
     default: false

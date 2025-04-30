@@ -35,7 +35,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const [publications, setPublications] = useState([]);
   const [grants, setGrants] = useState([]);
   const [conferences, setConferences] = useState([]);
-  
+
   const [showPublicationForm, setShowPublicationForm] = useState(false);
   const [showGrantForm, setShowGrantForm] = useState(false);
   const [showNonFundedResearchForm, setShowNonFundedResearchForm] = useState(false);
@@ -50,9 +50,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const { currentUser } = useContext(AuthContext);
 
   const [newPublication, setNewPublication] = useState({
-    publicationType: 'Journal',
+    publicationType: 'Journal Article',
     title: '',
-    status: 'Under Review',
     journalName: '',
     publicationStatus: 'In Progress'
   });
@@ -89,32 +88,32 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
+      const { data } = await axios.get(
+        `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+        config
+      );
+
       // const { data } = await axios.get(
-      //   `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+      //   `http://localhost:5001/api/research/${reportId}`,
       //   config
       // );
 
-      const { data } = await axios.get(
-        `http://localhost:5001/api/research/${reportId}`,
-        config
-      );
-      
       if (data) {
         if (data.publications) {
           setPublications(data.publications);
         }
-        
+
         if (data.grants) {
           setGrants(data.grants);
         }
-        
+
         if (data.conferences) {
           setConferences(data.conferences);
         }
@@ -136,27 +135,16 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setLoading(true);
       setError('');
       setSuccessMessage('');
-      
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
-      // await axios.post(
-      //   `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
-      //   { 
-      //     publications, 
-      //     grants,
-      //     conferences,
-      //     reportId: reportId
-      //   },
-      //   config
-      // );
 
       await axios.post(
-        `http://localhost:5001/api/research/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
         { 
           publications, 
           grants,
@@ -165,9 +153,20 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         },
         config
       );
-      
+
+      // await axios.post(
+      //   `http://localhost:5001/api/research/${reportId}`,
+      //   {
+      //     publications,
+      //     grants,
+      //     conferences,
+      //     reportId: reportId
+      //   },
+      //   config
+      // );
+
       setSuccessMessage('Research data saved successfully!');
-      
+
       // Proceed to next section
       onNext();
     } catch (error) {
@@ -203,9 +202,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const handleSavePublication = () => {
     setPublications([...publications, newPublication]);
     setNewPublication({
-      publicationType: 'Journal',
+      publicationType: 'Journal Article',
       title: '',
-      status: 'Under Review',
       journalName: '',
       publicationStatus: 'In Progress'
     });
@@ -332,9 +330,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {publications.map((pub, index) => (
           <div key={index} className="course-card">
             <h3>{pub.title} ({pub.publicationType})</h3>
-            <p>Journal: {pub.journalName}</p>
-            <p>Status: {pub.status}</p>
-            <p>Publication Status: {pub.publicationStatus}</p>
+            <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
+            <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
           </div>
         ))}
 
@@ -373,33 +370,50 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {showPublicationForm && (
           <div className="course-card">
             <h3>Add Publication</h3>
-            <div className="yar-form-group"><label className="course-label">Publication Type *</label>
-              <select className="course-form-input" value={newPublication.publicationType} onChange={(e) => handlePublicationChange('publicationType', e.target.value)}>
-                <option value="Journal">Journal</option>
-                <option value="Conference">Conference</option>
+            <div className="yar-form-group">
+              <label className="course-label">Publication Type *</label>
+              <select
+                className="course-form-input"
+                value={newPublication.publicationType}
+                onChange={(e) => handlePublicationChange('publicationType', e.target.value)}
+              >
+                <option value="Journal Article">Journal Article</option>
+                <option value="Conference Paper">Conference Paper</option>
                 <option value="Book">Book</option>
+                <option value="Edited Book">Edited Book</option>
                 <option value="Book Chapter">Book Chapter</option>
-                <option value="Report">Report</option>
+                <option value="Other">Other</option>
               </select>
             </div>
-            <div className="yar-form-group"><label className="course-label">Title *</label>
-              <input className="course-form-input" value={newPublication.title} onChange={(e) => handlePublicationChange('title', e.target.value)} />
+            <div className="yar-form-group">
+              <label className="course-label">Title *</label>
+              <input
+                className="course-form-input"
+                value={newPublication.title}
+                onChange={(e) => handlePublicationChange('title', e.target.value)}
+              />
             </div>
-            <div className="yar-form-group"><label className="course-label">Status *</label>
-              <select className="course-form-input" value={newPublication.status} onChange={(e) => handlePublicationChange('status', e.target.value)}>
-                <option value="Under Review">Under Review</option>
-                <option value="In Preparation">In Preparation</option>
-                <option value="Revise and Resubmit">Revise and Resubmit</option>
-              </select>
+            <div className="yar-form-group">
+              <label className="course-label">Journal/Conference/Publisher Name *</label>
+              <input
+                className="course-form-input"
+                value={newPublication.journalName}
+                onChange={(e) => handlePublicationChange('journalName', e.target.value)}
+              />
             </div>
-            <div className="yar-form-group"><label className="course-label">Journal Name *</label>
-              <input className="course-form-input" value={newPublication.journalName} onChange={(e) => handlePublicationChange('journalName', e.target.value)} />
-            </div>
-            <div className="yar-form-group"><label className="course-label">Publication Status *</label>
-              <select className="course-form-input" value={newPublication.publicationStatus} onChange={(e) => handlePublicationChange('publicationStatus', e.target.value)}>
+            <div className="yar-form-group">
+              <label className="course-label">Publication Status *</label>
+              <select
+                className="course-form-input"
+                value={newPublication.publicationStatus}
+                onChange={(e) => handlePublicationChange('publicationStatus', e.target.value)}
+              >
                 <option value="In Progress">In Progress</option>
+                <option value="75%+ Completed">75%+ Completed</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Revise and Resubmit">Revise and Resubmit</option>
+                <option value="Accepted with Revisions">Accepted with Revisions</option>
                 <option value="Published">Published</option>
-                <option value="Accepted">Accepted</option>
               </select>
             </div>
             <div className="yar-button-group">

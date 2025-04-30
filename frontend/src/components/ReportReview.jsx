@@ -8,7 +8,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  
+
   // State for report data
   const [report, setReport] = useState(null);
   const [teaching, setTeaching] = useState(null);
@@ -28,62 +28,63 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       // Configure headers for API requests
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
+      // 
       // Fetch report details
       const reportResponse = await axios.get(
-        `http://localhost:5001/api/reports/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         config
       );
-      
+
       // Fetch teaching data
       let teachingData = null;
       try {
         const teachingResponse = await axios.get(
-          `http://localhost:5001/api/teaching/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
           config
         );
         teachingData = teachingResponse.data;
       } catch (teachingError) {
         console.log('No teaching data or error fetching teaching data:', teachingError);
       }
-      
+
       // Fetch research data
       let researchData = null;
       try {
         const researchResponse = await axios.get(
-          `http://localhost:5001/api/research/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
           config
         );
         researchData = researchResponse.data;
       } catch (researchError) {
         console.log('No research data or error fetching research data:', researchError);
       }
-      
+
       // Fetch service data
       let serviceData = [];
       try {
         const serviceResponse = await axios.get(
-          `http://localhost:5001/api/service/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
         serviceData = serviceResponse.data;
       } catch (serviceError) {
         console.log('No service data or error fetching service data:', serviceError);
       }
-      
+
       // Update state with fetched data
       setReport(reportResponse.data);
       setTeaching(teachingData);
       setResearch(researchData);
       setServices(Array.isArray(serviceData) ? serviceData : []);
-      
+
     } catch (error) {
       console.error('Error fetching report data:', error);
       setError(error.response?.data?.message || 'Failed to load report data');
@@ -96,23 +97,23 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       // Update report status to submitted
       await axios.put(
-        `http://localhost:5001/api/reports/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         { status: 'submitted' },
         config
       );
-      
+
       setSuccessMessage('Report submitted successfully!');
-      
+
       // Call onSubmit prop after successful submission
       if (onSubmit) {
         setTimeout(() => {
@@ -151,9 +152,9 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           )}
           {report && (
             <div className="pdf-download-container">
-              <PDFGenerator 
-                reportData={report} 
-                elementToConvert="reportContentForPDF" 
+              <PDFGenerator
+                reportData={report}
+                elementToConvert="reportContentForPDF"
               />
             </div>
           )}
@@ -188,6 +189,9 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                         {course.evaluationScore && (
                           <p><strong>Evaluation Score:</strong> {course.evaluationScore}</p>
                         )}
+                        {course.adjustedEvaluationScore && (
+                          <p><strong>Adjusted Evaluation Score:</strong> {course.adjustedEvaluationScore}</p>
+                        )}
                         <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
                         <p><strong>Updated Course:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
                         {course.notes && <p><strong>Notes:</strong> {course.notes}</p>}
@@ -212,8 +216,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                           <h5>{pub.title}</h5>
                           <div className="review-item-details">
                             <p><strong>Type:</strong> {pub.publicationType}</p>
-                            <p><strong>Journal:</strong> {pub.journalName}</p>
-                            <p><strong>Status:</strong> {pub.status}</p>
+                            <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
                             <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
                           </div>
                         </div>
@@ -273,11 +276,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                     </div>
                   )}
 
-                  {(!research.publications || research.publications.length === 0) && 
-                   (!research.grants || research.grants.length === 0) && 
-                   (!research.conferences || research.conferences.length === 0) && (
-                    <p className="no-data-message">No research details available</p>
-                  )}
+                  {(!research.publications || research.publications.length === 0) &&
+                    (!research.grants || research.grants.length === 0) &&
+                    (!research.conferences || research.conferences.length === 0) && (
+                      <p className="no-data-message">No research details available</p>
+                    )}
                 </div>
               ) : (
                 <p className="no-data-message">No research data available</p>

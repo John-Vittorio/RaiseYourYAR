@@ -6,31 +6,49 @@ const CoPISchema = new mongoose.Schema({
 });
 
 const PublicationSchema = new mongoose.Schema({
-  publicationType: { 
-    type: String, 
-    enum: ['Journal', 'Conference', 'Book', 'Book Chapter', 'Report'],
-    required: true 
+  publicationType: {
+    type: String,
+    enum: [
+      'Journal Article',
+      'Conference Paper',
+      'Book',
+      'Edited Book',
+      'Book Chapter',
+      'Other'
+    ],
+    required: true
   },
-  title: { type: String, required: true },
-  status: { 
-    type: String, 
-    enum: ['Under Review', 'In Preparation', 'Revise and Resubmit'],
-    default: 'Under Review' 
+  title: {
+    type: String,
+    required: true
   },
-  journalName: { type: String, required: true },
-  publicationStatus: { 
-    type: String, 
-    enum: ['In Progress', 'Published', 'Accepted'],
-    default: 'In Progress' 
+  journalName: {
+    type: String,
+    required: true
   },
-  createdAt: { type: Date, default: Date.now }
+  publicationStatus: {
+    type: String,
+    enum: [
+      'In Progress',
+      '75%+ Completed',
+      'Under Review',
+      'Revise and Resubmit',
+      'Accepted with Revisions',
+      'Published'
+    ],
+    default: 'In Progress'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const GrantSchema = new mongoose.Schema({
-  type: { 
-    type: String, 
+  type: {
+    type: String,
     enum: ['Grant', 'NonFundedResearch', 'FundedResearch', 'OtherFunding'],
-    required: true 
+    required: true
   },
   client: { type: String },
   title: { type: String },
@@ -71,7 +89,7 @@ const ResearchSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-ResearchSchema.pre('save', function(next) {
+ResearchSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });

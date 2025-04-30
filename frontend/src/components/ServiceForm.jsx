@@ -37,15 +37,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         }
       };
       
-      // const { data } = await axios.get(
-      //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-      //   config
-      // );
-
       const { data } = await axios.get(
-        `http://localhost:5001/api/service/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
         config
       );
+
+      // const { data } = await axios.get(
+      //   `http://localhost:5001/api/service/${reportId}`,
+      //   config
+      // );
       
       if (data) {
         setServices(data);
@@ -106,17 +106,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       }
     };
     
-    // const { data } = await axios.post(
-    //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-    //   serviceData,
-    //   config
-    // );
-
     const { data } = await axios.post(
-      `http://localhost:5001/api/service/${reportId}`,
+      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
       serviceData,
       config
     );
+
+    // const { data } = await axios.post(
+    //   `http://localhost:5001/api/service/${reportId}`,
+    //   serviceData,
+    //   config
+    // );
     
     return data;
   }
