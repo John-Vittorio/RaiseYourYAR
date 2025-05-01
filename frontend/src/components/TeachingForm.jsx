@@ -420,11 +420,6 @@ const TeachingForm = ({ onNext, reportId }) => {
         {error && <div className="error-message">{error}</div>}
 
         {/* Empty state message when no courses exist */}
-        {courses.length === 0 && (
-          <div className="empty-courses-message">
-            <p>No courses added yet. Click "Add course" below to start adding your courses.</p>
-          </div>
-        )}
 
         {/* Course Listings */}
         {courses.map((course, index) => (
