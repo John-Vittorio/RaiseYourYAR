@@ -36,7 +36,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         }
       };
 
-      // 
       // Fetch report details
       const reportResponse = await axios.get(
         `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
@@ -165,6 +164,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
 
         <div id="reportContentForPDF">
           <div className="course-card report-card">
+            {currentUser && (
+              <div className="faculty-name-section">
+                <span>{currentUser.name}</span>
+              </div>
+            )}
+            
             <h2 className="review-section-title">Report Summary</h2>
             {report && (
               <div className="report-meta">

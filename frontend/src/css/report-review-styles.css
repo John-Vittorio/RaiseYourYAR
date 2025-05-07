@@ -10,6 +10,7 @@
   margin-bottom: 30px;
   border-bottom: 2px solid #4B2E83;
   padding-bottom: 15px;
+  position: relative;
 }
 
 .report-card {
@@ -19,6 +20,22 @@
   border: 1px solid #d9d9d9;
   box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
   margin-bottom: 30px;
+}
+
+/* Faculty Name Section - PROMINENT STYLING */
+.faculty-name-section {
+  font-size: 32px;
+  color: #4B2E83;
+  font-weight: 600;
+  font-family: "Encode Sans", sans-serif;
+  margin-bottom: 50px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #4B2E83;
+  text-align: left;
+}
+
+.faculty-name-section span {
+  font-weight: 700;
 }
 
 .report-meta {
