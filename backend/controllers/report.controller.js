@@ -1,4 +1,7 @@
 import Report from "../models/Report.model.js";
+import Teaching from "../models/teaching.model.js";
+import Research from "../models/research.model.js";
+import Service from "../models/service.model.js";
 import Faculty from "../models/faculty.model.js";
 import mongoose from 'mongoose';
 import asyncHandler from 'express-async-handler';
@@ -108,29 +111,85 @@ export const updateReport = async (req, res) => {
 
 export const deleteReport = asyncHandler(async (req, res) => {
   const { reportId } = req.params;
+  const session = await mongoose.startSession();
+  
+  try {
+    // Start a MongoDB transaction
+    session.startTransaction();
 
-  if (!mongoose.Types.ObjectId.isValid(reportId)) {
-    return res.status(400).json({ message: "Invalid report ID format" });
+    if (!mongoose.Types.ObjectId.isValid(reportId)) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ message: "Invalid report ID format" });
+    }
+
+    // Find the report with all populated sections to get their IDs
+    const report = await Report.findById(reportId)
+      .populate('teachingSection')
+      .populate('researchSection')
+      .populate('serviceSection')
+      .session(session);
+
+    if (!report) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    const isOwner = report.facultyId.toString() === req.user._id.toString();
+    const isDraft = report.status === 'draft';
+
+    if (!isOwner) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({ message: "You can only delete your own reports" });
+    }
+
+    if (!isDraft) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(403).json({ message: "Only draft reports can be deleted" });
+    }
+
+    // Delete teaching section if exists
+    if (report.teachingSection) {
+      await Teaching.findByIdAndDelete(report.teachingSection._id).session(session);
+    }
+
+    // Delete research section if exists
+    if (report.researchSection) {
+      await Research.findByIdAndDelete(report.researchSection._id).session(session);
+    }
+
+    // Delete all service sections if they exist
+    if (report.serviceSection && report.serviceSection.length > 0) {
+      const serviceIds = report.serviceSection.map(service => 
+        typeof service === 'object' ? service._id : service
+      );
+      await Service.deleteMany({ _id: { $in: serviceIds } }).session(session);
+    }
+
+    // Finally delete the report itself
+    await Report.findByIdAndDelete(reportId).session(session);
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ 
+      message: "Report and all associated sections deleted successfully",
+      deletedReport: reportId
+    });
+    
+  } catch (error) {
+    // If an error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+    
+    console.error('Error during report deletion:', error);
+    res.status(500).json({ 
+      message: "Failed to delete report and associated sections", 
+      error: error.message 
+    });
   }
-
-  const report = await Report.findById(reportId);
-
-  if (!report) {
-    return res.status(404).json({ message: "Report not found" });
-  }
-
-  const isOwner = report.facultyId.toString() === req.user._id.toString();
-  const isDraft = report.status === 'draft';
-
-  if (!isOwner) {
-    return res.status(403).json({ message: "You can only delete your own reports" });
-  }
-
-  if (!isDraft) {
-    return res.status(403).json({ message: "Only draft reports can be deleted" });
-  }
-
-  await Report.findByIdAndDelete(reportId);
-
-  res.status(200).json({ message: "Report deleted successfully" });
 });
