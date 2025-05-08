@@ -130,26 +130,6 @@ export const deleteReport = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "Only draft reports can be deleted" });
   }
 
-  // Delete teaching section if it exists
-  if (report.teachingSection) {
-    await mongoose.model('Teaching').findByIdAndDelete(report.teachingSection);
-  }
-  
-  // Delete research section if it exists
-  if (report.researchSection) {
-    await mongoose.model('Research').findByIdAndDelete(report.researchSection);
-  }
-  
-  // Delete all service sections (which is an array)
-  if (report.serviceSection && report.serviceSection.length > 0) {
-    const ServiceModel = mongoose.model('Service');
-    // Delete each service document in the array
-    for (const serviceId of report.serviceSection) {
-      await ServiceModel.findByIdAndDelete(serviceId);
-    }
-  }
-
-  // Finally delete the report itself
   await Report.findByIdAndDelete(reportId);
 
   res.status(200).json({ message: "Report deleted successfully" });
