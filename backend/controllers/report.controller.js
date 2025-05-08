@@ -130,6 +130,20 @@ export const deleteReport = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "Only draft reports can be deleted" });
   }
 
+  // Delete all associated documents first
+  if (report.teachingSection) {
+    await mongoose.model('Teaching').findByIdAndDelete(report.teachingSection);
+  }
+  
+  if (report.researchSection) {
+    await mongoose.model('Research').findByIdAndDelete(report.researchSection);
+  }
+  
+  if (report.serviceSection) {
+    await mongoose.model('Service').findByIdAndDelete(report.serviceSection);
+  }
+
+  // Finally delete the report itself
   await Report.findByIdAndDelete(reportId);
 
   res.status(200).json({ message: "Report deleted successfully" });
