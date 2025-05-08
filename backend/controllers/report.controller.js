@@ -1,6 +1,7 @@
 import Report from "../models/Report.model.js";
 import Faculty from "../models/faculty.model.js";
 import mongoose from 'mongoose';
+import asyncHandler from 'express-async-handler';
 
 // Get all reports for a faculty member
 export const getReports = async (req, res) => {
@@ -105,38 +106,31 @@ export const updateReport = async (req, res) => {
   }
 };
 
-// Delete a report
-export const deleteReport = async (req, res) => {
-  try {
-    const { reportId } = req.params;
-    
-    if (!mongoose.Types.ObjectId.isValid(reportId)) {
-      return res.status(400).json({ message: "Invalid report ID" });
-    }
-    
-    const report = await Report.findById(reportId);
-    
-    if (!report) {
-      return res.status(404).json({ message: "Report not found" });
-    }
-    
-    // Allow faculty to delete their own draft reports
-    if (req.user.role !== 'faculty') {
-      // Check if the report belongs to the current user
-      if (report.facultyId.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ message: "Not authorized to delete this report" });
-      }
-      
-      // Check if the report is in draft status
-      if (report.status !== 'draft') {
-        return res.status(403).json({ message: "Only draft reports can be deleted by faculty" });
-      }
-    }
-    
-    // Use findByIdAndDelete instead of remove() which is deprecated
-    await Report.findByIdAndDelete(reportId);
-    res.json({ message: "Report removed" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+export const deleteReport = asyncHandler(async (req, res) => {
+  const { reportId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(reportId)) {
+    return res.status(400).json({ message: "Invalid report ID format" });
   }
-};
+
+  const report = await Report.findById(reportId);
+
+  if (!report) {
+    return res.status(404).json({ message: "Report not found" });
+  }
+
+  const isOwner = report.facultyId.toString() === req.user._id.toString();
+  const isDraft = report.status === 'draft';
+
+  if (!isOwner) {
+    return res.status(403).json({ message: "You can only delete your own reports" });
+  }
+
+  if (!isDraft) {
+    return res.status(403).json({ message: "Only draft reports can be deleted" });
+  }
+
+  await Report.findByIdAndDelete(reportId);
+
+  res.status(200).json({ message: "Report deleted successfully" });
+});

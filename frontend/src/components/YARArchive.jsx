@@ -83,7 +83,7 @@ const YARArchive = ({ onStart }) => {
       // Use our direct MongoDB delete endpoint
       console.log('Sending delete request for report:', reportToDelete);
       const response = await axios.delete(
-        `https://raiseyouryar-3.onrender.com/api/delete/${reportToDelete}`,
+        `http://localhost:5001/api/reports/delete/${reportToDelete}`,
         config
       );
       
