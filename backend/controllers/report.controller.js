@@ -1,6 +1,6 @@
 import Report from "../models/Report.model.js";
 import Faculty from "../models/faculty.model.js";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 // Get all reports for a faculty member
 export const getReports = async (req, res) => {
@@ -120,12 +120,21 @@ export const deleteReport = async (req, res) => {
       return res.status(404).json({ message: "Report not found" });
     }
     
-    // Only admins can delete reports
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: "Not authorized to delete reports" });
+    // Allow faculty to delete their own draft reports
+    if (req.user.role !== 'faculty') {
+      // Check if the report belongs to the current user
+      if (report.facultyId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: "Not authorized to delete this report" });
+      }
+      
+      // Check if the report is in draft status
+      if (report.status !== 'draft') {
+        return res.status(403).json({ message: "Only draft reports can be deleted by faculty" });
+      }
     }
     
-    await report.remove();
+    // Use findByIdAndDelete instead of remove() which is deprecated
+    await Report.findByIdAndDelete(reportId);
     res.json({ message: "Report removed" });
   } catch (error) {
     res.status(500).json({ message: error.message });

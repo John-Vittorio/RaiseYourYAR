@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ReportCard = ({ report }) => {
+const ReportCard = ({ report, onClick, onDelete }) => {
   const navigate = useNavigate();
   
   // Format date for display
@@ -29,7 +29,24 @@ const ReportCard = ({ report }) => {
   
   // Handle click to view the report
   const handleViewReport = () => {
-    navigate(`/report/${report._id}`);
+    // If an onClick prop is provided, use it
+    if (onClick) {
+      onClick();
+    } else {
+      // Otherwise use the default navigation
+      navigate(`/report/${report._id}`);
+    }
+  };
+  
+  // Handle delete button click
+  const handleDelete = (e) => {
+    // Stop the click event from bubbling up to the parent
+    e.stopPropagation();
+    
+    // Call the onDelete function with the report id
+    if (onDelete) {
+      onDelete(report._id);
+    }
   };
   
   return (
@@ -45,6 +62,9 @@ const ReportCard = ({ report }) => {
       </div>
       
       <div className="report-card-details">
+        {report.status === 'draft' && report.updatedAt && (
+          <p><strong>Last Edited:</strong> {formatDate(report.updatedAt)}</p>
+        )}
         {report.submittedDate && (
           <p><strong>Submitted:</strong> {formatDate(report.submittedDate)}</p>
         )}
@@ -54,6 +74,14 @@ const ReportCard = ({ report }) => {
       </div>
       
       <div className="report-card-footer">
+        {report.status === 'draft' && (
+          <button 
+            className="report-card-delete-btn"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        )}
         <button className="report-card-view-btn">
           View Report
         </button>
