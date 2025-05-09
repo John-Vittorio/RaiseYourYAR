@@ -42,13 +42,13 @@ const Login = () => {
     
     try {
       console.log('Login attempt with:', formData.email);
-      const userData = await login(formData.email, formData.password);
-      console.log('Login successful:', userData);
-      
+      await login(formData.email, formData.password);
+      console.log('Login successful');
       // Navigation will be handled by the useEffect
     } catch (error) {
       console.error('Login error:', error);
       setError(error.message || 'Failed to login. Please try again.');
+    } finally {
       setLoading(false);
     }
   };

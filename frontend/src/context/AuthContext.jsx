@@ -32,9 +32,6 @@ export const AuthProvider = ({ children }) => {
       // Show what's happening in the console
       console.log('Logging in with:', { email });
       
-      // Add loading indicator for debugging
-      setLoading(true);
-      
       const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/login', {
         email,
         password
@@ -51,10 +48,8 @@ export const AuthProvider = ({ children }) => {
       }
       
       setCurrentUser(data);
-      setLoading(false);
       return data;
     } catch (error) {
-      setLoading(false);
       console.error('Login error:', error.response || error);
       throw new Error(error.response?.data?.message || 'Invalid login credentials or server error');
     }
@@ -66,28 +61,20 @@ export const AuthProvider = ({ children }) => {
       // Show what's happening in the console
       console.log('Signing up with:', { ...userData, password: '[HIDDEN]' });
       
-      // Add loading indicator for debugging
-      setLoading(true);
-      
       const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/register', userData);
       
       console.log('Signup response:', data);
       
       // Save to localStorage - only if the API returns user data
-      // Some APIs don't return user data on signup and require a separate login
       if (data.token) {
         localStorage.setItem('userInfo', JSON.stringify(data));
-        
         // Set auth header for future requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-        
         setCurrentUser(data);
       }
       
-      setLoading(false);
       return data;
     } catch (error) {
-      setLoading(false);
       console.error('Signup error:', error.response || error);
       throw new Error(error.response?.data?.message || 'Registration failed: ' + (error.message || 'Unknown error'));
     }

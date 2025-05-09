@@ -52,14 +52,15 @@ const Signup = () => {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = formData;
       
-      const result = await signup(userData);
-      console.log('Signup successful:', result);
+      await signup(userData);
+      console.log('Signup successful');
       
       // Explicitly navigate to login after successful signup
       navigate('/login');
     } catch (error) {
       console.error('Signup error:', error);
       setError(error.message || 'Failed to create account. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
