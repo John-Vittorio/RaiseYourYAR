@@ -2,13 +2,14 @@
 .report-review-container {
   max-width: 1200px; /* Increased from 1000px for better width */
   width: 100%;
-  margin: 30px auto 0; /* Fixed 30px top margin from nav */
+  margin: 0 auto; /* Remove top margin here - it comes from parent */
   padding: 0 20px 40px;
   box-sizing: border-box;
 }
 
+/* Ensure report view container has consistent styles */
 .report-view-container {
-  max-width: 1200px; /* Match the review container width */
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 0 20px;
@@ -16,7 +17,7 @@
 }
 
 .report-view-header {
-  margin: 30px 0 20px; /* Consistent 30px spacing from top */
+  margin: 30px 0 20px; /* Consistent spacing */
 }
 
 .report-review-header {
@@ -185,10 +186,26 @@
   gap: 8px;
 }
 
+/* Make sure we inherit the teaching-container styles that we need */
+.teaching-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: "Encode Sans", sans-serif;
+}
+
+.teaching-form-content {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .report-review-container,
-  .report-view-container {
+  .report-view-container,
+  .teaching-container {
     max-width: 100%;
   }
 }

@@ -151,225 +151,224 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
     return <div className="loading">Loading your report data...</div>;
   }
 
+  // Apply consistent structure regardless of readOnly mode
   return (
-    <div className="teaching-container report-review-container">
-      <div className="teaching-form-content">
-        <div className="teaching-header report-review-header">
-          <h1 className="yar-title">Yearly Activity Report</h1>
-          {!readOnly && (
-            <div className="teaching-breadcrumb">
-              <span className="inactive">Start</span>
-              <span className="separator">›</span>
-              <span className="inactive">Teaching</span>
-              <span className="separator">›</span>
-              <span className="inactive">Research</span>
-              <span className="separator">›</span>
-              <span className="inactive">Service</span>
-              <span className="separator">›</span>
-              <span className="active">Review</span>
-            </div>
-          )}
-          {report && (
-            <div className="pdf-download-container">
-              <PDFGenerator
-                reportData={report}
-                elementToConvert="reportContentForPDF"
-              />
-            </div>
-          )}
-        </div>
-
-        {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
-
-        <div id="reportContentForPDF">
-          <div className="course-card report-card">
-            {currentUser && (
-              <div className="faculty-name-section">
-                <span>{currentUser.name}</span>
-              </div>
-            )}
-            
-            <h2 className="review-section-title">Report Summary</h2>
-            {report && (
-              <div className="report-meta">
-                <p><strong>Academic Year:</strong> {report.academicYear}</p>
-                <p><strong>Status:</strong> {report.status}</p>
-                {report.notes && <p><strong>Notes:</strong> {report.notes}</p>}
-              </div>
-            )}
-
-            <div className="review-section">
-              <h3 className="review-section-title">Teaching</h3>
-              {teaching && teaching.courses && teaching.courses.length > 0 ? (
-                <div className="review-section-content">
-                  {teaching.courses.map((course, index) => (
-                    <div key={index} className="review-item">
-                      <h4>{course.name}</h4>
-                      <div className="review-item-details">
-                        <p><strong>Quarter:</strong> {course.quarter} {course.year}</p>
-                        <p><strong>Credits:</strong> {course.credits}</p>
-                        <p><strong>Enrollment:</strong> {course.enrollment}</p>
-                        <p><strong>Student Credit Hours:</strong> {course.studentCreditHours}</p>
-                        {course.evaluationScore && (
-                          <p><strong>Evaluation Score:</strong> {course.evaluationScore}</p>
-                        )}
-                        {course.adjustedEvaluationScore && (
-                          <p><strong>Adjusted Evaluation Score:</strong> {course.adjustedEvaluationScore}</p>
-                        )}
-                        <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
-                        <p><strong>Updated Course:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
-                        {course.notes && <p><strong>Notes:</strong> {course.notes}</p>}
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Display Teaching Section Notes if present */}
-                  {teachingSectionNotes && (
-                    <div className="section-notes">
-                      <h4>Teaching Section Notes:</h4>
-                      <p>{teachingSectionNotes}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="no-data-message">No teaching data available</p>
-              )}
-            </div>
-
-            <div className="review-section">
-              <h3 className="review-section-title">Research</h3>
-              {research ? (
-                <div className="review-section-content">
-                  {research.publications && research.publications.length > 0 && (
-                    <div className="research-publications">
-                      <h4>Publications</h4>
-                      {research.publications.map((pub, index) => (
-                        <div key={index} className="review-item">
-                          <h5>{pub.title}</h5>
-                          <div className="review-item-details">
-                            <p><strong>Type:</strong> {pub.publicationType}</p>
-                            <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
-                            <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {research.grants && research.grants.length > 0 && (
-                    <div className="research-grants">
-                      <h4>Grants & Research Activities</h4>
-                      {research.grants.map((grant, index) => (
-                        <div key={index} className="review-item">
-                          <h5>{grant.title} ({grant.type})</h5>
-                          <div className="review-item-details">
-                            {grant.client && <p><strong>Client/Sponsor:</strong> {grant.client}</p>}
-                            {grant.role && <p><strong>Role:</strong> {grant.role}</p>}
-                            {grant.totalAmount && <p><strong>Total Amount:</strong> ${grant.totalAmount}</p>}
-                            {grant.yourShare && <p><strong>Your Share:</strong> ${grant.yourShare}</p>}
-                            {grant.startDate && grant.endDate && (
-                              <p>
-                                <strong>Period:</strong> {new Date(grant.startDate).toLocaleDateString()} to {new Date(grant.endDate).toLocaleDateString()}
-                              </p>
-                            )}
-                            {grant.coPIs && grant.coPIs.length > 0 && (
-                              <div>
-                                <p><strong>Co-PIs:</strong></p>
-                                <ul>
-                                  {grant.coPIs.map((coPI, i) => (
-                                    <li key={i}>{coPI.name} {coPI.affiliation ? `(${coPI.affiliation})` : ''}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {grant.notes && <p><strong>Notes:</strong> {grant.notes}</p>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {research.conferences && research.conferences.length > 0 && (
-                    <div className="research-conferences">
-                      <h4>Conferences</h4>
-                      {research.conferences.map((conf, index) => (
-                        <div key={index} className="review-item">
-                          <h5>{conf.name}</h5>
-                          <div className="review-item-details">
-                            {conf.startDate && conf.endDate && (
-                              <p>
-                                <strong>Period:</strong> {new Date(conf.startDate).toLocaleDateString()} to {new Date(conf.endDate).toLocaleDateString()}
-                              </p>
-                            )}
-                            {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {(!research.publications || research.publications.length === 0) &&
-                    (!research.grants || research.grants.length === 0) &&
-                    (!research.conferences || research.conferences.length === 0) && (
-                      <p className="no-data-message">No research details available</p>
-                    )}
-                </div>
-              ) : (
-                <p className="no-data-message">No research data available</p>
-              )}
-            </div>
-
-            <div className="review-section">
-              <h3 className="review-section-title">Service</h3>
-              {services && services.length > 0 ? (
-                <div className="review-section-content">
-                  {services.map((service, index) => (
-                    <div key={index} className="review-item">
-                      <h4>{service.type}</h4>
-                      <div className="review-item-details">
-                        {service.role && <p><strong>Role:</strong> {service.role}</p>}
-                        {service.department && <p><strong>Department:</strong> {service.department}</p>}
-                        {service.description && <p><strong>Description:</strong> {service.description}</p>}
-                        {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Display Service Section Notes if present */}
-                  {serviceSectionNotes && (
-                    <div className="section-notes">
-                      <h4>Service Section Notes:</h4>
-                      <p>{serviceSectionNotes}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="no-data-message">No service data available</p>
-              )}
-            </div>
-          </div>
-        </div>
-
+    <div className="teaching-form-content report-review-container">
+      <div className="teaching-header report-review-header">
+        <h1 className="yar-title">Yearly Activity Report</h1>
         {!readOnly && (
-          <div className="navigation-buttons">
-            <button
-              onClick={onPrevious}
-              className="yar-button-secondary"
-              disabled={loading}
-            >
-              Previous
-            </button>
-            <button
-              onClick={handleSubmitReport}
-              className="yar-button-next submit-report-button"
-              disabled={loading}
-            >
-              {loading ? 'Submitting...' : 'Submit Report'}
-            </button>
+          <div className="teaching-breadcrumb">
+            <span className="inactive">Start</span>
+            <span className="separator">›</span>
+            <span className="inactive">Teaching</span>
+            <span className="separator">›</span>
+            <span className="inactive">Research</span>
+            <span className="separator">›</span>
+            <span className="inactive">Service</span>
+            <span className="separator">›</span>
+            <span className="active">Review</span>
+          </div>
+        )}
+        {report && (
+          <div className="pdf-download-container">
+            <PDFGenerator
+              reportData={report}
+              elementToConvert="reportContentForPDF"
+            />
           </div>
         )}
       </div>
+
+      {error && <div className="error-message">{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
+
+      <div id="reportContentForPDF">
+        <div className="course-card report-card">
+          {currentUser && (
+            <div className="faculty-name-section">
+              <span>{currentUser.name}</span>
+            </div>
+          )}
+          
+          <h2 className="review-section-title">Report Summary</h2>
+          {report && (
+            <div className="report-meta">
+              <p><strong>Academic Year:</strong> {report.academicYear}</p>
+              <p><strong>Status:</strong> {report.status}</p>
+              {report.notes && <p><strong>Notes:</strong> {report.notes}</p>}
+            </div>
+          )}
+
+          <div className="review-section">
+            <h3 className="review-section-title">Teaching</h3>
+            {teaching && teaching.courses && teaching.courses.length > 0 ? (
+              <div className="review-section-content">
+                {teaching.courses.map((course, index) => (
+                  <div key={index} className="review-item">
+                    <h4>{course.name}</h4>
+                    <div className="review-item-details">
+                      <p><strong>Quarter:</strong> {course.quarter} {course.year}</p>
+                      <p><strong>Credits:</strong> {course.credits}</p>
+                      <p><strong>Enrollment:</strong> {course.enrollment}</p>
+                      <p><strong>Student Credit Hours:</strong> {course.studentCreditHours}</p>
+                      {course.evaluationScore && (
+                        <p><strong>Evaluation Score:</strong> {course.evaluationScore}</p>
+                      )}
+                      {course.adjustedEvaluationScore && (
+                        <p><strong>Adjusted Evaluation Score:</strong> {course.adjustedEvaluationScore}</p>
+                      )}
+                      <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
+                      <p><strong>Updated Course:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
+                      {course.notes && <p><strong>Notes:</strong> {course.notes}</p>}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Display Teaching Section Notes if present */}
+                {teachingSectionNotes && (
+                  <div className="section-notes">
+                    <h4>Teaching Section Notes:</h4>
+                    <p>{teachingSectionNotes}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="no-data-message">No teaching data available</p>
+            )}
+          </div>
+
+          <div className="review-section">
+            <h3 className="review-section-title">Research</h3>
+            {research ? (
+              <div className="review-section-content">
+                {research.publications && research.publications.length > 0 && (
+                  <div className="research-publications">
+                    <h4>Publications</h4>
+                    {research.publications.map((pub, index) => (
+                      <div key={index} className="review-item">
+                        <h5>{pub.title}</h5>
+                        <div className="review-item-details">
+                          <p><strong>Type:</strong> {pub.publicationType}</p>
+                          <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
+                          <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {research.grants && research.grants.length > 0 && (
+                  <div className="research-grants">
+                    <h4>Grants & Research Activities</h4>
+                    {research.grants.map((grant, index) => (
+                      <div key={index} className="review-item">
+                        <h5>{grant.title} ({grant.type})</h5>
+                        <div className="review-item-details">
+                          {grant.client && <p><strong>Client/Sponsor:</strong> {grant.client}</p>}
+                          {grant.role && <p><strong>Role:</strong> {grant.role}</p>}
+                          {grant.totalAmount && <p><strong>Total Amount:</strong> ${grant.totalAmount}</p>}
+                          {grant.yourShare && <p><strong>Your Share:</strong> ${grant.yourShare}</p>}
+                          {grant.startDate && grant.endDate && (
+                            <p>
+                              <strong>Period:</strong> {new Date(grant.startDate).toLocaleDateString()} to {new Date(grant.endDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {grant.coPIs && grant.coPIs.length > 0 && (
+                            <div>
+                              <p><strong>Co-PIs:</strong></p>
+                              <ul>
+                                {grant.coPIs.map((coPI, i) => (
+                                  <li key={i}>{coPI.name} {coPI.affiliation ? `(${coPI.affiliation})` : ''}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {grant.notes && <p><strong>Notes:</strong> {grant.notes}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {research.conferences && research.conferences.length > 0 && (
+                  <div className="research-conferences">
+                    <h4>Conferences</h4>
+                    {research.conferences.map((conf, index) => (
+                      <div key={index} className="review-item">
+                        <h5>{conf.name}</h5>
+                        <div className="review-item-details">
+                          {conf.startDate && conf.endDate && (
+                            <p>
+                              <strong>Period:</strong> {new Date(conf.startDate).toLocaleDateString()} to {new Date(conf.endDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(!research.publications || research.publications.length === 0) &&
+                  (!research.grants || research.grants.length === 0) &&
+                  (!research.conferences || research.conferences.length === 0) && (
+                    <p className="no-data-message">No research details available</p>
+                  )}
+              </div>
+            ) : (
+              <p className="no-data-message">No research data available</p>
+            )}
+          </div>
+
+          <div className="review-section">
+            <h3 className="review-section-title">Service</h3>
+            {services && services.length > 0 ? (
+              <div className="review-section-content">
+                {services.map((service, index) => (
+                  <div key={index} className="review-item">
+                    <h4>{service.type}</h4>
+                    <div className="review-item-details">
+                      {service.role && <p><strong>Role:</strong> {service.role}</p>}
+                      {service.department && <p><strong>Department:</strong> {service.department}</p>}
+                      {service.description && <p><strong>Description:</strong> {service.description}</p>}
+                      {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Display Service Section Notes if present */}
+                {serviceSectionNotes && (
+                  <div className="section-notes">
+                    <h4>Service Section Notes:</h4>
+                    <p>{serviceSectionNotes}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="no-data-message">No service data available</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {!readOnly && (
+        <div className="navigation-buttons">
+          <button
+            onClick={onPrevious}
+            className="yar-button-secondary"
+            disabled={loading}
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleSubmitReport}
+            className="yar-button-next submit-report-button"
+            disabled={loading}
+          >
+            {loading ? 'Submitting...' : 'Submit Report'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -31,7 +31,7 @@ const ReportCard = ({ report, onClick, onDelete }) => {
   const handleViewReport = () => {
     // If an onClick prop is provided, use it
     if (onClick) {
-      onClick();
+      onClick(report._id);
     } else {
       // Otherwise use the default navigation
       navigate(`/report/${report._id}`);

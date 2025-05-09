@@ -54,33 +54,36 @@ const ReportViewPage = () => {
   return (
     <>
       <Navigation />
-      <div className="report-view-container">
-        <div className="report-view-header">
-          <button
-            onClick={handleBackToMain}
-            className="yar-button-secondary back-button"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
+      {/* Modified this div to use teaching-container class for consistency */}
+      <div className="teaching-container">
+        <div className="teaching-form-content">
+          <div className="report-view-header">
+            <button
+              onClick={handleBackToMain}
+              className="yar-button-secondary back-button"
             >
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Main
-          </button>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back to Main
+            </button>
+          </div>
+          
+          <ReportReview
+            reportId={reportId}
+            readOnly={true}
+          />
         </div>
-        
-        <ReportReview
-          reportId={reportId}
-          readOnly={true}
-        />
       </div>
     </>
   );
