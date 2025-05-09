@@ -9,25 +9,24 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { login, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   
-  // Redirect if user is already logged in
+  // Redirect immediately if user is already logged in
   useEffect(() => {
-    if (currentUser && !loading && submitAttempted) {
-      if (currentUser.role === 'admin') {
-        navigate('/');
-      } else {
-        navigate('/yar');
-      }
+    if (currentUser) {
+      // Navigate based on user role - immediate redirect without waiting for login to complete
+      navigate(currentUser.role === 'admin' ? '/' : '/yar');
     }
-  }, [currentUser, loading, navigate, submitAttempted]);
+  }, [currentUser, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Remove error message as soon as user starts typing
+    if (error) setError('');
+    
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -36,20 +35,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Already submitting? Prevent double submission
+    if (isSubmitting) return;
+    
+    // Clear previous errors
     setError('');
-    setLoading(true);
-    setSubmitAttempted(true);
+    setIsSubmitting(true);
     
     try {
-      console.log('Login attempt with:', formData.email);
+      // Optimistic UI update - we'll set a loading state but continue with UI interaction
       await login(formData.email, formData.password);
-      console.log('Login successful');
-      // Navigation will be handled by the useEffect
+      // Login successful - navigation will be handled by useEffect
     } catch (error) {
-      console.error('Login error:', error);
       setError(error.message || 'Failed to login. Please try again.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -76,6 +77,8 @@ const Login = () => {
               className="auth-form-input"
               placeholder="your.email@uw.edu"
               required
+              disabled={isSubmitting}
+              autoComplete="email"
             />
           </div>
           
@@ -90,15 +93,22 @@ const Login = () => {
               className="auth-form-input"
               placeholder="Enter your password"
               required
+              disabled={isSubmitting}
+              autoComplete="current-password"
             />
           </div>
           
           <button
             type="submit"
             className="auth-button"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {isSubmitting ? (
+              <>
+                <span className="spinner-icon"></span>
+                Logging in...
+              </>
+            ) : 'Login'}
           </button>
         </form>
         

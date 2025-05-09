@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../images/logo.svg';
@@ -13,21 +13,17 @@ const Signup = () => {
     role: 'faculty' // Default role
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   
-  const { signup, currentUser } = useContext(AuthContext);
+  const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
-  
-  // Redirect if user is already logged in or signup was successful
-  useEffect(() => {
-    if (currentUser && !loading && submitAttempted) {
-      navigate('/login');
-    }
-  }, [currentUser, loading, navigate, submitAttempted]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Clear error when user starts typing
+    if (error) setError('');
+    
     setFormData(prevState => ({
       ...prevState,
       [name]: value
@@ -36,32 +32,40 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     
-    // Check if passwords match
+    // Already submitting? Prevent double submission
+    if (isSubmitting) return;
+    
+    // Clear previous messages
+    setError('');
+    setSuccessMessage('');
+    
+    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match');
     }
     
-    setLoading(true);
-    setSubmitAttempted(true);
+    setIsSubmitting(true);
     
     try {
-      console.log('Signup attempt with:', { ...formData, password: '[HIDDEN]' });
-      
-      // Remove confirmPassword before sending to API
+      // Remove confirmPassword before sending
       const { confirmPassword, ...userData } = formData;
       
-      await signup(userData);
-      console.log('Signup successful');
+      // Show immediate feedback while request processes
+      setSuccessMessage('Creating your account...');
       
-      // Explicitly navigate to login after successful signup
-      navigate('/login');
+      await signup(userData);
+      
+      // Show success message and redirect after short delay
+      setSuccessMessage('Account created successfully! Redirecting to login...');
+      
+      // Quick redirect to login after signup (feels more responsive)
+      setTimeout(() => navigate('/login'), 800);
     } catch (error) {
-      console.error('Signup error:', error);
       setError(error.message || 'Failed to create account. Please try again.');
+      setSuccessMessage('');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -75,6 +79,7 @@ const Signup = () => {
         <h1 className="auth-title">Create an Account</h1>
         
         {error && <div className="auth-error">{error}</div>}
+        {successMessage && <div className="auth-success">{successMessage}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="auth-form-group">
@@ -88,6 +93,8 @@ const Signup = () => {
               className="auth-form-input"
               placeholder="Enter your NetID"
               required
+              disabled={isSubmitting}
+              autoComplete="username"
             />
           </div>
           
@@ -102,6 +109,8 @@ const Signup = () => {
               className="auth-form-input"
               placeholder="Enter your full name"
               required
+              disabled={isSubmitting}
+              autoComplete="name"
             />
           </div>
           
@@ -116,6 +125,8 @@ const Signup = () => {
               className="auth-form-input"
               placeholder="your.email@uw.edu"
               required
+              disabled={isSubmitting}
+              autoComplete="email"
             />
           </div>
           
@@ -130,6 +141,8 @@ const Signup = () => {
               className="auth-form-input"
               placeholder="Create a password"
               required
+              disabled={isSubmitting}
+              autoComplete="new-password"
             />
           </div>
           
@@ -144,15 +157,22 @@ const Signup = () => {
               className="auth-form-input"
               placeholder="Confirm your password"
               required
+              disabled={isSubmitting}
+              autoComplete="new-password"
             />
           </div>
           
           <button 
             type="submit" 
             className="auth-button"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {isSubmitting ? (
+              <>
+                <span className="spinner-icon"></span>
+                Creating Account...
+              </>
+            ) : 'Sign Up'}
           </button>
         </form>
         
