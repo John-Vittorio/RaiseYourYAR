@@ -16,8 +16,11 @@
   box-sizing: border-box;
 }
 
+/* Add consistent top spacing below navigation */
 .report-view-header {
-  margin: 30px 0 20px; /* Consistent spacing */
+  margin: 30px 0 20px; /* Consistent spacing - 30px from nav */
+  display: flex;
+  align-items: center;
 }
 
 .report-review-header {

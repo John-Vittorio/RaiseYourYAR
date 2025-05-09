@@ -44,7 +44,7 @@ const ReportViewPage = () => {
             onClick={handleBackToMain} 
             className="yar-button-secondary"
           >
-            Back to Main Page
+            Back
           </button>
         </div>
       </>
