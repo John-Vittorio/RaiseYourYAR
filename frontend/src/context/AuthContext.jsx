@@ -21,7 +21,12 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (email, password) => {
     try {
-      const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/login', {
+      // const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/login', {
+      //   email,
+      //   password
+      // });
+
+      const { data } = await axios.post('http://localhost:5001/api/auth/login', {
         email,
         password
       });
@@ -38,9 +43,9 @@ export const AuthProvider = ({ children }) => {
   // Signup function
   const signup = async (userData) => {
     try {
-      const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/register', userData);
+      // const { data } = await axios.post('https://raiseyouryar-3.onrender.com/api/auth/register', userData);
 
-      // const { data } = await axios.post('http://localhost:5001/api/auth/register', userData);
+      const { data } = await axios.post('http://localhost:5001/api/auth/register', userData);
       
       // Save to localStorage
       localStorage.setItem('userInfo', JSON.stringify(data));

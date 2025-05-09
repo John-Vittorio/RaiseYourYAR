@@ -37,6 +37,11 @@ const YARArchive = ({ onStart }) => {
         'https://raiseyouryar-3.onrender.com/api/reports',
         config
       );
+
+      // const { data } = await axios.get(
+      //   'http://localhost:5001/api/reports',
+      //   config
+      // );
       
       setReports(data);
     } catch (error) {
@@ -86,6 +91,11 @@ const YARArchive = ({ onStart }) => {
         `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
         config
       );
+
+      // const response = await axios.delete(
+      //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+      //   config
+      // );
       
       console.log('Delete response:', response.data);
       

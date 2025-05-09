@@ -86,6 +86,11 @@ const teachingSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // Add sectionNotes field
+  sectionNotes: {
+    type: String,
+    default: ""
+  },
   createdAt: {
     type: Date,
     default: Date.now

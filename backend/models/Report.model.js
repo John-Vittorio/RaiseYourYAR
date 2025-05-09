@@ -48,6 +48,15 @@ const reportSchema = new mongoose.Schema({
     notes: {
         type: String,
     },
+    // New fields for section notes
+    teachingNotes: {
+        type: String,
+        default: ""
+    },
+    serviceNotes: {
+        type: String,
+        default: ""
+    },
     createdAt: { 
         type: Date, 
         default: Date.now 

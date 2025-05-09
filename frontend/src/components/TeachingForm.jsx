@@ -11,6 +11,10 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [autoSaveStatus, setAutoSaveStatus] = useState('');
   const [autoSaveTimer, setAutoSaveTimer] = useState(null);
+  
+  // New state for section notes
+  const [sectionNotes, setSectionNotes] = useState('');
+  const [originalSectionNotes, setOriginalSectionNotes] = useState('');
 
   const { currentUser } = useContext(AuthContext);
 
@@ -25,7 +29,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   // Set up auto-save whenever courses data changes
   useEffect(() => {
     // Only set up auto-save if we have courses and they're not the initial empty state
-    if (courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) {
+    if ((courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) ||
+        (sectionNotes !== originalSectionNotes)) {
       // Clear any existing timer
       if (autoSaveTimer) {
         clearTimeout(autoSaveTimer);
@@ -48,7 +53,7 @@ const TeachingForm = ({ onNext, reportId }) => {
         clearTimeout(autoSaveTimer);
       }
     };
-  }, [courses]);
+  }, [courses, sectionNotes]);
 
   const fetchTeachingData = async () => {
     try {
@@ -67,26 +72,39 @@ const TeachingForm = ({ onNext, reportId }) => {
           config
         );
 
-        if (data && data.courses && data.courses.length > 0) {
-          // Map API data to component state format
-          const mappedCourses = data.courses.map((course, index) => ({
-            id: index + 1,
-            name: course.name || '',
-            credits: course.credits || '0',
-            enrollment: course.enrollment || '0',
-            studentCreditHours: course.studentCreditHours || '0',
-            evaluationScore: course.evaluationScore || '',
-            adjustedEvaluationScore: course.adjustedEvaluationScore || '',
-            commEngaged: course.commEngaged || false,
-            updatedCourse: course.updatedCourse || false,
-            outsideDept: course.outsideDept || false,
-            notes: course.notes || '',
-            quarter: course.quarter || 'Autumn',
-            year: course.year || new Date().getFullYear()
-          }));
+        // const { data } = await axios.get(
+        //   `http://localhost:5001/api/teaching/${reportId}`,
+        //   config
+        // );
 
-          setCourses(mappedCourses);
-          setOriginalCourses(JSON.parse(JSON.stringify(mappedCourses)));
+        if (data) {
+          if (data.courses && data.courses.length > 0) {
+            // Map API data to component state format
+            const mappedCourses = data.courses.map((course, index) => ({
+              id: index + 1,
+              name: course.name || '',
+              credits: course.credits || '0',
+              enrollment: course.enrollment || '0',
+              studentCreditHours: course.studentCreditHours || '0',
+              evaluationScore: course.evaluationScore || '',
+              adjustedEvaluationScore: course.adjustedEvaluationScore || '',
+              commEngaged: course.commEngaged || false,
+              updatedCourse: course.updatedCourse || false,
+              outsideDept: course.outsideDept || false,
+              notes: course.notes || '',
+              quarter: course.quarter || 'Autumn',
+              year: course.year || new Date().getFullYear()
+            }));
+
+            setCourses(mappedCourses);
+            setOriginalCourses(JSON.parse(JSON.stringify(mappedCourses)));
+          }
+
+          // Load section notes if present
+          if (data.sectionNotes) {
+            setSectionNotes(data.sectionNotes);
+            setOriginalSectionNotes(data.sectionNotes);
+          }
         }
         // No longer adding an empty course if no data
       } catch (error) {
@@ -133,13 +151,25 @@ const TeachingForm = ({ onNext, reportId }) => {
         `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
         {
           courses: apiCourses,
-          taughtOutsideDept: apiCourses.some(course => course.outsideDept)
+          taughtOutsideDept: apiCourses.some(course => course.outsideDept),
+          sectionNotes: sectionNotes // Include section notes in the request
         },
         config
       );
 
+      // await axios.post(
+      //   `http://localhost:5001/api/teaching/${reportId}`,
+      //   {
+      //     courses: apiCourses,
+      //     taughtOutsideDept: apiCourses.some(course => course.outsideDept),
+      //     sectionNotes: sectionNotes // Include section notes in the request
+      //   },
+      //   config
+      // );
+
       // Update original courses to match current state
       setOriginalCourses(JSON.parse(JSON.stringify(courses)));
+      setOriginalSectionNotes(sectionNotes);
       setAutoSaveStatus('saved');
 
       // Clear auto-save status after 3 seconds
@@ -160,6 +190,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   // Initialize original courses for cancel functionality
   useEffect(() => {
     setOriginalCourses(JSON.parse(JSON.stringify(courses)));
+    setOriginalSectionNotes(sectionNotes);
   }, []);
 
   // Validate a single course
@@ -235,6 +266,12 @@ const TeachingForm = ({ onNext, reportId }) => {
         apiCourse,
         config
       );
+
+      // const response = await axios.post(
+      //   `http://localhost:5001/api/teaching/course/${reportId}`,
+      //   apiCourse,
+      //   config
+      // );
 
       // Update original courses for cancel functionality
       setOriginalCourses(prev => {
@@ -349,6 +386,11 @@ const TeachingForm = ({ onNext, reportId }) => {
     }
   };
 
+  // Handle section notes change
+  const handleSectionNotesChange = (e) => {
+    setSectionNotes(e.target.value);
+  };
+
   // Generate unique ID for new courses
   const generateUniqueId = () => {
     const existingIds = courses.map(course => course.id);
@@ -381,7 +423,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   const handleNext = async () => {
     try {
       // If there are any unsaved changes, save them before proceeding
-      if (JSON.stringify(courses) !== JSON.stringify(originalCourses)) {
+      if (JSON.stringify(courses) !== JSON.stringify(originalCourses) || 
+          sectionNotes !== originalSectionNotes) {
         await autoSaveTeachingData();
       }
 
@@ -419,7 +462,23 @@ const TeachingForm = ({ onNext, reportId }) => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Empty state message when no courses exist */}
+        {/* Section Notes */}
+        <div className="course-card">
+          <h3 className="course-title">Teaching Section Notes</h3>
+          <p className="notes-instruction">
+            For committees for which you are not a chair, please add that in the service section, under thesis service (under drop-down), thesis/dissertation committee member.
+          </p>
+          <div className="yar-form-group">
+            <textarea
+              className="course-notes"
+              rows="6"
+              value={sectionNotes}
+              onChange={handleSectionNotesChange}
+              placeholder="Enter any additional notes about your teaching activities here..."
+              style={{ width: '100%', padding: '12px', marginTop: '15px' }}
+            ></textarea>
+          </div>
+        </div>
 
         {/* Course Listings */}
         {courses.map((course, index) => (
@@ -696,6 +755,19 @@ const TeachingForm = ({ onNext, reportId }) => {
           </button>
         </div>
       </div>
+
+      <style jsx>{`
+        .notes-instruction {
+          background-color: #f9f9ff;
+          padding: 15px;
+          border-left: 3px solid #4B2E83;
+          border-radius: 4px;
+          font-family: "Encode Sans";
+          margin-top: 10px;
+          line-height: 1.6;
+          color: #555;
+        }
+      `}</style>
     </div>
   );
 };

@@ -12,8 +12,10 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
   // State for report data
   const [report, setReport] = useState(null);
   const [teaching, setTeaching] = useState(null);
+  const [teachingSectionNotes, setTeachingSectionNotes] = useState('');
   const [research, setResearch] = useState(null);
   const [services, setServices] = useState([]);
+  const [serviceSectionNotes, setServiceSectionNotes] = useState('');
 
   const { currentUser } = useContext(AuthContext);
 
@@ -42,6 +44,21 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         config
       );
 
+      // const reportResponse = await axios.get(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   config
+      // );
+
+      // Get service section notes from the report
+      if (reportResponse.data && reportResponse.data.serviceNotes) {
+        setServiceSectionNotes(reportResponse.data.serviceNotes);
+      }
+
+      // Get teaching notes from the report if available
+      if (reportResponse.data && reportResponse.data.teachingNotes) {
+        setTeachingSectionNotes(reportResponse.data.teachingNotes);
+      }
+
       // Fetch teaching data
       let teachingData = null;
       try {
@@ -49,7 +66,18 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
           config
         );
+
+        // const teachingResponse = await axios.get(
+        //   `http://localhost:5001/api/teaching/${reportId}`,
+        //   config
+        // );
+
         teachingData = teachingResponse.data;
+
+        // Get section notes from teaching data if it exists there
+        if (teachingData && teachingData.sectionNotes && !teachingSectionNotes) {
+          setTeachingSectionNotes(teachingData.sectionNotes);
+        }
       } catch (teachingError) {
         console.log('No teaching data or error fetching teaching data:', teachingError);
       }
@@ -61,6 +89,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
           config
         );
+
+        // const researchResponse = await axios.get(
+        //   `http://localhost:5001/api/research/${reportId}`,
+        //   config
+        // );
+
         researchData = researchResponse.data;
       } catch (researchError) {
         console.log('No research data or error fetching research data:', researchError);
@@ -73,6 +107,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
+
+        // const serviceResponse = await axios.get(
+        //   `http://localhost:5001/api/service/${reportId}`,
+        //   config
+        // );
+
         serviceData = serviceResponse.data;
       } catch (serviceError) {
         console.log('No service data or error fetching service data:', serviceError);
@@ -110,6 +150,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         { status: 'submitted' },
         config
       );
+
+      // await axios.put(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   { status: 'submitted' },
+      //   config
+      // );
 
       setSuccessMessage('Report submitted successfully!');
 
@@ -203,6 +249,14 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Display Teaching Section Notes if present */}
+                  {teachingSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Teaching Section Notes:</h4>
+                      <p>{teachingSectionNotes}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="no-data-message">No teaching data available</p>
@@ -307,6 +361,14 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Display Service Section Notes if present */}
+                  {serviceSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Service Section Notes:</h4>
+                      <p>{serviceSectionNotes}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="no-data-message">No service data available</p>
@@ -334,6 +396,28 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           </div>
         )}
       </div>
+      
+      <style jsx>{`
+        .section-notes {
+          margin-top: 15px;
+          padding: 10px 15px;
+          background-color: #f5f8ff;
+          border-radius: 6px;
+          border-left: 3px solid #4B2E83;
+        }
+
+        .section-notes h4 {
+          color: #4B2E83;
+          margin-bottom: 8px;
+        }
+
+        .section-notes p {
+          white-space: pre-line;
+          margin: 0;
+          line-height: 1.5;
+          color: #333;
+        }
+      `}</style>
     </div>
   );
 };

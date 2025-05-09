@@ -72,7 +72,7 @@ export const createReport = async (req, res) => {
 export const updateReport = async (req, res) => {
   try {
     const { reportId } = req.params;
-    const { academicYear, notes, status } = req.body;
+    const { academicYear, notes, status, serviceNotes, teachingNotes } = req.body;
     
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
       return res.status(400).json({ message: "Invalid report ID" });
@@ -90,8 +90,10 @@ export const updateReport = async (req, res) => {
     }
     
     // Update report fields
-    report.academicYear = academicYear || report.academicYear;
-    report.notes = notes || report.notes;
+    if (academicYear) report.academicYear = academicYear;
+    if (notes !== undefined) report.notes = notes;
+    if (serviceNotes !== undefined) report.serviceNotes = serviceNotes;
+    if (teachingNotes !== undefined) report.teachingNotes = teachingNotes;
     
     // Only allow status update if all sections are complete
     if (status === "submitted" && report.isComplete()) {
