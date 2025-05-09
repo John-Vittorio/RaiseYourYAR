@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../images/logo.svg';
@@ -10,9 +10,21 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   
-  const { login } = useContext(AuthContext);
+  const { login, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (currentUser && !loading && submitAttempted) {
+      if (currentUser.role === 'admin') {
+        navigate('/');
+      } else {
+        navigate('/yar');
+      }
+    }
+  }, [currentUser, loading, navigate, submitAttempted]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,17 +38,17 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setSubmitAttempted(true);
     
     try {
+      console.log('Login attempt with:', formData.email);
       const userData = await login(formData.email, formData.password);
-      if (userData.role === 'admin') {
-        navigate('/'); // Admins go to dashboard
-      } else {
-        navigate('/yar'); // Faculty go to YAR page
-      }
+      console.log('Login successful:', userData);
+      
+      // Navigation will be handled by the useEffect
     } catch (error) {
-      setError(error.message);
-    } finally {
+      console.error('Login error:', error);
+      setError(error.message || 'Failed to login. Please try again.');
       setLoading(false);
     }
   };
@@ -81,8 +93,8 @@ const Login = () => {
             />
           </div>
           
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="auth-button"
             disabled={loading}
           >
@@ -93,6 +105,9 @@ const Login = () => {
         <div className="auth-links">
           <p>
             Don't have an account? <Link to="/signup" className="auth-link">Sign up</Link>
+          </p>
+          <p>
+            <Link to="/forgot-password" className="auth-link">Forgot Password?</Link>
           </p>
         </div>
       </div>

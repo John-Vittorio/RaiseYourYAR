@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../images/logo.svg';
@@ -14,9 +14,17 @@ const Signup = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   
-  const { signup } = useContext(AuthContext);
+  const { signup, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  
+  // Redirect if user is already logged in or signup was successful
+  useEffect(() => {
+    if (currentUser && !loading && submitAttempted) {
+      navigate('/login');
+    }
+  }, [currentUser, loading, navigate, submitAttempted]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,15 +44,22 @@ const Signup = () => {
     }
     
     setLoading(true);
+    setSubmitAttempted(true);
     
     try {
+      console.log('Signup attempt with:', { ...formData, password: '[HIDDEN]' });
+      
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = formData;
-      await signup(userData);
+      
+      const result = await signup(userData);
+      console.log('Signup successful:', result);
+      
+      // Explicitly navigate to login after successful signup
       navigate('/login');
     } catch (error) {
-      setError(error.message);
-    } finally {
+      console.error('Signup error:', error);
+      setError(error.message || 'Failed to create account. Please try again.');
       setLoading(false);
     }
   };
