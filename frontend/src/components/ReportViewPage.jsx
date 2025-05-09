@@ -17,7 +17,6 @@ const ReportViewPage = () => {
       setError('No report ID provided');
       return;
     }
-    
     setLoading(false);
   }, [reportId]);
 
@@ -41,7 +40,10 @@ const ReportViewPage = () => {
         <Navigation />
         <div className="error-message">
           {error}
-          <button onClick={handleBackToMain} className="yar-button-secondary">
+          <button 
+            onClick={handleBackToMain} 
+            className="yar-button-secondary"
+          >
             Back to Main Page
           </button>
         </div>
@@ -54,19 +56,29 @@ const ReportViewPage = () => {
       <Navigation />
       <div className="report-view-container">
         <div className="report-view-header">
-          <button 
+          <button
             onClick={handleBackToMain}
             className="yar-button-secondary back-button"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
             Back to Main
           </button>
         </div>
         
-        <ReportReview 
-          reportId={reportId} 
+        <ReportReview
+          reportId={reportId}
           readOnly={true}
         />
       </div>

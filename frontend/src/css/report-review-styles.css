@@ -1,9 +1,22 @@
 /* Report Review Component Styles */
-
 .report-review-container {
-  max-width: 1000px;
+  max-width: 1200px; /* Increased from 1000px for better width */
+  width: 100%;
+  margin: 30px auto 0; /* Fixed 30px top margin from nav */
+  padding: 0 20px 40px;
+  box-sizing: border-box;
+}
+
+.report-view-container {
+  max-width: 1200px; /* Match the review container width */
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.report-view-header {
+  margin: 30px 0 20px; /* Consistent 30px spacing from top */
 }
 
 .report-review-header {
@@ -20,6 +33,7 @@
   border: 1px solid #d9d9d9;
   box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
   margin-bottom: 30px;
+  width: 100%; /* Ensure full width */
 }
 
 /* Faculty Name Section - PROMINENT STYLING */
@@ -142,8 +156,8 @@
   margin-bottom: 25px;
 }
 
-.research-publications h4, 
-.research-grants h4, 
+.research-publications h4,
+.research-grants h4,
 .research-conferences h4 {
   color: #4B2E83;
   border-bottom: 1px solid #e0e0e0;
@@ -164,7 +178,21 @@
   background: linear-gradient(to right, #32006E, #1B1B2F);
 }
 
+/* Consistent Back button styling */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* Responsive adjustments */
+@media (max-width: 992px) {
+  .report-review-container,
+  .report-view-container {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .report-card {
     padding: 20px;
@@ -177,4 +205,30 @@
   .review-item {
     padding: 12px;
   }
+  
+  .faculty-name-section {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+}
+
+/* Section notes styling */
+.section-notes {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #f5f8ff;
+  border-radius: 6px;
+  border-left: 3px solid #4B2E83;
+}
+
+.section-notes h4 {
+  color: #4B2E83;
+  margin-bottom: 8px;
+}
+
+.section-notes p {
+  white-space: pre-line;
+  margin: 0;
+  line-height: 1.5;
+  color: #333;
 }
