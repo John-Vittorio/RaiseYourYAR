@@ -59,8 +59,8 @@ const Signup = () => {
       // Show success message and redirect after short delay
       setSuccessMessage('Account created successfully! Redirecting to login...');
       
-      // Quick redirect to login after signup (feels more responsive)
-      setTimeout(() => navigate('/login'), 800);
+      // Redirect to login after signup
+      setTimeout(() => navigate('/login'), 1500);
     } catch (error) {
       setError(error.message || 'Failed to create account. Please try again.');
       setSuccessMessage('');

@@ -9,11 +9,6 @@ const api = axios.create({
   timeout: 15000, // 15 second timeout to prevent hanging requests
 });
 
-// const api = axios.create({
-//   baseURL: 'http://localhost:5001/api',
-//   timeout: 15000, // 15 second timeout to prevent hanging requests
-// });
-
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,20 +63,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Signup function - optimized
+  // Signup function - modified to not automatically login
   const signup = async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
-      const data = response.data;
-      
-      // Only store user data if API returns token (some APIs might not auto-login after signup)
-      if (data.token) {
-        localStorage.setItem('userInfo', JSON.stringify(data));
-        setupAuthHeaders(data.token);
-        setCurrentUser(data);
-      }
-      
-      return data;
+      // Return the response data but don't set current user or store in localStorage
+      return response.data;
     } catch (error) {
       console.error('Signup error:', error.response || error);
       throw new Error(error.response?.data?.message || 'Registration failed');
