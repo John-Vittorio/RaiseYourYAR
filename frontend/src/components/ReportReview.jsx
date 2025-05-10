@@ -44,6 +44,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         config
       );
 
+      // const reportResponse = await axios.get(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   config
+      // );
+
       // Get service section notes from the report
       if (reportResponse.data && reportResponse.data.serviceNotes) {
         setServiceSectionNotes(reportResponse.data.serviceNotes);
@@ -61,6 +66,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
           config
         );
+
+        // const teachingResponse = await axios.get(
+        //   `http://localhost:5001/api/teaching/${reportId}`,
+        //   config
+        // );
 
         teachingData = teachingResponse.data;
 
@@ -80,6 +90,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           config
         );
 
+        // const researchResponse = await axios.get(
+        //   `http://localhost:5001/api/research/${reportId}`,
+        //   config
+        // );
+
         researchData = researchResponse.data;
       } catch (researchError) {
         console.log('No research data or error fetching research data:', researchError);
@@ -92,6 +107,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
+
+        // const serviceResponse = await axios.get(
+        //   `http://localhost:5001/api/service/${reportId}`,
+        //   config
+        // );
 
         serviceData = serviceResponse.data;
       } catch (serviceError) {
@@ -131,6 +151,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         config
       );
 
+      // await axios.put(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   { status: 'submitted' },
+      //   config
+      // );
+
       setSuccessMessage('Report submitted successfully!');
 
       // Call onSubmit prop after successful submission
@@ -166,6 +192,8 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             <span className="separator">›</span>
             <span className="inactive">Service</span>
             <span className="separator">›</span>
+            <span className="inactive">General Notes</span>
+            <span className="separator">›</span>
             <span className="active">Review</span>
           </div>
         )}
@@ -189,7 +217,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <span>{currentUser.name}</span>
             </div>
           )}
-          
+
           <h2 className="review-section-title">Report Summary</h2>
           {report && (
             <div className="report-meta">
@@ -223,7 +251,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Display Teaching Section Notes if present */}
                 {teachingSectionNotes && (
                   <div className="section-notes">
@@ -335,7 +363,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Display Service Section Notes if present */}
                 {serviceSectionNotes && (
                   <div className="section-notes">
@@ -346,6 +374,18 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               </div>
             ) : (
               <p className="no-data-message">No service data available</p>
+            )}
+          </div>
+          <div className="review-section">
+            <h3 className="review-section-title">General Notes</h3>
+            {report && report.notes ? (
+              <div className="review-section-content">
+                <div className="general-notes-content">
+                  <p>{report.notes}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="no-data-message">No general notes provided</p>
             )}
           </div>
         </div>

@@ -9,10 +9,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   
-  // Add state for section notes
-  const [sectionNotes, setSectionNotes] = useState('');
-  const [originalSectionNotes, setOriginalSectionNotes] = useState('');
-
   const { currentUser } = useContext(AuthContext);
 
   const [newService, setNewService] = useState({
@@ -41,7 +37,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         }
       };
       
-      // First, try to get service entries
+      // Get service entries
       try {
         const { data } = await axios.get(
           `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
@@ -63,25 +59,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         }
       }
       
-      // Then, get the report to check for section notes
-      try {
-        const reportResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-          config
-        );
-
-        // const reportResponse = await axios.get(
-        //   `http://localhost:5001/api/reports/${reportId}`,
-        //   config
-        // );
-        
-        if (reportResponse.data && reportResponse.data.serviceNotes) {
-          setSectionNotes(reportResponse.data.serviceNotes);
-          setOriginalSectionNotes(reportResponse.data.serviceNotes);
-        }
-      } catch (reportError) {
-        console.error('Error fetching report for notes:', reportError);
-      }
     } catch (error) {
       if (error.response?.status !== 404) {
         setError(error.response?.data?.message || 'Failed to fetch service data');
@@ -108,33 +85,9 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         });
       }
       
-      // Save section notes to the report
-      if (sectionNotes !== originalSectionNotes) {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentUser.token}`
-          }
-        };
-        
-        await axios.put(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-          { serviceNotes: sectionNotes },
-          config
-        );
-
-        // await axios.put(
-        //   `http://localhost:5001/api/reports/${reportId}`,
-        //   { serviceNotes: sectionNotes },
-        //   config
-        // );
-        
-        setOriginalSectionNotes(sectionNotes);
-      }
-      
       setSuccessMessage('Service data saved successfully!');
       
-      // Proceed to review page (instead of directly submitting)
+      // Proceed to general notes page
       setTimeout(() => {
         onNext();
       }, 1000);
@@ -151,11 +104,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       ...prev,
       [field]: value
     }));
-  };
-  
-  // Handle section notes change
-  const handleSectionNotesChange = (e) => {
-    setSectionNotes(e.target.value);
   };
   
   const handleSaveService = async () => {
@@ -232,24 +180,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
-        
-        {/* Section Notes */}
-        <div className="course-card">
-          <h3 className="course-title">Service Section Notes</h3>
-          <p className="notes-instruction">
-            If there is something you would like the department to know about your activities this year, please briefly describe here. You might consider the following ways to evaluate research and creative work: publication/output, funding, impact, peer reputation, and prestige of output venues.
-          </p>
-          <div className="yar-form-group">
-            <textarea
-              className="course-notes"
-              rows="6"
-              value={sectionNotes}
-              onChange={handleSectionNotesChange}
-              placeholder="Enter any additional notes about your service activities here..."
-              style={{ width: '100%', padding: '12px', marginTop: '15px' }}
-            ></textarea>
-          </div>
-        </div>
 
         {/* Services List */}
         {services.map(service => (
@@ -375,47 +305,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next: Review'} {/* Updated button text */}
+            {loading ? 'Saving...' : 'Next: General Notes'} 
           </button>
         </div>
       </div>
-
-      <style jsx>{`
-        .success-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 50vh;
-          padding: 30px;
-        }
-        
-        .success-message-large {
-          background-color: rgba(76, 175, 80, 0.1);
-          border-left: 4px solid #4CAF50;
-          color: #2e7d32;
-          padding: 30px;
-          border-radius: 8px;
-          text-align: center;
-          max-width: 600px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .success-message-large h2 {
-          margin-top: 0;
-          color: #2e7d32;
-        }
-        
-        .notes-instruction {
-          background-color: #f9f9ff;
-          padding: 15px;
-          border-left: 3px solid #4B2E83;
-          border-radius: 4px;
-          font-family: "Encode Sans";
-          margin-top: 10px;
-          line-height: 1.6;
-          color: #555;
-        }
-      `}</style>
     </div>
   );
 };

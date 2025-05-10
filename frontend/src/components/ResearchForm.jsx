@@ -145,8 +145,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
       await axios.post(
         `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
-        { 
-          publications, 
+        {
+          publications,
           grants,
           conferences,
           reportId: reportId
@@ -320,6 +320,12 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             <span className="inactive">Teaching</span>
             <span className="separator">›</span>
             <span className="active">Research</span>
+            <span className="separator">›</span>
+            <span className="inactive">Service</span>
+            <span className="separator">›</span>
+            <span className="inactive">General Notes</span>
+            <span className="separator">›</span>
+            <span className="inactive">Review</span>
           </div>
         </div>
 

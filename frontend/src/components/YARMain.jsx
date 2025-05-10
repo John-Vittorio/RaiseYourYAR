@@ -5,11 +5,12 @@ import YARArchive from './YARArchive';
 import TeachingForm from './TeachingForm';
 import ResearchForm from './ResearchForm';
 import ServiceForm from './ServiceForm';
-import ReportReview from './ReportReview'; // Import our new component
+import GeneralNotesForm from './GeneralNotesForm'; // Import our new component
+import ReportReview from './ReportReview';
 
 const YARMain = () => {
   // State to track the current view and active report
-  const [currentView, setCurrentView] = useState('main'); // main, teaching, research, service, review
+  const [currentView, setCurrentView] = useState('main'); // main, teaching, research, service, generalNotes, review
   const [activeReport, setActiveReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -85,7 +86,11 @@ const YARMain = () => {
         setCurrentView('service');
         break;
       case 'service':
-        // Instead of submitting, now go to review
+        // Now go to general notes instead of review
+        setCurrentView('generalNotes');
+        break;
+      case 'generalNotes':
+        // After general notes, go to review
         setCurrentView('review');
         break;
       default:
@@ -114,8 +119,11 @@ const YARMain = () => {
       case 'service':
         setCurrentView('research');
         break;
-      case 'review':
+      case 'generalNotes':
         setCurrentView('service');
+        break;
+      case 'review':
+        setCurrentView('generalNotes');
         break;
       default:
         setCurrentView('main');
@@ -167,6 +175,14 @@ const YARMain = () => {
           <ServiceForm
             onNext={() => handleNext('service')}
             onPrevious={() => handlePrevious('service')}
+            reportId={activeReport?._id}
+          />
+        );
+      case 'generalNotes':
+        return (
+          <GeneralNotesForm
+            onNext={() => handleNext('generalNotes')}
+            onPrevious={() => handlePrevious('generalNotes')}
             reportId={activeReport?._id}
           />
         );

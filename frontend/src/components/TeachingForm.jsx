@@ -11,7 +11,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [autoSaveStatus, setAutoSaveStatus] = useState('');
   const [autoSaveTimer, setAutoSaveTimer] = useState(null);
-  
+
   // New state for section notes
   const [sectionNotes, setSectionNotes] = useState('');
   const [originalSectionNotes, setOriginalSectionNotes] = useState('');
@@ -30,7 +30,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   useEffect(() => {
     // Only set up auto-save if we have courses and they're not the initial empty state
     if ((courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) ||
-        (sectionNotes !== originalSectionNotes)) {
+      (sectionNotes !== originalSectionNotes)) {
       // Clear any existing timer
       if (autoSaveTimer) {
         clearTimeout(autoSaveTimer);
@@ -423,8 +423,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   const handleNext = async () => {
     try {
       // If there are any unsaved changes, save them before proceeding
-      if (JSON.stringify(courses) !== JSON.stringify(originalCourses) || 
-          sectionNotes !== originalSectionNotes) {
+      if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
+        sectionNotes !== originalSectionNotes) {
         await autoSaveTeachingData();
       }
 
@@ -448,7 +448,16 @@ const TeachingForm = ({ onNext, reportId }) => {
             <span className="inactive">Start</span>
             <span className="separator">›</span>
             <span className="active">Teaching</span>
+            <span className="separator">›</span>
+            <span className="inactive">Research</span>
+            <span className="separator">›</span>
+            <span className="inactive">Service</span>
+            <span className="separator">›</span>
+            <span className="inactive">General Notes</span>
+            <span className="separator">›</span>
+            <span className="inactive">Review</span>
           </div>
+
 
           {/* Auto-save status indicator */}
           {autoSaveStatus && (

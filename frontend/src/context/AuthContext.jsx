@@ -9,6 +9,11 @@ const api = axios.create({
   timeout: 15000, // 15 second timeout to prevent hanging requests
 });
 
+// const api = axios.create({
+//   baseURL: 'http://localhost:5001/api',
+//   timeout: 15000, // 15 second timeout to prevent hanging requests
+// });
+
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
