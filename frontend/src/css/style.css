@@ -654,6 +654,7 @@ hr {
     max-width: 1000px;
     /* margin: 0 auto; */
     width: 100%;
+    overflow-y: auto;
 }
 
 .teaching-header {
