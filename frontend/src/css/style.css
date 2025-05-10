@@ -498,7 +498,7 @@ hr {
     margin-top: 30px;
     margin-bottom: 30px;
     overflow-y: auto;
-    max-height: auto;
+    max-height: 100vh;
     display: flex;
     flex-direction: column;
     max-width: 1000px;
