@@ -14,7 +14,6 @@ const Signup = () => {
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   
   const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -36,9 +35,8 @@ const Signup = () => {
     // Already submitting? Prevent double submission
     if (isSubmitting) return;
     
-    // Clear previous messages
+    // Clear previous errors
     setError('');
-    setSuccessMessage('');
     
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -51,19 +49,12 @@ const Signup = () => {
       // Remove confirmPassword before sending
       const { confirmPassword, ...userData } = formData;
       
-      // Show immediate feedback while request processes
-      setSuccessMessage('Creating your account...');
-      
       await signup(userData);
       
-      // Show success message and redirect after short delay
-      setSuccessMessage('Account created successfully! Redirecting to login...');
-      
-      // Redirect to login after signup
-      setTimeout(() => navigate('/login'), 1500);
+      // Immediately redirect to login after successful signup
+      navigate('/login');
     } catch (error) {
       setError(error.message || 'Failed to create account. Please try again.');
-      setSuccessMessage('');
     } finally {
       setIsSubmitting(false);
     }
@@ -79,7 +70,6 @@ const Signup = () => {
         <h1 className="auth-title">Create an Account</h1>
         
         {error && <div className="auth-error">{error}</div>}
-        {successMessage && <div className="auth-success">{successMessage}</div>}
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="auth-form-group">
