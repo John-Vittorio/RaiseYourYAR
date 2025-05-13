@@ -71,7 +71,7 @@ export const postTeaching = async (req, res) => {
       // Update existing teaching data
       teachingData.courses = validatedCourses;
       teachingData.taughtOutsideDept = taughtOutsideDept; // Store this value too
-      teachingData.sectionNotes = sectionNotes || ""; // Update section notes
+      teachingData.sectionNotes = sectionNotes || ""; // Ensure sectionNotes is stored
       const updatedTeaching = await teachingData.save();
 
       // Also update the teaching notes in the report
@@ -165,6 +165,8 @@ export const postCourse = async (req, res) => {
         teachingData.courses.push(courseData);
       }
 
+      // Make sure we preserve the section notes during single course updates
+      // (the sectionNotes field should have already existed on the teachingData)
       const updatedTeaching = await teachingData.save();
       res.json(updatedTeaching);
     } else {
@@ -172,7 +174,8 @@ export const postCourse = async (req, res) => {
       const newTeaching = await Teaching.create({
         facultyId: req.user._id,
         reportId: reportId,
-        courses: [courseData]
+        courses: [courseData],
+        sectionNotes: "" // Initialize with empty section notes
       });
 
       // Update the report with the teaching section ID
