@@ -50,40 +50,45 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         margin-bottom: 10px;
       }
       
-      /* Grid layout for review items */
+      /* Modified grid layout for review items - more rectangular */
       .review-section-content {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 15px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
       }
       
+      /* Make review items more rectangular with controlled height */
       .review-item {
         background-color: #f9f9ff;
         border-left: 3px solid #4B2E83;
-        padding: 10px;
-        margin-bottom: 12px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
         page-break-inside: avoid;
+        min-height: 0; /* Remove minimum height constraints */
+        max-height: none; /* Allow natural height */
+        overflow: visible; /* Ensure content doesn't get cut off */
       }
       
+      /* Tighten up spacing within review items */
       .review-item-details p {
-        margin: 3px 0;
-        line-height: 1.4;
+        margin: 2px 0;
+        line-height: 1.3;
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
       }
       
       h4 {
-        margin-top: 5px;
-        margin-bottom: 8px;
+        margin-top: 3px;
+        margin-bottom: 5px;
         color: #4B2E83;
       }
       
       .section-notes {
         background-color: #f5f8ff;
         border-left: 3px solid #4B2E83;
-        padding: 8px 12px;
-        margin-top: 10px;
+        padding: 8px 10px;
+        margin-top: 8px;
         grid-column: 1 / -1;
         white-space: normal;
         word-wrap: break-word;
@@ -94,6 +99,7 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        line-height: 1.3;
       }
       
       /* Handle page breaks appropriately */
@@ -114,7 +120,7 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         .review-section-content {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 15px;
+          gap: 12px;
         }
         
         .section-notes {
@@ -123,6 +129,20 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         
         .no-data-message {
           grid-column: 1 / -1;
+        }
+        
+        /* Ensure more rectangular display */
+        .review-item {
+          height: auto;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        /* Reduce vertical spacing */
+        .review-item h4, .review-item h5 {
+          margin-top: 0;
+          margin-bottom: 5px;
         }
       }
     `;
