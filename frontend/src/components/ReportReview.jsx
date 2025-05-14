@@ -44,11 +44,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         config
       );
 
-      // const reportResponse = await axios.get(
-      //   `http://localhost:5001/api/reports/${reportId}`,
-      //   config
-      // );
-
       // Get service section notes from the report
       if (reportResponse.data && reportResponse.data.serviceNotes) {
         setServiceSectionNotes(reportResponse.data.serviceNotes);
@@ -67,15 +62,10 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           config
         );
 
-        // const teachingResponse = await axios.get(
-        //   `http://localhost:5001/api/teaching/${reportId}`,
-        //   config
-        // );
-
         teachingData = teachingResponse.data;
 
         // Get section notes from teaching data if it exists there
-        if (teachingData && teachingData.sectionNotes && !teachingSectionNotes) {
+        if (teachingData && teachingData.sectionNotes) {
           setTeachingSectionNotes(teachingData.sectionNotes);
         }
       } catch (teachingError) {
@@ -90,11 +80,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           config
         );
 
-        // const researchResponse = await axios.get(
-        //   `http://localhost:5001/api/research/${reportId}`,
-        //   config
-        // );
-
         researchData = researchResponse.data;
       } catch (researchError) {
         console.log('No research data or error fetching research data:', researchError);
@@ -107,11 +92,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
           `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
-
-        // const serviceResponse = await axios.get(
-        //   `http://localhost:5001/api/service/${reportId}`,
-        //   config
-        // );
 
         serviceData = serviceResponse.data;
       } catch (serviceError) {
@@ -150,12 +130,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         { status: 'submitted' },
         config
       );
-
-      // await axios.put(
-      //   `http://localhost:5001/api/reports/${reportId}`,
-      //   { status: 'submitted' },
-      //   config
-      // );
 
       setSuccessMessage('Report submitted successfully!');
 
@@ -252,7 +226,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                   </div>
                 ))}
 
-                {/* Display Teaching Section Notes if present */}
+                {/* Always check for teaching section notes and display them if available */}
                 {teachingSectionNotes && (
                   <div className="section-notes">
                     <h4>Teaching Section Notes:</h4>
@@ -261,7 +235,17 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 )}
               </div>
             ) : (
-              <p className="no-data-message">No teaching data available</p>
+              <div className="review-section-content">
+                <p className="no-data-message">No teaching data available</p>
+                
+                {/* Display teaching section notes even if no courses */}
+                {teachingSectionNotes && (
+                  <div className="section-notes">
+                    <h4>Teaching Section Notes:</h4>
+                    <p>{teachingSectionNotes}</p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -373,9 +357,20 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 )}
               </div>
             ) : (
-              <p className="no-data-message">No service data available</p>
+              <div className="review-section-content">
+                <p className="no-data-message">No service data available</p>
+                
+                {/* Display service section notes even if no services */}
+                {serviceSectionNotes && (
+                  <div className="section-notes">
+                    <h4>Service Section Notes:</h4>
+                    <p>{serviceSectionNotes}</p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
+          
           <div className="review-section">
             <h3 className="review-section-title">General Notes</h3>
             {report && report.notes ? (
