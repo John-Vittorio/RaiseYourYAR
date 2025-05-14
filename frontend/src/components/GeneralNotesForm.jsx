@@ -33,15 +33,15 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
       
       // Get the report to check for existing notes
       try {
-        // const reportResponse = await axios.get(
-        //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-        //   config
-        // );
-
         const reportResponse = await axios.get(
-          `http://localhost:5001/api/reports/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
           config
         );
+
+        // const reportResponse = await axios.get(
+        //   `http://localhost:5001/api/reports/${reportId}`,
+        //   config
+        // );
         
         if (reportResponse.data && reportResponse.data.notes) {
           setGeneralNotes(reportResponse.data.notes);
@@ -78,17 +78,17 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
           }
         };
         
-        // await axios.put(
-        //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-        //   { notes: generalNotes },
-        //   config
-        // );
-
         await axios.put(
-          `http://localhost:5001/api/reports/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
           { notes: generalNotes },
           config
         );
+
+        // await axios.put(
+        //   `http://localhost:5001/api/reports/${reportId}`,
+        //   { notes: generalNotes },
+        //   config
+        // );
         
         setOriginalNotes(generalNotes);
       }

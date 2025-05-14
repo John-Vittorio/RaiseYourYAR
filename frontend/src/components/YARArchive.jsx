@@ -33,15 +33,15 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         }
       };
       
-      // const { data } = await axios.get(
-      //   'https://raiseyouryar-3.onrender.com/api/reports',
-      //   config
-      // );
-
       const { data } = await axios.get(
-        'http://localhost:5001/api/reports',
+        'https://raiseyouryar-3.onrender.com/api/reports',
         config
       );
+
+      // const { data } = await axios.get(
+      //   'http://localhost:5001/api/reports',
+      //   config
+      // );
       
       setReports(data);
     } catch (error) {
@@ -100,15 +100,15 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       
       // Use our direct MongoDB delete endpoint
       console.log('Sending delete request for report:', reportToDelete);
-      // const response = await axios.delete(
-      //   `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
-      //   config
-      // );
-
       const response = await axios.delete(
-        `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
         config
       );
+
+      // const response = await axios.delete(
+      //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+      //   config
+      // );
       
       console.log('Delete response:', response.data);
       

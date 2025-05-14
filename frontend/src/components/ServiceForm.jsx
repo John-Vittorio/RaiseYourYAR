@@ -41,15 +41,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       
       // Get service entries
       try {
-        // const { data } = await axios.get(
-        //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-        //   config
-        // );
-
         const { data } = await axios.get(
-          `http://localhost:5001/api/service/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
+
+        // const { data } = await axios.get(
+        //   `http://localhost:5001/api/service/${reportId}`,
+        //   config
+        // );
       
         if (data) {
           setServices(data);
@@ -150,17 +150,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       }
     };
     
-    // const { data } = await axios.post(
-    //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-    //   serviceData,
-    //   config
-    // );
-
     const { data } = await axios.post(
-      `http://localhost:5001/api/service/${reportId}`,
+      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
       serviceData,
       config
     );
+
+    // const { data } = await axios.post(
+    //   `http://localhost:5001/api/service/${reportId}`,
+    //   serviceData,
+    //   config
+    // );
     
     return data;
   };
@@ -176,15 +176,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         }
       };
       
-      // await axios.delete(
-      //   `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
-      //   config
-      // );
-
       await axios.delete(
-        `http://localhost:5001/api/service/${serviceId}`,
+        `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
         config
       );
+
+      // await axios.delete(
+      //   `http://localhost:5001/api/service/${serviceId}`,
+      //   config
+      // );
       
       // Update local state to remove the deleted service
       setServices(prev => prev.filter(service => service._id !== serviceId));

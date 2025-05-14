@@ -39,15 +39,15 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       };
 
       // Fetch report details
-      // const reportResponse = await axios.get(
-      //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-      //   config
-      // );
-
       const reportResponse = await axios.get(
-        `http://localhost:5001/api/reports/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         config
       );
+
+      // const reportResponse = await axios.get(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   config
+      // );
 
       // Get service section notes from the report
       if (reportResponse.data && reportResponse.data.serviceNotes) {
@@ -62,15 +62,15 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       // Fetch teaching data
       let teachingData = null;
       try {
-        // const teachingResponse = await axios.get(
-        //   `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
-        //   config
-        // );
-
         const teachingResponse = await axios.get(
-          `http://localhost:5001/api/teaching/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
           config
         );
+
+        // const teachingResponse = await axios.get(
+        //   `http://localhost:5001/api/teaching/${reportId}`,
+        //   config
+        // );
 
         teachingData = teachingResponse.data;
 
@@ -85,15 +85,15 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       // Fetch research data
       let researchData = null;
       try {
-        // const researchResponse = await axios.get(
-        //   `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
-        //   config
-        // );
-
         const researchResponse = await axios.get(
-          `http://localhost:5001/api/research/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
           config
         );
+
+        // const researchResponse = await axios.get(
+        //   `http://localhost:5001/api/research/${reportId}`,
+        //   config
+        // );
 
         researchData = researchResponse.data;
       } catch (researchError) {
@@ -103,15 +103,15 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       // Fetch service data
       let serviceData = [];
       try {
-        // const serviceResponse = await axios.get(
-        //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-        //   config
-        // );
-
         const serviceResponse = await axios.get(
-          `http://localhost:5001/api/service/${reportId}`,
+          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
+
+        // const serviceResponse = await axios.get(
+        //   `http://localhost:5001/api/service/${reportId}`,
+        //   config
+        // );
 
         serviceData = serviceResponse.data;
       } catch (serviceError) {
@@ -145,17 +145,17 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       };
 
       // Update report status to submitted
-      // await axios.put(
-      //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-      //   { status: 'submitted' },
-      //   config
-      // );
-
       await axios.put(
-        `http://localhost:5001/api/reports/${reportId}`,
+        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         { status: 'submitted' },
         config
       );
+
+      // await axios.put(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   { status: 'submitted' },
+      //   config
+      // );
 
       setSuccessMessage('Report submitted successfully!');
 
