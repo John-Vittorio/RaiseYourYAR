@@ -260,6 +260,24 @@
   display: none; /* Hidden by default in browser */
 }
 
+/* Add to report-review-styles.css */
+
+/* Ensure proper text wrapping for all content */
+.wrap-text {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.5;
+}
+
+/* Ensure General Notes section has consistent styling */
+.general-notes-content {
+  background-color: #f5f8ff;
+  border-left: 3px solid #4B2E83;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
 @media print {
   /* Applied when printing or generating PDF */
   .pdf-optimized {

@@ -9,6 +9,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // State for report data
   const [report, setReport] = useState(null);
   const [teaching, setTeaching] = useState(null);
   const [teachingSectionNotes, setTeachingSectionNotes] = useState('');
@@ -148,7 +149,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
 
   // Function to get status class for color coding
   const getStatusClass = (status) => {
-    switch(status) {
+    switch (status) {
       case 'draft': return 'draft';
       case 'submitted': return 'submitted';
       case 'approved': return 'approved';
@@ -201,7 +202,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       {successMessage && <div className="success-message">{successMessage}</div>}
 
       <div id="reportContentForPDF" className="pdf-report-container">
-        {/* PDF Title Header - Only visible in the PDF */}
+        {/* PDF Title Header */}
         <div className="pdf-optimized yar-title-pdf">
           2024-2025 Yearly Activity Report
           {report && (
@@ -210,7 +211,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             </span>
           )}
         </div>
-        
+
         <div className="course-card report-card">
           {currentUser && (
             <div className="faculty-name-section">
@@ -218,202 +219,190 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             </div>
           )}
 
-          <h2 className="review-section-title">Report Summary</h2>
-          {report && (
-            <div className="report-meta">
-              <p><strong>Academic Year:</strong> {report.academicYear}</p>
-              <p><strong>Status:</strong> {report.status}</p>
-              <p><strong>Generated:</strong> {formatDate(new Date())}</p>
-            </div>
-          )}
-
-          <div className="review-section">
-            <h3 className="review-section-title">Teaching</h3>
-            {teaching && teaching.courses && teaching.courses.length > 0 ? (
-              <div className="review-section-content">
-                {teaching.courses.map((course, index) => (
-                  <div key={index} className="review-item">
-                    <h4>{course.name}</h4>
-                    <div className="review-item-details">
-                      <p><strong>Quarter:</strong> {course.quarter} {course.year}</p>
-                      <p><strong>Credits:</strong> {course.credits}</p>
-                      <p><strong>Enrollment:</strong> {course.enrollment}</p>
-                      <p><strong>Student Credit Hours:</strong> {course.studentCreditHours}</p>
-                      {course.evaluationScore && (
-                        <p><strong>Evaluation Score:</strong> {course.evaluationScore}</p>
-                      )}
-                      {course.adjustedEvaluationScore && (
-                        <p><strong>Adjusted Evaluation Score:</strong> {course.adjustedEvaluationScore}</p>
-                      )}
-                      <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
-                      <p><strong>Updated Course:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
-                      {course.notes && <p className="wrap-text"><strong>Notes:</strong> {course.notes}</p>}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Always check for teaching section notes and display them if available */}
-                {teachingSectionNotes && (
-                  <div className="section-notes">
-                    <h4>Teaching Section Notes:</h4>
-                    <p className="wrap-text">{teachingSectionNotes}</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="review-section-content">
-                <p className="no-data-message">No teaching data available</p>
-                
-                {/* Display teaching section notes even if no courses */}
-                {teachingSectionNotes && (
-                  <div className="section-notes">
-                    <h4>Teaching Section Notes:</h4>
-                    <p className="wrap-text">{teachingSectionNotes}</p>
-                  </div>
-                )}
+          <div className="pdf-content-wrapper">
+            <h2 className="review-section-title">Report Summary</h2>
+            {report && (
+              <div className="report-meta">
+                <p><strong>Academic Year:</strong> {report.academicYear}</p>
+                <p><strong>Status:</strong> {report.status}</p>
+                <p><strong>Generated:</strong> {formatDate(new Date())}</p>
               </div>
             )}
-          </div>
 
-          <div className="review-section">
-            <h3 className="review-section-title">Research</h3>
-            {research ? (
-              <div className="review-section-content">
-                {research.publications && research.publications.length > 0 && (
-                  <div className="research-publications">
-                    <h4>Publications</h4>
-                    {research.publications.map((pub, index) => (
-                      <div key={index} className="review-item">
-                        <h5>{pub.title}</h5>
-                        <div className="review-item-details">
-                          <p><strong>Type:</strong> {pub.publicationType}</p>
-                          <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
-                          <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
-                          {pub.notes && <p className="wrap-text"><strong>Notes:</strong> {pub.notes}</p>}
-                        </div>
+            <div className="review-section teaching-section">
+              <h3 className="review-section-title">Teaching</h3>
+              {teaching && teaching.courses && teaching.courses.length > 0 ? (
+                <div className="review-section-content">
+                  {teaching.courses.map((course, index) => (
+                    <div key={index} className="review-item">
+                      <h4>{course.name}</h4>
+                      <div className="review-item-details">
+                        <p><strong>Quarter:</strong> {course.quarter} {course.year}</p>
+                        <p><strong>Credits:</strong> {course.credits}</p>
+                        <p><strong>Enrollment:</strong> {course.enrollment}</p>
+                        <p><strong>Student Credit Hours:</strong> {course.studentCreditHours}</p>
+                        {course.evaluationScore && (
+                          <p><strong>Evaluation Score:</strong> {course.evaluationScore}</p>
+                        )}
+                        {course.adjustedEvaluationScore && (
+                          <p><strong>Adjusted Evaluation:</strong> {course.adjustedEvaluationScore}</p>
+                        )}
+                        <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
+                        <p><strong>Updated:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
+                        {course.notes && <p className="wrap-text"><strong>Notes:</strong> {course.notes}</p>}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  ))}
 
-                {research.grants && research.grants.length > 0 && (
-                  <div className="research-grants">
-                    <h4>Grants & Research Activities</h4>
-                    {research.grants.map((grant, index) => (
-                      <div key={index} className="review-item">
-                        <h5>{grant.title} ({grant.type})</h5>
-                        <div className="review-item-details">
-                          {grant.client && <p><strong>Client/Sponsor:</strong> {grant.client}</p>}
-                          {grant.role && <p><strong>Role:</strong> {grant.role}</p>}
-                          {grant.totalAmount && <p><strong>Total Amount:</strong> ${grant.totalAmount}</p>}
-                          {grant.yourShare && <p><strong>Your Share:</strong> ${grant.yourShare}</p>}
-                          {grant.startDate && grant.endDate && (
-                            <p>
-                              <strong>Period:</strong> {new Date(grant.startDate).toLocaleDateString()} to {new Date(grant.endDate).toLocaleDateString()}
-                            </p>
-                          )}
-                          {grant.coPIs && grant.coPIs.length > 0 && (
-                            <div>
-                              <p><strong>Co-PIs:</strong></p>
-                              <ul className="wrap-text">
-                                {grant.coPIs.map((coPI, i) => (
-                                  <li key={i}>{coPI.name} {coPI.affiliation ? `(${coPI.affiliation})` : ''}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          {grant.notes && <p className="wrap-text"><strong>Notes:</strong> {grant.notes}</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {research.conferences && research.conferences.length > 0 && (
-                  <div className="research-conferences">
-                    <h4>Conferences</h4>
-                    {research.conferences.map((conf, index) => (
-                      <div key={index} className="review-item">
-                        <h5>{conf.name}</h5>
-                        <div className="review-item-details">
-                          {conf.startDate && conf.endDate && (
-                            <p>
-                              <strong>Period:</strong> {new Date(conf.startDate).toLocaleDateString()} to {new Date(conf.endDate).toLocaleDateString()}
-                            </p>
-                          )}
-                          {conf.notes && <p className="wrap-text"><strong>Notes:</strong> {conf.notes}</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {(!research.publications || research.publications.length === 0) &&
-                  (!research.grants || research.grants.length === 0) &&
-                  (!research.conferences || research.conferences.length === 0) && (
-                    <p className="no-data-message">No research details available</p>
+                  {teachingSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Teaching Section Notes:</h4>
+                      <p className="wrap-text">{teachingSectionNotes}</p>
+                    </div>
                   )}
-              </div>
-            ) : (
-              <p className="no-data-message">No research data available</p>
-            )}
-          </div>
-
-          <div className="review-section">
-            <h3 className="review-section-title">Service</h3>
-            {services && services.length > 0 ? (
-              <div className="review-section-content">
-                {services.map((service, index) => (
-                  <div key={index} className="review-item">
-                    <h4>{service.type}</h4>
-                    <div className="review-item-details">
-                      {service.role && <p><strong>Role:</strong> {service.role}</p>}
-                      {service.department && <p><strong>Department:</strong> {service.department}</p>}
-                      {service.description && <p className="wrap-text"><strong>Description:</strong> {service.description}</p>}
-                      {service.notes && <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Display Service Section Notes if present */}
-                {serviceSectionNotes && (
-                  <div className="section-notes">
-                    <h4>Service Section Notes:</h4>
-                    <p className="wrap-text">{serviceSectionNotes}</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="review-section-content">
-                <p className="no-data-message">No service data available</p>
-                
-                {/* Display service section notes even if no services */}
-                {serviceSectionNotes && (
-                  <div className="section-notes">
-                    <h4>Service Section Notes:</h4>
-                    <p className="wrap-text">{serviceSectionNotes}</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          
-          <div className="review-section">
-            <h3 className="review-section-title">General Notes</h3>
-            {report && report.notes ? (
-              <div className="review-section-content">
-                <div className="general-notes-content">
-                  <p className="wrap-text">{report.notes}</p>
                 </div>
-              </div>
-            ) : (
-              <p className="no-data-message">No general notes provided</p>
-            )}
+              ) : (
+                <div className="review-section-content">
+                  <p className="no-data-message">No teaching data available</p>
+
+                  {teachingSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Teaching Section Notes:</h4>
+                      <p className="wrap-text">{teachingSectionNotes}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="review-section research-section">
+              <h3 className="review-section-title">Research</h3>
+              {research ? (
+                <div className="review-section-content">
+                  {research.publications && research.publications.length > 0 && (
+                    <>
+                      {research.publications.map((pub, index) => (
+                        <div key={index} className="review-item">
+                          <h4>{pub.title}</h4>
+                          <div className="review-item-details">
+                            <p><strong>Type:</strong> {pub.publicationType}</p>
+                            <p><strong>Journal/Publisher:</strong> {pub.journalName}</p>
+                            <p><strong>Status:</strong> {pub.publicationStatus}</p>
+                            {pub.notes && <p className="wrap-text"><strong>Notes:</strong> {pub.notes}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {research.grants && research.grants.length > 0 && (
+                    <>
+                      {research.grants.map((grant, index) => (
+                        <div key={index} className="review-item">
+                          <h4>{grant.title} ({grant.type})</h4>
+                          <div className="review-item-details">
+                            {grant.client && <p><strong>Client:</strong> {grant.client}</p>}
+                            {grant.role && <p><strong>Role:</strong> {grant.role}</p>}
+                            {grant.totalAmount && <p><strong>Total:</strong> ${grant.totalAmount}</p>}
+                            {grant.yourShare && <p><strong>Your Share:</strong> ${grant.yourShare}</p>}
+                            {grant.startDate && grant.endDate && (
+                              <p>
+                                <strong>Period:</strong> {new Date(grant.startDate).toLocaleDateString()} to {new Date(grant.endDate).toLocaleDateString()}
+                              </p>
+                            )}
+                            {grant.coPIs && grant.coPIs.length > 0 && (
+                              <p><strong>Co-PIs:</strong> {grant.coPIs.map(pi => pi.name).join(', ')}</p>
+                            )}
+                            {grant.notes && <p className="wrap-text"><strong>Notes:</strong> {grant.notes}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {research.conferences && research.conferences.length > 0 && (
+                    <>
+                      {research.conferences.map((conf, index) => (
+                        <div key={index} className="review-item">
+                          <h4>{conf.name}</h4>
+                          <div className="review-item-details">
+                            {conf.startDate && conf.endDate && (
+                              <p>
+                                <strong>Period:</strong> {new Date(conf.startDate).toLocaleDateString()} to {new Date(conf.endDate).toLocaleDateString()}
+                              </p>
+                            )}
+                            {conf.notes && <p className="wrap-text"><strong>Notes:</strong> {conf.notes}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {(!research.publications || research.publications.length === 0) &&
+                    (!research.grants || research.grants.length === 0) &&
+                    (!research.conferences || research.conferences.length === 0) && (
+                      <p className="no-data-message">No research details available</p>
+                    )}
+                </div>
+              ) : (
+                <p className="no-data-message">No research data available</p>
+              )}
+            </div>
+
+            <div className="review-section service-section">
+              <h3 className="review-section-title">Service</h3>
+              {services && services.length > 0 ? (
+                <div className="review-section-content">
+                  {services.map((service, index) => (
+                    <div key={index} className="review-item">
+                      <h4>{service.type}</h4>
+                      <div className="review-item-details">
+                        {service.role && <p><strong>Role:</strong> {service.role}</p>}
+                        {service.department && <p><strong>Dept:</strong> {service.department}</p>}
+                        {service.description && <p className="wrap-text"><strong>Description:</strong> {service.description}</p>}
+                        {service.notes && <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>}
+                      </div>
+                    </div>
+                  ))}
+
+                  {serviceSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Service Section Notes:</h4>
+                      <p className="wrap-text">{serviceSectionNotes}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="review-section-content">
+                  <p className="no-data-message">No service data available</p>
+
+                  {serviceSectionNotes && (
+                    <div className="section-notes">
+                      <h4>Service Section Notes:</h4>
+                      <p className="wrap-text">{serviceSectionNotes}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="review-section notes-section">
+              <h3 className="review-section-title">General Notes</h3>
+              {report && report.notes ? (
+                <div className="review-section-content">
+                  <div className="general-notes-content">
+                    <p className="wrap-text">{report.notes}</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="no-data-message">No general notes provided</p>
+              )}
+            </div>
           </div>
-          
-          {/* PDF Footer - Only visible in PDF */}
-          <div className="pdf-optimized" style={{ marginTop: '40px', borderTop: '1px solid #ccc', paddingTop: '10px', fontSize: '10px', color: '#666', textAlign: 'center' }}>
-            <p>Generated on {new Date().toLocaleDateString()} | Yearly Activity Report | Page 1</p>
+
+          {/* PDF Footer */}
+          <div className="pdf-optimized pdf-footer">
+            <p>Generated on {new Date().toLocaleDateString()} | Yearly Activity Report</p>
           </div>
         </div>
       </div>
