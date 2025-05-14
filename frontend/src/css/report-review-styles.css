@@ -92,7 +92,7 @@
 
 .review-section-content {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   overflow-wrap: break-word;
   word-wrap: break-word;
   box-sizing: border-box;
@@ -102,10 +102,8 @@
 @media screen {
   .review-section-content {
     display: grid;
-    grid-template-columns: 1fr;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    box-sizing: border-box;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
   }
   
   .no-data-message,
