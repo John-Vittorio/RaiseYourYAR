@@ -50,6 +50,13 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         margin-bottom: 10px;
       }
       
+      /* Grid layout for review items */
+      .review-section-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+      
       .review-item {
         background-color: #f9f9ff;
         border-left: 3px solid #4B2E83;
@@ -61,6 +68,9 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
       .review-item-details p {
         margin: 3px 0;
         line-height: 1.4;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       
       h4 {
@@ -74,6 +84,16 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         border-left: 3px solid #4B2E83;
         padding: 8px 12px;
         margin-top: 10px;
+        grid-column: 1 / -1;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+      
+      .general-notes-content p {
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
       
       /* Handle page breaks appropriately */
@@ -87,6 +107,23 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
       
       .report-meta {
         page-break-inside: avoid;
+      }
+      
+      /* Make sure the grid layout works properly in PDF */
+      @media print {
+        .review-section-content {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+        }
+        
+        .section-notes {
+          grid-column: 1 / -1;
+        }
+        
+        .no-data-message {
+          grid-column: 1 / -1;
+        }
       }
     `;
     

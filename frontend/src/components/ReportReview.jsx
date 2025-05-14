@@ -225,7 +225,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <p><strong>Academic Year:</strong> {report.academicYear}</p>
               <p><strong>Status:</strong> {report.status}</p>
               <p><strong>Generated:</strong> {formatDate(new Date())}</p>
-              {report.notes && <p><strong>Notes:</strong> {report.notes}</p>}
+              {report.notes && <p className="wrap-text"><strong>Notes:</strong> {report.notes}</p>}
             </div>
           )}
 
@@ -249,7 +249,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                       )}
                       <p><strong>Community Engaged:</strong> {course.commEngaged ? 'Yes' : 'No'}</p>
                       <p><strong>Updated Course:</strong> {course.updatedCourse ? 'Yes' : 'No'}</p>
-                      {course.notes && <p><strong>Notes:</strong> {course.notes}</p>}
+                      {course.notes && <p className="wrap-text"><strong>Notes:</strong> {course.notes}</p>}
                     </div>
                   </div>
                 ))}
@@ -258,7 +258,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 {teachingSectionNotes && (
                   <div className="section-notes">
                     <h4>Teaching Section Notes:</h4>
-                    <p>{teachingSectionNotes}</p>
+                    <p className="wrap-text">{teachingSectionNotes}</p>
                   </div>
                 )}
               </div>
@@ -270,7 +270,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 {teachingSectionNotes && (
                   <div className="section-notes">
                     <h4>Teaching Section Notes:</h4>
-                    <p>{teachingSectionNotes}</p>
+                    <p className="wrap-text">{teachingSectionNotes}</p>
                   </div>
                 )}
               </div>
@@ -291,6 +291,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                           <p><strong>Type:</strong> {pub.publicationType}</p>
                           <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName}</p>
                           <p><strong>Publication Status:</strong> {pub.publicationStatus}</p>
+                          {pub.notes && <p className="wrap-text"><strong>Notes:</strong> {pub.notes}</p>}
                         </div>
                       </div>
                     ))}
@@ -316,14 +317,14 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                           {grant.coPIs && grant.coPIs.length > 0 && (
                             <div>
                               <p><strong>Co-PIs:</strong></p>
-                              <ul>
+                              <ul className="wrap-text">
                                 {grant.coPIs.map((coPI, i) => (
                                   <li key={i}>{coPI.name} {coPI.affiliation ? `(${coPI.affiliation})` : ''}</li>
                                 ))}
                               </ul>
                             </div>
                           )}
-                          {grant.notes && <p><strong>Notes:</strong> {grant.notes}</p>}
+                          {grant.notes && <p className="wrap-text"><strong>Notes:</strong> {grant.notes}</p>}
                         </div>
                       </div>
                     ))}
@@ -342,7 +343,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                               <strong>Period:</strong> {new Date(conf.startDate).toLocaleDateString()} to {new Date(conf.endDate).toLocaleDateString()}
                             </p>
                           )}
-                          {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
+                          {conf.notes && <p className="wrap-text"><strong>Notes:</strong> {conf.notes}</p>}
                         </div>
                       </div>
                     ))}
@@ -370,8 +371,8 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                     <div className="review-item-details">
                       {service.role && <p><strong>Role:</strong> {service.role}</p>}
                       {service.department && <p><strong>Department:</strong> {service.department}</p>}
-                      {service.description && <p><strong>Description:</strong> {service.description}</p>}
-                      {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
+                      {service.description && <p className="wrap-text"><strong>Description:</strong> {service.description}</p>}
+                      {service.notes && <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>}
                     </div>
                   </div>
                 ))}
@@ -380,7 +381,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 {serviceSectionNotes && (
                   <div className="section-notes">
                     <h4>Service Section Notes:</h4>
-                    <p>{serviceSectionNotes}</p>
+                    <p className="wrap-text">{serviceSectionNotes}</p>
                   </div>
                 )}
               </div>
@@ -392,7 +393,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 {serviceSectionNotes && (
                   <div className="section-notes">
                     <h4>Service Section Notes:</h4>
-                    <p>{serviceSectionNotes}</p>
+                    <p className="wrap-text">{serviceSectionNotes}</p>
                   </div>
                 )}
               </div>
@@ -404,7 +405,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             {report && report.notes ? (
               <div className="review-section-content">
                 <div className="general-notes-content">
-                  <p>{report.notes}</p>
+                  <p className="wrap-text">{report.notes}</p>
                 </div>
               </div>
             ) : (
