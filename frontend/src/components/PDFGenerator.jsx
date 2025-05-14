@@ -29,102 +29,107 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
       }
       
       .faculty-name-section {
-        font-size: 22px;
+        font-size: 20px;
         color: #4B2E83;
         font-weight: 600;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
         border-bottom: 2px solid #4B2E83;
       }
       
       .review-section {
-        margin-top: 15px;
-        padding-top: 10px;
+        margin-top: 12px;
+        padding-top: 8px;
         page-break-inside: avoid;
       }
       
       .review-section-title {
         color: #4B2E83;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
       
-      /* Set grid layout for 3 items per row */
+      /* Set grid layout for exactly 2 items per row */
       .review-section-content {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
       }
       
-      /* More compact review items */
+      /* More compact and horizontal review items */
       .review-item {
         background-color: #f9f9ff;
         border-left: 3px solid #4B2E83;
-        padding: 6px 8px;
+        padding: 5px 8px;
         margin-bottom: 6px;
         page-break-inside: avoid;
         min-height: auto;
-        max-height: none;
+        height: auto;
         overflow: visible;
       }
       
       /* Tighter spacing within review items */
       .review-item-details p {
         margin: 1px 0;
-        line-height: 1.2;
+        line-height: 1.15;
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        font-size: 9px;
       }
       
       h4 {
-        margin-top: 2px;
-        margin-bottom: 3px;
+        margin-top: 1px;
+        margin-bottom: 2px;
         color: #4B2E83;
-        font-size: 13px;
+        font-size: 11px;
       }
       
       h5 {
         margin-top: 1px;
-        margin-bottom: 3px;
-        font-size: 12px;
+        margin-bottom: 2px;
+        font-size: 10px;
       }
       
       .section-notes {
         background-color: #f5f8ff;
         border-left: 3px solid #4B2E83;
-        padding: 6px 8px;
+        padding: 5px 8px;
         margin-top: 6px;
         grid-column: 1 / -1;
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        font-size: 9px;
       }
       
       .section-notes h4 {
-        margin-bottom: 4px;
+        margin-bottom: 3px;
+        font-size: 11px;
       }
       
       .general-notes-content p {
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
-        line-height: 1.2;
+        line-height: 1.15;
+        font-size: 9px;
       }
       
       /* Report meta information */
       .report-meta {
         background-color: #f9f9ff;
-        padding: 8px 10px;
-        margin-bottom: 15px;
+        padding: 6px 8px;
+        margin-bottom: 12px;
         border-left: 4px solid #4B2E83;
         page-break-inside: avoid;
+        font-size: 10px;
       }
       
       .report-meta p {
         margin: 2px 0;
-        line-height: 1.2;
+        line-height: 1.15;
       }
       
       /* Careful page break handling */
@@ -147,18 +152,19 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         text-align: center;
         font-style: italic;
         color: #777;
+        font-size: 10px;
       }
       
       /* More compact layout for PDF */
       @media print {
         body {
-          font-size: 10pt;
-          line-height: 1.2;
+          font-size: 9pt;
+          line-height: 1.15;
         }
         
         .review-section-content {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
           gap: 8px;
         }
         
@@ -176,20 +182,20 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
           min-height: auto;
           display: flex;
           flex-direction: column;
-          padding: 6px 8px;
+          padding: 5px 8px;
         }
         
         /* Reduce vertical spacing */
         .review-item h4, .review-item h5 {
           margin-top: 0;
-          margin-bottom: 3px;
+          margin-bottom: 2px;
         }
         
         /* Make section titles stand out but take less space */
         .review-section-title {
-          font-size: 14pt;
-          margin-bottom: 6px;
-          margin-top: 12px;
+          font-size: 13pt;
+          margin-bottom: 4px;
+          margin-top: 10px;
         }
         
         /* Keep sections on the same page as much as possible */
@@ -204,8 +210,8 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         
         /* More compact faculty name section */
         .faculty-name-section {
-          margin-bottom: 15px;
-          padding-bottom: 8px;
+          margin-bottom: 12px;
+          padding-bottom: 6px;
         }
       }
     `;
@@ -213,7 +219,7 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
     clonedElement.prepend(pdfStyle);
 
     const opt = {
-      margin: [0.4, 0.4, 0.4, 0.4], // [top, right, bottom, left] in inches - reduced margins
+      margin: [0.3, 0.3, 0.3, 0.3], // [top, right, bottom, left] in inches - reduced margins
       filename: `YAR_Report_${reportData.academicYear}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
