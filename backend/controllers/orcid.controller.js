@@ -20,7 +20,8 @@ export const handleOrcidCallback = async (req, res) => {
                 client_secret: process.env.ORCID_CLIENT_SECRET, 
                 grant_type: 'authorization_code',
                 code, 
-                redirect_uri: 'https://raiseyouryar-3.onrender.com/api/orcid/callback', 
+                // Using the correct backend URL for redirect_uri
+                redirect_uri: 'https://raiseyouryar-3.onrender.com/api/orcid/callback',
             }) 
         });
         
@@ -33,9 +34,9 @@ export const handleOrcidCallback = async (req, res) => {
             }); 
         }
         
-        const { orcid, name, access_token } = tokenData;
+        const { orcid, access_token } = tokenData;
         
-        // Optionally fetch more user info from ORCID API
+        // Fetch user info from ORCID API
         const profileRes = await fetch(`https://pub.sandbox.orcid.org/v3.0/${orcid}`, { 
             headers: {
                 'Accept': 'application/json',
@@ -44,10 +45,10 @@ export const handleOrcidCallback = async (req, res) => {
         });
         
         const profile = await profileRes.json();
-        const givenName = profile?.person?.name?.["given-names"]?.value;
-        const familyName = profile?.person?.name?.["family-name"]?.value;
+        const givenName = profile?.person?.name?.["given-names"]?.value || '';
+        const familyName = profile?.person?.name?.["family-name"]?.value || '';
         
-        // Optionally: store/update in your Faculty model
+        // Store/update in your Faculty model
         let faculty = await Faculty.findOne({ orcidId: orcid });
         
         if (!faculty) {
@@ -57,10 +58,18 @@ export const handleOrcidCallback = async (req, res) => {
                 lastName: familyName,
                 // Add more fields as necessary
             }); 
+        } else {
+            // Update existing faculty information
+            faculty.firstName = givenName;
+            faculty.lastName = familyName;
+            await faculty.save();
         }
         
-        // Optional: issue your own session/token or redirect with info
-        res.redirect(`https://yearlyactivityreport.netlify.app/orcid-success?orcid=${orcid}&name=${givenName} ${familyName}`); 
+        // Properly encode the name with spaces to prevent URL issues
+        const encodedName = encodeURIComponent(`${givenName} ${familyName}`);
+        
+        // Redirect to frontend with properly encoded parameters
+        res.redirect(`https://yearlyactivityreport.netlify.app/orcid-success?orcid=${orcid}&name=${encodedName}`);
     } catch (error) {
         console.error("ORCID callback error:", error);
         res.status(500).json({ 
