@@ -5,7 +5,8 @@ export const AuthContext = createContext();
 
 // Create a pre-configured axios instance with timeout
 const api = axios.create({
-  baseURL: 'https://raiseyouryar-3.onrender.com/api',
+  // baseURL: 'https://raiseyouryar-3.onrender.com/api',
+  baseURL: 'http://localhost:5001/api',
   timeout: 15000, // 15 second timeout to prevent hanging requests
 });
 

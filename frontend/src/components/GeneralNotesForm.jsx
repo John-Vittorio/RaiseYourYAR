@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import ResumeNotification from './ResumeNotification';
 
 const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
   const [generalNotes, setGeneralNotes] = useState('');
@@ -8,6 +9,7 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isResuming, setIsResuming] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
 
@@ -31,19 +33,24 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
       
       // Get the report to check for existing notes
       try {
-        const reportResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-          config
-        );
-
         // const reportResponse = await axios.get(
-        //   `http://localhost:5001/api/reports/${reportId}`,
+        //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         //   config
         // );
+
+        const reportResponse = await axios.get(
+          `http://localhost:5001/api/reports/${reportId}`,
+          config
+        );
         
         if (reportResponse.data && reportResponse.data.notes) {
           setGeneralNotes(reportResponse.data.notes);
           setOriginalNotes(reportResponse.data.notes);
+          
+          // If we found existing notes, this is a resumed draft
+          if (reportResponse.data.notes.trim().length > 0) {
+            setIsResuming(true);
+          }
         }
       } catch (reportError) {
         console.error('Error fetching report for notes:', reportError);
@@ -71,17 +78,17 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
           }
         };
         
-        await axios.put(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
-          { notes: generalNotes },
-          config
-        );
-
         // await axios.put(
-        //   `http://localhost:5001/api/reports/${reportId}`,
+        //   `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
         //   { notes: generalNotes },
         //   config
         // );
+
+        await axios.put(
+          `http://localhost:5001/api/reports/${reportId}`,
+          { notes: generalNotes },
+          config
+        );
         
         setOriginalNotes(generalNotes);
       }
@@ -111,6 +118,8 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
   return (
     <div className="teaching-container">
       <div className="teaching-form-content">
+        {isResuming && <ResumeNotification reportId={reportId} />}
+        
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">

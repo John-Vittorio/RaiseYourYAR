@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import ResumeNotification from './ResumeNotification';
 
 const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResearch, onAddFundedResearch, onAddOtherFunding, onAddConference }) => {
   const actions = [
@@ -35,6 +36,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const [publications, setPublications] = useState([]);
   const [grants, setGrants] = useState([]);
   const [conferences, setConferences] = useState([]);
+  const [isResuming, setIsResuming] = useState(false);
 
   const [showPublicationForm, setShowPublicationForm] = useState(false);
   const [showGrantForm, setShowGrantForm] = useState(false);
@@ -95,35 +97,44 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         }
       };
 
-      const { data } = await axios.get(
-        `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
-        config
-      );
+      try {
+        const { data } = await axios.get(
+          `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+          config
+        );
 
-      // const { data } = await axios.get(
-      //   `http://localhost:5001/api/research/${reportId}`,
-      //   config
-      // );
+        if (data) {
+          if (data.publications) {
+            setPublications(data.publications);
+          }
 
-      if (data) {
-        if (data.publications) {
-          setPublications(data.publications);
+          if (data.grants) {
+            setGrants(data.grants);
+          }
+
+          if (data.conferences) {
+            setConferences(data.conferences);
+          }
+          
+          // If we have any data, this is a resumed draft
+          if (
+            (data.publications && data.publications.length > 0) || 
+            (data.grants && data.grants.length > 0) || 
+            (data.conferences && data.conferences.length > 0)
+          ) {
+            setIsResuming(true);
+          }
         }
-
-        if (data.grants) {
-          setGrants(data.grants);
-        }
-
-        if (data.conferences) {
-          setConferences(data.conferences);
+      } catch (error) {
+        // If 404, it means no research data exists yet, which is fine
+        if (error.response?.status !== 404) {
+          setError(error.response?.data?.message || 'Failed to fetch research data');
+          console.error('Error fetching research data:', error);
         }
       }
     } catch (error) {
-      // If 404, it means no research data exists yet, which is fine
-      if (error.response?.status !== 404) {
-        setError(error.response?.data?.message || 'Failed to fetch research data');
-        console.error('Error fetching research data:', error);
-      }
+      setError(error.response?.data?.message || 'Failed to fetch research data');
+      console.error('Error fetching research data:', error);
     } finally {
       setLoading(false);
     }
@@ -153,17 +164,6 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         },
         config
       );
-
-      // await axios.post(
-      //   `http://localhost:5001/api/research/${reportId}`,
-      //   {
-      //     publications,
-      //     grants,
-      //     conferences,
-      //     reportId: reportId
-      //   },
-      //   config
-      // );
 
       setSuccessMessage('Research data saved successfully!');
 
@@ -312,6 +312,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   return (
     <div className="teaching-container">
       <div className="teaching-form-content">
+        {isResuming && <ResumeNotification reportId={reportId} />}
+        
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">

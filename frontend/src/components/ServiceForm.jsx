@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import ResumeNotification from './ResumeNotification';
 
 const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [services, setServices] = useState([]);
@@ -8,6 +9,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isResuming, setIsResuming] = useState(false);
   
   const { currentUser } = useContext(AuthContext);
 
@@ -39,18 +41,23 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       
       // Get service entries
       try {
-        const { data } = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-          config
-        );
-
         // const { data } = await axios.get(
-        //   `http://localhost:5001/api/service/${reportId}`,
+        //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
         //   config
         // );
+
+        const { data } = await axios.get(
+          `http://localhost:5001/api/service/${reportId}`,
+          config
+        );
       
         if (data) {
           setServices(data);
+          
+          // If we found existing data, this is a resumed draft
+          if (data.length > 0) {
+            setIsResuming(true);
+          }
         }
       } catch (error) {
         // 404 is expected if no service data exists yet
@@ -143,28 +150,69 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       }
     };
     
-    const { data } = await axios.post(
-      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
-      serviceData,
-      config
-    );
-
     // const { data } = await axios.post(
-    //   `http://localhost:5001/api/service/${reportId}`,
+    //   `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
     //   serviceData,
     //   config
     // );
+
+    const { data } = await axios.post(
+      `http://localhost:5001/api/service/${reportId}`,
+      serviceData,
+      config
+    );
     
     return data;
   };
 
-  if (loading) {
+  const handleDeleteService = async (serviceId) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      // await axios.delete(
+      //   `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+      //   config
+      // );
+
+      await axios.delete(
+        `http://localhost:5001/api/service/${serviceId}`,
+        config
+      );
+      
+      // Update local state to remove the deleted service
+      setServices(prev => prev.filter(service => service._id !== serviceId));
+      
+      setSuccessMessage('Service entry deleted successfully!');
+      
+      // Clear success message after delay
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 2000);
+      
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to delete service');
+      console.error('Error deleting service:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && services.length === 0) {
     return <div className="loading">Loading...</div>;
   }
 
   return (
     <div className="teaching-container">
       <div className="teaching-form-content">
+        {isResuming && <ResumeNotification reportId={reportId} />}
+        
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">
@@ -189,6 +237,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             {service.department && <p><strong>Department:</strong> {service.department}</p>}
             {service.description && <p><strong>Description:</strong> {service.description}</p>}
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
+            
+            <div className="service-actions">
+              <button 
+                onClick={() => handleDeleteService(service._id)}
+                className="yar-button-secondary delete-service"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
 
@@ -309,6 +366,29 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           </button>
         </div>
       </div>
+      
+      <style jsx>{`
+        .service-actions {
+          margin-top: 15px;
+          display: flex;
+          justify-content: flex-end;
+        }
+        
+        .delete-service {
+          background-color: #f8f8f8;
+          border: 1px solid #e0e0e0;
+          color: #d32f2f;
+          padding: 5px 10px;
+          border-radius: 4px;
+          font-size: 13px;
+          transition: all 0.3s ease;
+        }
+        
+        .delete-service:hover {
+          background-color: #fbe9e7;
+          border-color: #ffcdd2;
+        }
+      `}</style>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import axios from "axios";
 import image from "../images/drive.png";
 import ReportCard from "./ReportCard";
 
-const YARArchive = ({ onStart }) => {
+const YARArchive = ({ onStart, onEditDraft }) => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,15 +33,15 @@ const YARArchive = ({ onStart }) => {
         }
       };
       
-      const { data } = await axios.get(
-        'https://raiseyouryar-3.onrender.com/api/reports',
-        config
-      );
-
       // const { data } = await axios.get(
-      //   'http://localhost:5001/api/reports',
+      //   'https://raiseyouryar-3.onrender.com/api/reports',
       //   config
       // );
+
+      const { data } = await axios.get(
+        'http://localhost:5001/api/reports',
+        config
+      );
       
       setReports(data);
     } catch (error) {
@@ -55,6 +55,19 @@ const YARArchive = ({ onStart }) => {
   // Handle navigation to a specific report
   const viewReport = (reportId) => {
     navigate(`/report/${reportId}`);
+  };
+
+  // Handle clicking on a report - edited for draft handling
+  const handleReportClick = (reportId, status) => {
+    if (status === 'draft') {
+      // For draft reports, pass to parent for editing
+      if (onEditDraft) {
+        onEditDraft(reportId);
+      }
+    } else {
+      // For submitted/approved reports, just view
+      viewReport(reportId);
+    }
   };
 
   // Handle deleting a report
@@ -87,15 +100,15 @@ const YARArchive = ({ onStart }) => {
       
       // Use our direct MongoDB delete endpoint
       console.log('Sending delete request for report:', reportToDelete);
-      const response = await axios.delete(
-        `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
-        config
-      );
-
       // const response = await axios.delete(
-      //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+      //   `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
       //   config
       // );
+
+      const response = await axios.delete(
+        `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+        config
+      );
       
       console.log('Delete response:', response.data);
       
@@ -154,7 +167,7 @@ const YARArchive = ({ onStart }) => {
             <ReportCard 
               key={report._id} 
               report={report} 
-              onClick={() => viewReport(report._id)}
+              onClick={(reportId) => handleReportClick(reportId, report.status)}
               onDelete={handleDeleteClick}
             />
           ))}

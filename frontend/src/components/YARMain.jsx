@@ -5,8 +5,11 @@ import YARArchive from './YARArchive';
 import TeachingForm from './TeachingForm';
 import ResearchForm from './ResearchForm';
 import ServiceForm from './ServiceForm';
-import GeneralNotesForm from './GeneralNotesForm'; // Import our new component
+import GeneralNotesForm from './GeneralNotesForm';
 import ReportReview from './ReportReview';
+
+// Form sections in sequence
+const FORM_SECTIONS = ['main', 'teaching', 'research', 'service', 'generalNotes', 'review'];
 
 const YARMain = () => {
   // State to track the current view and active report
@@ -17,6 +20,11 @@ const YARMain = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false); // Track successful submission
   
   const { currentUser } = useContext(AuthContext);
+
+  // Debug logging for view changes
+  useEffect(() => {
+    console.log("Current view changed to:", currentView);
+  }, [currentView]);
 
   // Function to create a new report
   const createNewReport = async () => {
@@ -36,18 +44,40 @@ const YARMain = () => {
         { academicYear: getCurrentAcademicYear() },
         config
       );
-
-      // const { data } = await axios.post(
-      //   'http://localhost:5001/api/reports',
-      //   { academicYear: getCurrentAcademicYear() },
-      //   config
-      // );
       
       setActiveReport(data);
       return data;
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to create report');
       console.error('Error creating report:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // New function to load existing report for editing
+  const loadExistingReport = async (reportId) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`
+        }
+      };
+      
+      const { data } = await axios.get(
+        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+        config
+      );
+      
+      setActiveReport(data);
+      return data;
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to load report');
+      console.error('Error loading report:', error);
       return null;
     } finally {
       setLoading(false);
@@ -72,29 +102,49 @@ const YARMain = () => {
   const handleStartYAR = async () => {
     const report = await createNewReport();
     if (report) {
+      console.log("Moving to teaching view after creating new report");
       setCurrentView('teaching');
     }
   };
 
-  // navigate to the next section
-  const handleNext = (currentSection) => {
-    switch (currentSection) {
-      case 'teaching':
-        setCurrentView('research');
-        break;
-      case 'research':
-        setCurrentView('service');
-        break;
-      case 'service':
-        // Now go to general notes instead of review
-        setCurrentView('generalNotes');
-        break;
-      case 'generalNotes':
-        // After general notes, go to review
-        setCurrentView('review');
-        break;
-      default:
-        setCurrentView('main');
+  // handle editing an existing draft
+  const handleEditDraft = async (reportId) => {
+    const report = await loadExistingReport(reportId);
+    if (report) {
+      console.log("Moving to teaching view after loading draft report");
+      setCurrentView('teaching');
+    }
+  };
+
+  // Move to the next section in sequence
+  const handleNext = (currentSectionName) => {
+    console.log("handleNext called with current section:", currentSectionName);
+    
+    // Find the index of the current section
+    const currentIndex = FORM_SECTIONS.indexOf(currentSectionName);
+    
+    if (currentIndex !== -1 && currentIndex < FORM_SECTIONS.length - 1) {
+      const nextSection = FORM_SECTIONS[currentIndex + 1];
+      console.log(`Moving from ${currentSectionName} to ${nextSection}`);
+      
+      // Force a state update with setTimeout to ensure React registers the change
+      setTimeout(() => {
+        setCurrentView(nextSection);
+      }, 10);
+    } else {
+      console.error(`Invalid navigation from ${currentSectionName}`);
+    }
+  };
+
+  // Move to the previous section in sequence
+  const handlePrevious = (currentSectionName) => {
+    // Find the index of the current section
+    const currentIndex = FORM_SECTIONS.indexOf(currentSectionName);
+    
+    if (currentIndex > 1) { // Don't go back before teaching
+      const prevSection = FORM_SECTIONS[currentIndex - 1];
+      console.log(`Moving from ${currentSectionName} to ${prevSection}`);
+      setCurrentView(prevSection);
     }
   };
 
@@ -110,33 +160,16 @@ const YARMain = () => {
     }, 3000);
   };
 
-  // navigate to the previous section
-  const handlePrevious = (currentSection) => {
-    switch (currentSection) {
-      case 'research':
-        setCurrentView('teaching');
-        break;
-      case 'service':
-        setCurrentView('research');
-        break;
-      case 'generalNotes':
-        setCurrentView('service');
-        break;
-      case 'review':
-        setCurrentView('generalNotes');
-        break;
-      default:
-        setCurrentView('main');
-    }
-  };
-
+  // Render the appropriate component based on the current view
   const renderView = () => {
+    console.log("Rendering view:", currentView);
+    
     if (loading) {
       return <div className="loading">Loading...</div>;
     }
 
     if (error) {
-      return <div className="error">{error}</div>;
+      return <div className="error-message">{error}</div>;
     }
 
     // Show success message after submission
@@ -152,9 +185,13 @@ const YARMain = () => {
       );
     }
 
+    // Render the appropriate component based on currentView
     switch (currentView) {
       case 'main':
-        return <YARArchive onStart={handleStartYAR} />;
+        return <YARArchive 
+          onStart={handleStartYAR} 
+          onEditDraft={handleEditDraft} 
+        />;
       case 'teaching':
         return (
           <TeachingForm 
@@ -195,7 +232,8 @@ const YARMain = () => {
           />
         );
       default:
-        return <div>Invalid view state</div>;
+        console.error("Invalid view state:", currentView);
+        return <div>Invalid view state: {currentView}</div>;
     }
   };
 

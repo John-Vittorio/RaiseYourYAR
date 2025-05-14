@@ -1,5 +1,4 @@
-// App.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute, FacultyRoute } from './components/ProtectedRoute';
@@ -14,10 +13,46 @@ import './css/style.css';
 import './css/auth-styles.css';
 import './css/report-cards.css';
 
+// Import YAR components for preloading
+import { 
+  TeachingForm, 
+  ResearchForm, 
+  ServiceForm, 
+  GeneralNotesForm,
+  ReportReview,
+  YARNavigationHelper
+} from './components/YAR';
+
+// This component preloads all YAR components to prevent navigation issues
+const YARPreload = () => {
+  useEffect(() => {
+    // Initialize navigation fixes
+    YARNavigationHelper.fixNavigationIssues();
+    
+    // Add global navigation debug handler
+    window.addEventListener('click', (e) => {
+      // Look for navigation buttons
+      if (e.target.closest('.yar-button-next') || e.target.closest('.yar-button-secondary')) {
+        console.log('Navigation button clicked:', e.target.textContent.trim());
+      }
+    });
+    
+    return () => {
+      // Clean up event listener
+      window.removeEventListener('click', () => {});
+    };
+  }, []);
+  
+  return null; // This component doesn't render anything
+};
+
 function App() {
   return (
     <AuthProvider>
       <div className="App">
+        {/* Preload YAR components */}
+        <YARPreload />
+        
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
@@ -73,6 +108,29 @@ function App() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
+      
+      <style jsx global>{`
+        /* Critical CSS fixes for YAR navigation */
+        .yar-button-next {
+          z-index: 10;
+          position: relative;
+        }
+        
+        .teaching-breadcrumb,
+        .resume-notification {
+          pointer-events: none !important;
+        }
+        
+        .resume-notification button {
+          pointer-events: all !important;
+        }
+        
+        /* Fix for content visibility */
+        .teaching-container {
+          z-index: 1;
+          position: relative;
+        }
+      `}</style>
     </AuthProvider>
   );
 }

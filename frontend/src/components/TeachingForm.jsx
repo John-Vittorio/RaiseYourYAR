@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import ResumeNotification from './ResumeNotification';
 
 const TeachingForm = ({ onNext, reportId }) => {
   const [courses, setCourses] = useState([]);
@@ -11,6 +12,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [autoSaveStatus, setAutoSaveStatus] = useState('');
   const [autoSaveTimer, setAutoSaveTimer] = useState(null);
+  const [isResuming, setIsResuming] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // New state for section notes
   const [sectionNotes, setSectionNotes] = useState('');
@@ -23,7 +26,6 @@ const TeachingForm = ({ onNext, reportId }) => {
     if (reportId) {
       fetchTeachingData();
     }
-    // No longer adding an empty course by default
   }, [reportId]);
 
   // Set up auto-save whenever courses data changes
@@ -72,11 +74,6 @@ const TeachingForm = ({ onNext, reportId }) => {
           config
         );
 
-        // const { data } = await axios.get(
-        //   `http://localhost:5001/api/teaching/${reportId}`,
-        //   config
-        // );
-
         if (data) {
           if (data.courses && data.courses.length > 0) {
             // Map API data to component state format
@@ -98,6 +95,11 @@ const TeachingForm = ({ onNext, reportId }) => {
 
             setCourses(mappedCourses);
             setOriginalCourses(JSON.parse(JSON.stringify(mappedCourses)));
+            
+            // If we found existing data, this is a resumed draft
+            if (mappedCourses.length > 0) {
+              setIsResuming(true);
+            }
           }
 
           // Load section notes if present
@@ -106,13 +108,11 @@ const TeachingForm = ({ onNext, reportId }) => {
             setOriginalSectionNotes(data.sectionNotes);
           }
         }
-        // No longer adding an empty course if no data
       } catch (error) {
         // If 404, it means no teaching data exists yet, which is fine
         if (error.response?.status !== 404) {
           setError(error.response?.data?.message || 'Failed to fetch teaching data');
         }
-        // No longer adding an empty course if fetch fails
       }
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to fetch teaching data');
@@ -156,16 +156,6 @@ const TeachingForm = ({ onNext, reportId }) => {
         },
         config
       );
-
-      // await axios.post(
-      //   `http://localhost:5001/api/teaching/${reportId}`,
-      //   {
-      //     courses: apiCourses,
-      //     taughtOutsideDept: apiCourses.some(course => course.outsideDept),
-      //     sectionNotes: sectionNotes // Include section notes in the request
-      //   },
-      //   config
-      // );
 
       // Update original courses to match current state
       setOriginalCourses(JSON.parse(JSON.stringify(courses)));
@@ -266,12 +256,6 @@ const TeachingForm = ({ onNext, reportId }) => {
         apiCourse,
         config
       );
-
-      // const response = await axios.post(
-      //   `http://localhost:5001/api/teaching/course/${reportId}`,
-      //   apiCourse,
-      //   config
-      // );
 
       // Update original courses for cancel functionality
       setOriginalCourses(prev => {
@@ -419,19 +403,31 @@ const TeachingForm = ({ onNext, reportId }) => {
     setCourses(prev => [...prev, newCourse]);
   };
 
-  // Continue to next section
+  // Handle navigating to research section
   const handleNext = async () => {
+    if (isNavigating) return; // Prevent double clicks
+    
     try {
+      setIsNavigating(true);
+      console.log("TeachingForm: Next button clicked - saving and proceeding to Research");
+      
       // If there are any unsaved changes, save them before proceeding
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
         sectionNotes !== originalSectionNotes) {
         await autoSaveTeachingData();
       }
 
-      // Call the onNext prop to navigate to the next section
-      onNext();
+      // Wait a short moment before triggering navigation
+      setTimeout(() => {
+        // Call the parent's onNext function to navigate to research
+        console.log("TeachingForm: Calling parent onNext to navigate to research");
+        onNext(); 
+      }, 100);
+      
     } catch (error) {
+      console.error("TeachingForm: Error during navigation:", error);
       setError('Failed to save your data before proceeding. Please try again.');
+      setIsNavigating(false);
     }
   };
 
@@ -442,6 +438,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   return (
     <div className="teaching-container">
       <div className="teaching-form-content">
+        {isResuming && <ResumeNotification reportId={reportId} />}
+        
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">
@@ -758,9 +756,10 @@ const TeachingForm = ({ onNext, reportId }) => {
           <button
             onClick={handleNext}
             className="yar-button-next"
-            disabled={loading}
+            disabled={isNavigating || loading}
+            id="to-research-button"
           >
-            Next
+            {isNavigating ? 'Moving to Research...' : 'Next: Research'} 
           </button>
         </div>
       </div>
@@ -775,6 +774,32 @@ const TeachingForm = ({ onNext, reportId }) => {
           margin-top: 10px;
           line-height: 1.6;
           color: #555;
+        }
+        
+        #to-research-button {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        #to-research-button:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+          transform: translateX(-100%);
+        }
+        
+        #to-research-button:hover:after {
+          animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
         }
       `}</style>
     </div>
