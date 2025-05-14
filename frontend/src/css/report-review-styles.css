@@ -246,12 +246,12 @@
 }
 
 /* General notes content needs word wrap */
-.general-notes-content p {
+/* .general-notes-content p {
   white-space: normal;
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.5;
-}
+} */
 
 /* PDF Specific Styles - Added to report-review-styles.css */
 
@@ -271,12 +271,12 @@
 }
 
 /* Ensure General Notes section has consistent styling */
-.general-notes-content {
+/* .general-notes-content {
   background-color: #f5f8ff;
   border-left: 3px solid #4B2E83;
   padding: 10px 15px;
   border-radius: 6px;
-}
+} */
 
 @media print {
   /* Applied when printing or generating PDF */
