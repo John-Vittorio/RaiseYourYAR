@@ -225,7 +225,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <p><strong>Academic Year:</strong> {report.academicYear}</p>
               <p><strong>Status:</strong> {report.status}</p>
               <p><strong>Generated:</strong> {formatDate(new Date())}</p>
-              {report.notes && <p className="wrap-text"><strong>Notes:</strong> {report.notes}</p>}
             </div>
           )}
 
