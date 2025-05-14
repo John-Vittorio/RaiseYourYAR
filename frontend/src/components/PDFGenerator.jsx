@@ -50,10 +50,10 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         margin-bottom: 8px;
       }
       
-      /* Compact grid layout for review items */
+      /* Set grid layout for 3 items per row */
       .review-section-content {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 8px;
       }
       
@@ -141,6 +141,14 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         page-break-inside: avoid;
       }
       
+      /* No data message styling */
+      .no-data-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-style: italic;
+        color: #777;
+      }
+      
       /* More compact layout for PDF */
       @media print {
         body {
@@ -150,7 +158,7 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
         
         .review-section-content {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 8px;
         }
         
