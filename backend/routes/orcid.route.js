@@ -1,6 +1,6 @@
 // routes/orcid.route.js
 import express from 'express';
-import { handleOrcidCallback } from '../controllers/orcid.controller.js';
+import { handleOrcidCallback } from '../controllers/orchid.controller.js';
 
 const router = express.Router();
 

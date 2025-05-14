@@ -11,14 +11,12 @@ import teachingRoutes from "./routes/teaching.route.js";
 import researchRoutes from "./routes/research.route.js";
 import serviceRoutes from "./routes/service.route.js";
 import facultyRoutes from "./routes/faculty.route.js";
-import orcidRoutes from "./routes/orchid.route.js";
+import orcidRoutes from "./routes/orcid.route.js";  // Fixed from orchid to orcid
 
 dotenv.config();
 
 const app = express();
 import { MongoClient, ObjectId } from 'mongodb';
-
-
 
 /* Middleware */
 app.use(express.json());
@@ -53,7 +51,7 @@ connectDB().then(() => {
     app.use("/api/research", researchRoutes);
     app.use("/api/service", serviceRoutes);
     app.use("/api/faculty", facultyRoutes);
-    app.use("/api/orchid", orcidRoutes);
+    app.use("/api/orcid", orcidRoutes);  // Fixed from /api/orchid to /api/orcid
 
     app.listen(PORT, () => {
         console.log("Server started at http://localhost:", PORT);
