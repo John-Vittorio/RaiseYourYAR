@@ -11,6 +11,7 @@ import teachingRoutes from "./routes/teaching.route.js";
 import researchRoutes from "./routes/research.route.js";
 import serviceRoutes from "./routes/service.route.js";
 import facultyRoutes from "./routes/faculty.route.js";
+import orcidRoutes from "./routes/orcid.route.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ connectDB().then(() => {
     app.use("/api/research", researchRoutes);
     app.use("/api/service", serviceRoutes);
     app.use("/api/faculty", facultyRoutes);
+    app.use("/api/orcid", orcidRoutes);
 
     app.listen(PORT, () => {
         console.log("Server started at http://localhost:", PORT);
