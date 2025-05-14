@@ -303,8 +303,8 @@
   /* Revised grid layout for PDF to make items more rectangular */
   .review-section-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjusted min-width */
+    gap: 15px;
   }
   
   .no-data-message,
