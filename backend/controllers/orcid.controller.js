@@ -20,7 +20,7 @@ export const handleOrcidCallback = async (req, res) => {
                 client_secret: process.env.ORCID_CLIENT_SECRET, 
                 grant_type: 'authorization_code',
                 code, 
-                redirect_uri: 'https://yearlyactivityreport.netlify.app/auth/orcid/callback', 
+                redirect_uri: 'https://raiseyouryar-3.onrender.com/api/orcid/callback', 
             }) 
         });
         
