@@ -301,7 +301,7 @@
   /* Revised grid layout for PDF to make items more rectangular */
   .review-section-content {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 12px;
   }
   
