@@ -390,7 +390,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <h3 className="review-section-title">General Notes</h3>
               {report && report.notes ? (
                 <div className="review-section-content">
-                  <div className="general-notes-content">
+                  <div className="section-notes general-notes-content">
                     <p className="wrap-text">{report.notes}</p>
                   </div>
                 </div>
