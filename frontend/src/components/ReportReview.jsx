@@ -9,7 +9,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // State for report data
   const [report, setReport] = useState(null);
   const [teaching, setTeaching] = useState(null);
   const [teachingSectionNotes, setTeachingSectionNotes] = useState('');
