@@ -88,7 +88,6 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
       
       setSuccessMessage('General notes saved successfully!');
       
-      // Proceed to review page
       setTimeout(() => {
         onNext();
       }, 1000);
