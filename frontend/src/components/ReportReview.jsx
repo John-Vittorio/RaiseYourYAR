@@ -147,6 +147,23 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
     }
   };
 
+  // Function to get status class for color coding
+  const getStatusClass = (status) => {
+    switch(status) {
+      case 'draft': return 'draft';
+      case 'submitted': return 'submitted';
+      case 'approved': return 'approved';
+      default: return '';
+    }
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   if (loading) {
     return <div className="loading">Loading your report data...</div>;
   }
@@ -184,7 +201,17 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       {error && <div className="error-message">{error}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
-      <div id="reportContentForPDF">
+      <div id="reportContentForPDF" className="pdf-report-container">
+        {/* PDF Title Header - Only visible in the PDF */}
+        <div className="pdf-optimized yar-title-pdf">
+          2024-2025 Yearly Activity Report
+          {report && (
+            <span className={`report-status-pdf ${getStatusClass(report.status)}`}>
+              {report.status.toUpperCase()}
+            </span>
+          )}
+        </div>
+        
         <div className="course-card report-card">
           {currentUser && (
             <div className="faculty-name-section">
@@ -197,6 +224,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             <div className="report-meta">
               <p><strong>Academic Year:</strong> {report.academicYear}</p>
               <p><strong>Status:</strong> {report.status}</p>
+              <p><strong>Generated:</strong> {formatDate(new Date())}</p>
               {report.notes && <p><strong>Notes:</strong> {report.notes}</p>}
             </div>
           )}
@@ -382,6 +410,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
             ) : (
               <p className="no-data-message">No general notes provided</p>
             )}
+          </div>
+          
+          {/* PDF Footer - Only visible in PDF */}
+          <div className="pdf-optimized" style={{ marginTop: '40px', borderTop: '1px solid #ccc', paddingTop: '10px', fontSize: '10px', color: '#666', textAlign: 'center' }}>
+            <p>Generated on {new Date().toLocaleDateString()} | Yearly Activity Report | Page 1</p>
           </div>
         </div>
       </div>

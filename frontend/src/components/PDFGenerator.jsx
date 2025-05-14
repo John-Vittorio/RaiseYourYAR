@@ -10,15 +10,129 @@ const PDFGenerator = ({ reportData, elementToConvert }) => {
       return;
     }
     
+    // Create a clone of the element to avoid modifying the visible DOM
+    const clonedElement = element.cloneNode(true);
+    
+    // Add PDF-specific styling to the clone
+    const pdfStyle = document.createElement('style');
+    pdfStyle.textContent = `
+      * {
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+      }
+      
+      .report-card {
+        padding: 20px;
+        margin: 0;
+        box-shadow: none;
+        border: none;
+      }
+      
+      .faculty-name-section {
+        font-size: 24px;
+        color: #4B2E83;
+        font-weight: 600;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #4B2E83;
+      }
+      
+      .review-section {
+        margin-top: 20px;
+        padding-top: 15px;
+        page-break-inside: avoid;
+      }
+      
+      .review-section-title {
+        color: #4B2E83;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      
+      .review-item {
+        background-color: #f9f9ff;
+        border-left: 3px solid #4B2E83;
+        padding: 10px;
+        margin-bottom: 12px;
+        page-break-inside: avoid;
+      }
+      
+      .review-item-details p {
+        margin: 3px 0;
+        line-height: 1.4;
+      }
+      
+      h4 {
+        margin-top: 5px;
+        margin-bottom: 8px;
+        color: #4B2E83;
+      }
+      
+      .section-notes {
+        background-color: #f5f8ff;
+        border-left: 3px solid #4B2E83;
+        padding: 8px 12px;
+        margin-top: 10px;
+      }
+      
+      /* Handle page breaks appropriately */
+      .review-section {
+        page-break-after: auto;
+      }
+      
+      h2, h3 {
+        page-break-after: avoid;
+      }
+      
+      .report-meta {
+        page-break-inside: avoid;
+      }
+    `;
+    
+    clonedElement.prepend(pdfStyle);
+    
     const opt = {
-      margin: 1,
+      margin: [0.5, 0.5, 0.5, 0.5], // [top, right, bottom, left] in inches
       filename: `YAR_Report_${reportData.academicYear}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait'}
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        letterRendering: true,
+        allowTaint: false
+      },
+      jsPDF: { 
+        unit: 'in', 
+        format: 'letter', 
+        orientation: 'portrait',
+        compressPDF: true
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+      enableLinks: true
     };
     
-    html2pdf().set(opt).from(element).save();
+    // Create a temporary container for the clone
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.appendChild(clonedElement);
+    document.body.appendChild(tempContainer);
+    
+    // Generate PDF from the cloned content
+    html2pdf()
+      .set(opt)
+      .from(clonedElement)
+      .save()
+      .then(() => {
+        // Clean up
+        document.body.removeChild(tempContainer);
+      })
+      .catch(err => {
+        console.error('Error generating PDF:', err);
+        document.body.removeChild(tempContainer);
+      });
   };
 
   return (

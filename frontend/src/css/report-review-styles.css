@@ -253,3 +253,113 @@
   line-height: 1.5;
   color: #333;
 }
+
+/* PDF Specific Styles - Added to report-review-styles.css */
+
+/* Styles specifically for PDF rendering */
+.pdf-optimized {
+  display: none; /* Hidden by default in browser */
+}
+
+@media print {
+  /* Applied when printing or generating PDF */
+  .pdf-optimized {
+    display: block;
+  }
+  
+  /* Elements that shouldn't appear in the PDF */
+  .navigation-buttons,
+  .teaching-breadcrumb,
+  .pdf-download-container {
+    display: none !important;
+  }
+  
+  /* PDF layout management */
+  .review-section {
+    page-break-inside: avoid;
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+  
+  .review-item {
+    page-break-inside: avoid;
+    margin-bottom: 10px;
+  }
+  
+  h2, h3, h4 {
+    page-break-after: avoid;
+  }
+  
+  /* Ensure no content overflows */
+  .report-review-container,
+  .report-card,
+  .review-section-content,
+  #reportContentForPDF {
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  
+  /* Adjust fonts for better PDF rendering */
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .faculty-name-section {
+    font-size: 24pt;
+    margin-bottom: 20px;
+  }
+  
+  .review-section-title {
+    font-size: 18pt;
+  }
+  
+  /* Ensure content fits page width */
+  p, ul, ol, li {
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+}
+
+/* PDF content container */
+#reportContentForPDF {
+  width: 100%;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* Make sure report title is prominent in PDF */
+.yar-title-pdf {
+  color: #4B2E83;
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4B2E83;
+}
+
+/* Status indicator for PDF */
+.report-status-pdf {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.report-status-pdf.draft {
+  background-color: #f39c12;
+  color: white;
+}
+
+.report-status-pdf.submitted {
+  background-color: #3498db;
+  color: white;
+}
+
+.report-status-pdf.approved {
+  background-color: #2ecc71;
+  color: white;
+}
