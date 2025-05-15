@@ -497,7 +497,7 @@ hr {
     flex-basis: auto;
     margin-top: 30px;
     margin-bottom: 30px;
-    margin-right:30px;
+    margin-right: 30px;
     overflow-y: auto;
     max-height: 100vh;
     display: flex;
@@ -1225,44 +1225,45 @@ hr {
 .yar-container {
     display: flex;
     flex-direction: column;
-    gap: 30px; /* Add consistent spacing between sections */
-  }
-  
-  /* Reports section with proper sizing */
-  .reports-section {
+    /* gap: 30px; */
+    /* Add consistent spacing between sections */
+}
+
+/* Reports section with proper sizing */
+.reports-section {
     width: 100%;
-  }
-  
-  /* Privacy statement section with proper spacing */
-  .privacy-statement-section {
+}
+
+/* Privacy statement section with proper spacing */
+.privacy-statement-section {
     width: 100%;
-  }
-  
-  /* Override the height constraints to allow proper display */
-  .privacy-form-version {
+}
+
+/* Override the height constraints to allow proper display */
+.privacy-form-version {
     height: auto;
     min-height: auto;
     overflow: visible;
     margin-bottom: 30px;
-  }
-  
-  /* Give the privacy content proper height */
-  .privacy-content {
+}
+
+/* Give the privacy content proper height */
+.privacy-content {
     max-height: none;
     overflow: visible;
-  }
-  
-  /* Make sure reports display properly */
-  .reports-grid {
+}
+
+/* Make sure reports display properly */
+.reports-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     width: 100%;
     margin-bottom: 30px;
-  }
-  
-  /* Modal styling improvements */
-  .delete-modal-overlay {
+}
+
+/* Modal styling improvements */
+.delete-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1273,77 +1274,77 @@ hr {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-  }
-  
-  .delete-modal {
+}
+
+.delete-modal {
     background-color: white;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
     max-width: 500px;
     width: 90%;
-  }
-  
-  /* Status messages */
-  .delete-success-message {
+}
+
+/* Status messages */
+.delete-success-message {
     color: #2ecc71;
     text-align: center;
     font-weight: bold;
     margin: 20px 0;
-  }
-  
-  .delete-error-message {
+}
+
+.delete-error-message {
     color: #e74c3c;
     margin: 10px 0;
-  }
-  
-  /* Button styles */
-  .delete-modal-buttons {
+}
+
+/* Button styles */
+.delete-modal-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
-  }
-  
-  .cancel-delete-btn {
+}
+
+.cancel-delete-btn {
     padding: 8px 16px;
     border: 1px solid #4B2E83;
     background-color: white;
     color: #4B2E83;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .confirm-delete-btn {
+}
+
+.confirm-delete-btn {
     padding: 8px 16px;
     background-color: #e74c3c;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .no-reports-message {
+}
+
+.no-reports-message {
     padding: 20px;
     text-align: center;
     color: #666;
-  }
-  
-  /* Add responsive adjustments */
-  @media (max-width: 768px) {
+}
+
+/* Add responsive adjustments */
+@media (max-width: 768px) {
     .yar-buttons-container {
-      flex-direction: column;
+        flex-direction: column;
     }
-    
+
     .privacy-form-version {
-      padding: 20px;
+        padding: 20px;
     }
-  }
-  
-  /* Loading indicator */
-  .loading {
+}
+
+/* Loading indicator */
+.loading {
     padding: 20px;
     text-align: center;
     color: #4B2E83;
     font-style: italic;
-  }
+}
