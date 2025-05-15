@@ -1218,3 +1218,136 @@ hr {
         transform: translateY(0);
     }
 }
+
+/* Add these CSS rules to fix the privacy statement layout */
+
+/* Main container structure with proper spacing */
+.yar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Add consistent spacing between sections */
+    padding-bottom: 30px; /* Add bottom padding */
+  }
+  
+  /* Reports section with proper sizing */
+  .reports-section {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  /* Privacy statement section with proper spacing */
+  .privacy-statement-section {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Override the height constraints to allow proper display */
+  .privacy-form-version {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+    margin-bottom: 30px;
+  }
+  
+  /* Give the privacy content proper height */
+  .privacy-content {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* Make sure reports display properly */
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  /* Modal styling improvements */
+  .delete-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .delete-modal {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(93, 0, 93, 0.15);
+    max-width: 500px;
+    width: 90%;
+  }
+  
+  /* Status messages */
+  .delete-success-message {
+    color: #2ecc71;
+    text-align: center;
+    font-weight: bold;
+    margin: 20px 0;
+  }
+  
+  .delete-error-message {
+    color: #e74c3c;
+    margin: 10px 0;
+  }
+  
+  /* Button styles */
+  .delete-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .cancel-delete-btn {
+    padding: 8px 16px;
+    border: 1px solid #4B2E83;
+    background-color: white;
+    color: #4B2E83;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .confirm-delete-btn {
+    padding: 8px 16px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .no-reports-message {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+  }
+  
+  /* Add responsive adjustments */
+  @media (max-width: 768px) {
+    .yar-buttons-container {
+      flex-direction: column;
+    }
+    
+    .privacy-form-version {
+      padding: 20px;
+    }
+  }
+  
+  /* Loading indicator */
+  .loading {
+    padding: 20px;
+    text-align: center;
+    color: #4B2E83;
+    font-style: italic;
+  }
