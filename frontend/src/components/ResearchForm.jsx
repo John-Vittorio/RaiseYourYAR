@@ -140,8 +140,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     }
   };
 
-  // Save research data and proceed to next section
-  const handleSaveAndNext = async () => {
+  // Generic function to save research data to the database
+  const saveResearchData = async (updatedPublications = publications, updatedGrants = grants, updatedConferences = conferences) => {
     try {
       setLoading(true);
       setError('');
@@ -157,23 +157,31 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       await axios.post(
         `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
         {
-          publications,
-          grants,
-          conferences,
+          publications: updatedPublications,
+          grants: updatedGrants,
+          conferences: updatedConferences,
           reportId: reportId
         },
         config
       );
 
       setSuccessMessage('Research data saved successfully!');
-
-      // Proceed to next section
-      onNext();
+      setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save research data');
       console.error('Error saving research data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Save research data and proceed to next section
+  const handleSaveAndNext = async () => {
+    await saveResearchData();
+    
+    // Only proceed to next if save was successful
+    if (!error) {
+      onNext();
     }
   };
 
@@ -199,110 +207,146 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     setGrant(prev => ({ ...prev, coPIs: [...prev.coPIs, { name: '', affiliation: '' }] }));
   };
 
-  const handleSavePublication = () => {
-    setPublications([...publications, newPublication]);
-    setNewPublication({
-      publicationType: 'Journal Article',
-      title: '',
-      journalName: '',
-      publicationStatus: 'In Progress'
-    });
-    setShowPublicationForm(false);
+  const handleSavePublication = async () => {
+    const updatedPublications = [...publications, newPublication];
+    setPublications(updatedPublications);
+    
+    await saveResearchData(updatedPublications, grants, conferences);
+    
+    if (!error) {
+      setNewPublication({
+        publicationType: 'Journal Article',
+        title: '',
+        journalName: '',
+        publicationStatus: 'In Progress'
+      });
+      setShowPublicationForm(false);
+    }
   };
 
-  const handleSaveGrant = () => {
-    setGrants([...grants, grant]);
-    setGrant({
-      type: 'Grant',
-      client: '',
-      title: '',
-      contractNumber: '',
-      role: '',
-      totalAmount: '',
-      yourShare: '',
-      startDate: '',
-      endDate: '',
-      coPIs: [{ name: '', affiliation: '' }],
-      notes: ''
-    });
-    setShowGrantForm(false);
+  const handleSaveGrant = async () => {
+    const updatedGrants = [...grants, grant];
+    setGrants(updatedGrants);
+    
+    await saveResearchData(publications, updatedGrants, conferences);
+    
+    if (!error) {
+      setGrant({
+        type: 'Grant',
+        client: '',
+        title: '',
+        contractNumber: '',
+        role: '',
+        totalAmount: '',
+        yourShare: '',
+        startDate: '',
+        endDate: '',
+        coPIs: [{ name: '', affiliation: '' }],
+        notes: ''
+      });
+      setShowGrantForm(false);
+    }
   };
 
-  const handleSaveNonFundedResearch = () => {
+  const handleSaveNonFundedResearch = async () => {
     const nonFundedResearch = {
       ...grant,
       type: 'NonFundedResearch'
     };
-    setGrants([...grants, nonFundedResearch]);
-    setGrant({
-      type: 'Grant',
-      client: '',
-      title: '',
-      contractNumber: '',
-      role: '',
-      totalAmount: '',
-      yourShare: '',
-      startDate: '',
-      endDate: '',
-      coPIs: [{ name: '', affiliation: '' }],
-      notes: ''
-    });
-    setShowNonFundedResearchForm(false);
+    const updatedGrants = [...grants, nonFundedResearch];
+    setGrants(updatedGrants);
+    
+    await saveResearchData(publications, updatedGrants, conferences);
+    
+    if (!error) {
+      setGrant({
+        type: 'Grant',
+        client: '',
+        title: '',
+        contractNumber: '',
+        role: '',
+        totalAmount: '',
+        yourShare: '',
+        startDate: '',
+        endDate: '',
+        coPIs: [{ name: '', affiliation: '' }],
+        notes: ''
+      });
+      setShowNonFundedResearchForm(false);
+    }
   };
 
-  const handleSaveFundedResearch = () => {
+  const handleSaveFundedResearch = async () => {
     const fundedResearch = {
       ...grant,
       type: 'FundedResearch'
     };
-    setGrants([...grants, fundedResearch]);
-    setGrant({
-      type: 'Grant',
-      client: '',
-      title: '',
-      contractNumber: '',
-      role: '',
-      totalAmount: '',
-      yourShare: '',
-      startDate: '',
-      endDate: '',
-      coPIs: [{ name: '', affiliation: '' }],
-      notes: ''
-    });
-    setShowFundedResearchForm(false);
+    const updatedGrants = [...grants, fundedResearch];
+    setGrants(updatedGrants);
+    
+    await saveResearchData(publications, updatedGrants, conferences);
+    
+    if (!error) {
+      setGrant({
+        type: 'Grant',
+        client: '',
+        title: '',
+        contractNumber: '',
+        role: '',
+        totalAmount: '',
+        yourShare: '',
+        startDate: '',
+        endDate: '',
+        coPIs: [{ name: '', affiliation: '' }],
+        notes: ''
+      });
+      setShowFundedResearchForm(false);
+    }
   };
 
-  const handleSaveOtherFunding = () => {
+  const handleSaveOtherFunding = async () => {
     const otherFunding = {
       ...grant,
       type: 'OtherFunding'
     };
-    setGrants([...grants, otherFunding]);
-    setGrant({
-      type: 'Grant',
-      client: '',
-      title: '',
-      contractNumber: '',
-      role: '',
-      totalAmount: '',
-      yourShare: '',
-      startDate: '',
-      endDate: '',
-      coPIs: [{ name: '', affiliation: '' }],
-      notes: ''
-    });
-    setShowOtherFundingForm(false);
+    const updatedGrants = [...grants, otherFunding];
+    setGrants(updatedGrants);
+    
+    await saveResearchData(publications, updatedGrants, conferences);
+    
+    if (!error) {
+      setGrant({
+        type: 'Grant',
+        client: '',
+        title: '',
+        contractNumber: '',
+        role: '',
+        totalAmount: '',
+        yourShare: '',
+        startDate: '',
+        endDate: '',
+        coPIs: [{ name: '', affiliation: '' }],
+        notes: ''
+      });
+      setShowOtherFundingForm(false);
+    }
   };
 
-  const handleSaveConference = () => {
-    setConferences([...conferences, conference]);
-    setConference({
-      name: '',
-      startDate: '',
-      endDate: '',
-      notes: ''
-    });
-    setShowConferenceForm(false);
+  const handleSaveConference = async () => {
+    const updatedConferences = [...conferences, conference];
+    setConferences(updatedConferences);
+    
+    await saveResearchData(publications, grants, updatedConferences);
+    
+    if (!error) {
+      setConference({
+        name: '',
+        startDate: '',
+        endDate: '',
+        notes: ''
+      });
+      setShowConferenceForm(false);
+    }
   };
 
   if (loading) {
@@ -426,7 +470,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             </div>
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={() => setShowPublicationForm(false)}>Cancel</button>
-              <button className="yar-button-primary" onClick={handleSavePublication}>Save</button>
+              <button className="yar-button-primary" onClick={handleSavePublication} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </button>
             </div>
           </div>
         )}
@@ -468,7 +514,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={() => setShowGrantForm(false)}>Cancel</button>
-              <button className="yar-button-primary" onClick={handleSaveGrant}>Save</button>
+              <button className="yar-button-primary" onClick={handleSaveGrant} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </button>
             </div>
           </div>
         )}
@@ -507,7 +555,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={() => setShowNonFundedResearchForm(false)}>Cancel</button>
-              <button className="yar-button-primary" onClick={handleSaveNonFundedResearch}>Save</button>
+              <button className="yar-button-primary" onClick={handleSaveNonFundedResearch} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </button>
             </div>
           </div>
         )}
@@ -530,6 +580,89 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             <div className="yar-form-group">
               <label>End Date</label>
               <input type="date" className="course-form-input" value={grant.endDate} onChange={e => handleGrantChange('endDate', e.target.value)} />
+            </div>
+
+            {grant.coPIs.map((coPI, i) => (
+              <div key={i} className="yar-form-group">
+                <label>Co-PI Name</label>
+                <input className="course-form-input" value={coPI.name} onChange={e => updateCoPI(i, 'name', e.target.value)} />
+                <label>Affiliation</label>
+                <input className="course-form-input" value={coPI.affiliation} onChange={e => updateCoPI(i, 'affiliation', e.target.value)} />
+              </div>
+            ))}
+            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+
+            <div className="yar-form-group">
+              <label>Additional Notes</label>
+              <textarea className="course-form-input" value={grant.notes} onChange={e => handleGrantChange('notes', e.target.value)} />
+            </div>
+
+            <div className="yar-button-group">
+              <button className="yar-button-secondary" onClick={() => setShowFundedResearchForm(false)}>Cancel</button>
+              <button className="yar-button-primary" onClick={handleSaveFundedResearch} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Other Funding Form */}
+        {showOtherFundingForm && (
+          <div className="course-card">
+            <h3>Other Funding Awards</h3>
+            <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" type="number" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" type="number" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
+
+            <div className="yar-form-group">
+              <label>Start Date</label>
+              <input type="date" className="course-form-input" value={grant.startDate} onChange={e => handleGrantChange('startDate', e.target.value)} />
+            </div>
+            <div className="yar-form-group">
+              <label>End Date</label>
+              <input type="date" className="course-form-input" value={grant.endDate} onChange={e => handleGrantChange('endDate', e.target.value)} />
+            </div>
+
+            {grant.coPIs.map((coPI, i) => (
+              <div key={i} className="yar-form-group">
+                <label>Co-PI Name</label>
+                <input className="course-form-input" value={coPI.name} onChange={e => updateCoPI(i, 'name', e.target.value)} />
+                <label>Affiliation</label>
+                <input className="course-form-input" value={coPI.affiliation} onChange={e => updateCoPI(i, 'affiliation', e.target.value)} />
+              </div>
+            ))}
+            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+
+            <div className="yar-form-group">
+              <label>Additional Notes</label>
+              <textarea className="course-form-input" value={grant.notes} onChange={e => handleGrantChange('notes', e.target.value)} />
+            </div>
+
+            <div className="yar-button-group">
+              <button className="yar-button-secondary" onClick={() => setShowOtherFundingForm(false)}>Cancel</button>
+              <button className="yar-button-primary" onClick={handleSaveOtherFunding} disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Conference Form */}
+        {showConferenceForm && (
+          <div className="course-card">
+            <h3>Conference Participation</h3>
+            <div className="yar-form-group"><label>Name</label><input className="course-form-input" value={conference.name} onChange={e => handleConferenceChange('name', e.target.value)} /></div>
+
+            <div className="yar-form-group">
+              <label>Start Date</label>
+              <input type="date" className="course-form-input" value={conference.startDate} onChange={e => handleConferenceChange('startDate', e.target.value)} />
+            </div>
+            <div className="yar-form-group">
+              <label>End Date</label>
+              <input type="date" className="course-form-input" value={conference.endDate} onChange={e => handleConferenceChange('endDate', e.target.value)} />
             </div>
 
             {grant.coPIs.map((coPI, i) => (
