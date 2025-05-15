@@ -1226,20 +1226,16 @@ hr {
     display: flex;
     flex-direction: column;
     gap: 30px; /* Add consistent spacing between sections */
-    padding-bottom: 30px; /* Add bottom padding */
   }
   
   /* Reports section with proper sizing */
   .reports-section {
     width: 100%;
-    margin-top: 20px;
   }
   
   /* Privacy statement section with proper spacing */
   .privacy-statement-section {
     width: 100%;
-    margin-top: 20px;
-    margin-bottom: 20px;
   }
   
   /* Override the height constraints to allow proper display */
