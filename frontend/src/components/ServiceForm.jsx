@@ -10,6 +10,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isResuming, setIsResuming] = useState(false);
+  const [editingServiceIndex, setEditingServiceIndex] = useState(-1);
   
   const { currentUser } = useContext(AuthContext);
 
@@ -20,6 +21,14 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     description: '',
     notes: ''
   });
+
+  // Function to scroll to top when editing
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   // Fetch existing service data if available
   useEffect(() => {
@@ -45,11 +54,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
           config
         );
-
-        // const { data } = await axios.get(
-        //   `http://localhost:5001/api/service/${reportId}`,
-        //   config
-        // );
       
         if (data) {
           setServices(data);
@@ -113,15 +117,54 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }));
   };
   
+  // Function to handle editing a service
+  const handleEditService = (service, index) => {
+    setNewService({
+      type: service.type || '',
+      role: service.role || '',
+      department: service.department || '',
+      description: service.description || '',
+      notes: service.notes || ''
+    });
+    setEditingServiceIndex(index);
+    setShowForm(true);
+    scrollToTop();
+  };
+  
   const handleSaveService = async () => {
     try {
       setLoading(true);
       setError('');
       
-      const data = await createService(newService);
-      
-      // Add the new service to our local state
-      setServices(prev => [...prev, data]);
+      if (editingServiceIndex >= 0) {
+        // Update existing service
+        const serviceId = services[editingServiceIndex]._id;
+        
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentUser.token}`
+          }
+        };
+        
+        const response = await axios.put(
+          `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+          newService,
+          config
+        );
+        
+        // Update the service in the local state
+        const updatedServices = [...services];
+        updatedServices[editingServiceIndex] = response.data;
+        setServices(updatedServices);
+        
+        setSuccessMessage('Service updated successfully!');
+      } else {
+        // Create new service
+        const data = await createService(newService);
+        setServices(prev => [...prev, data]);
+        setSuccessMessage('Service saved successfully!');
+      }
       
       // Reset form
       setNewService({
@@ -132,8 +175,14 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         notes: ''
       });
       
-      // Hide form
+      // Hide form and reset editing state
       setShowForm(false);
+      setEditingServiceIndex(-1);
+      
+      // Clear success message after delay
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save service');
       console.error('Error saving service:', error);
@@ -155,12 +204,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       serviceData,
       config
     );
-
-    // const { data } = await axios.post(
-    //   `http://localhost:5001/api/service/${reportId}`,
-    //   serviceData,
-    //   config
-    // );
     
     return data;
   };
@@ -180,11 +223,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
         config
       );
-
-      // await axios.delete(
-      //   `http://localhost:5001/api/service/${serviceId}`,
-      //   config
-      // );
       
       // Update local state to remove the deleted service
       setServices(prev => prev.filter(service => service._id !== serviceId));
@@ -229,30 +267,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
 
-        {/* Services List */}
-        {services.map(service => (
-          <div key={service._id} className="course-card">
-            <h3 className="course-title">{service.type}</h3>
-            {service.role && <p><strong>Role:</strong> {service.role}</p>}
-            {service.department && <p><strong>Department:</strong> {service.department}</p>}
-            {service.description && <p><strong>Description:</strong> {service.description}</p>}
-            {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
-            
-            <div className="service-actions">
-              <button 
-                onClick={() => handleDeleteService(service._id)}
-                className="yar-button-secondary delete-service"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {/* Add Service Form */}
-        {showForm ? (
+        {/* Service Form - Now at the top for editing */}
+        {showForm && (
           <div className="course-card">
-            <h3 className="course-title">Service Details</h3>
+            <h3 className="course-title">{editingServiceIndex >= 0 ? 'Edit Service' : 'Service Details'}</h3>
 
             <div className="yar-form-group">
               <label className="course-label">Service Type <span className="required-indicator">*</span></label>
@@ -318,7 +336,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
             <div className="yar-button-group">
               <button
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingServiceIndex(-1);
+                  setNewService({
+                    type: '',
+                    role: '',
+                    department: '',
+                    description: '',
+                    notes: ''
+                  });
+                }}
                 className="yar-button-secondary"
               >
                 Cancel
@@ -331,14 +359,47 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                   opacity: !newService.type || loading ? 0.6 : 1
                 }}
               >
-                {loading ? 'Saving' : 'Save'}
+                {loading ? 'Saving' : editingServiceIndex >= 0 ? 'Update' : 'Save'}
               </button>
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* Services List */}
+        {services.map((service, index) => (
+          <div key={service._id} className="course-card">
+            <h3 className="course-title">{service.type}</h3>
+            {service.role && <p><strong>Role:</strong> {service.role}</p>}
+            {service.department && <p><strong>Department:</strong> {service.department}</p>}
+            {service.description && <p><strong>Description:</strong> {service.description}</p>}
+            {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
+            
+            <div className="service-actions">
+              <button 
+                onClick={() => handleEditService(service, index)}
+                className="yar-button-secondary edit-service"
+              >
+                Edit
+              </button>
+              <button 
+                onClick={() => handleDeleteService(service._id)}
+                className="yar-button-secondary delete-service"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Add Service Button - only show when not editing */}
+        {!showForm && (
           <div
             className="add-course-button"
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setShowForm(true);
+              setEditingServiceIndex(-1);
+              scrollToTop();
+            }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -372,6 +433,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           margin-top: 15px;
           display: flex;
           justify-content: flex-end;
+          gap: 10px;
         }
         
         .delete-service {
@@ -387,6 +449,37 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         .delete-service:hover {
           background-color: #fbe9e7;
           border-color: #ffcdd2;
+        }
+        
+        .edit-service {
+          background-color: #f8f8f8;
+          border: 1px solid #e0e0e0;
+          color: #4B2E83;
+          padding: 5px 10px;
+          border-radius: 4px;
+          font-size: 13px;
+          transition: all 0.3s ease;
+        }
+
+        .edit-service:hover {
+          background-color: #EAE6F4;
+          border-color: #C8BEE6;
+        }
+        
+        /* Animation for form transitions */
+        .course-card {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>

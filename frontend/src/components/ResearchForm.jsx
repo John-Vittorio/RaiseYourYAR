@@ -91,6 +91,21 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     }
   }, [reportId]);
 
+  // Add this useEffect to scroll to top when editing begins
+  useEffect(() => {
+    if (editingPublicationIndex !== -1 || editingGrantIndex !== -1 || editingConferenceIndex !== -1 ||
+        showPublicationForm || showGrantForm || showNonFundedResearchForm || 
+        showFundedResearchForm || showOtherFundingForm || showConferenceForm) {
+      // Scroll to top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [editingPublicationIndex, editingGrantIndex, editingConferenceIndex, 
+      showPublicationForm, showGrantForm, showNonFundedResearchForm, 
+      showFundedResearchForm, showOtherFundingForm, showConferenceForm]);
+
   const fetchResearchData = async () => {
     try {
       setLoading(true);
@@ -200,11 +215,19 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     setGrant(prev => ({ ...prev, coPIs: [...prev.coPIs, { name: '', affiliation: '' }] }));
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   // Handle editing publications
   const handleEditPublication = (index) => {
     setNewPublication(publications[index]);
     setEditingPublicationIndex(index);
     setShowPublicationForm(true);
+    scrollToTop();
   };
 
   // Handle editing grants
@@ -212,6 +235,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     const grantToEdit = grants[index];
     setGrant(grantToEdit);
     setEditingGrantIndex(index);
+    scrollToTop();
     
     // Show the appropriate form based on grant type
     switch(grantToEdit.type) {
@@ -230,6 +254,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       default:
         setShowGrantForm(true);
     }
+    scrollToTop();
   };
 
   // Handle editing conferences
@@ -237,6 +262,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     setConference(conferences[index]);
     setEditingConferenceIndex(index);
     setShowConferenceForm(true);
+    scrollToTop();
   };
 
   const handleSavePublication = async () => {
@@ -642,103 +668,6 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
 
-        {/* Display saved publications */}
-        {publications.map((pub, index) => (
-          <div key={index} className="course-card">
-            <div className="card-content">
-              <h3>{pub.publicationType}</h3>
-              <p><strong>Title:</strong> {pub.title || 'None'}</p>
-              <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName || 'None'}</p>
-              <p><strong>Publication Status:</strong> {pub.publicationStatus || 'None'}</p>
-            </div>
-            <div className="service-actions">
-              <button 
-                className="yar-button-secondary edit-service"
-                onClick={() => handleEditPublication(index)}
-                disabled={loading}
-              >
-                Edit
-              </button>
-              <button 
-                className="yar-button-secondary delete-service"
-                onClick={() => handleDeletePublication(index)}
-                disabled={loading}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {/* Display saved grants */}
-        {grants.map((g, index) => (
-          <div key={index} className="course-card">
-            <div className="card-header">
-              <div>
-                <h3>{formatGrantType(g.type)}</h3>
-                <p><strong>Title:</strong> {g.title || 'None'}</p>
-                <p><strong>Client/Sponsor:</strong> {g.client || 'None'}</p>
-                {g.contractNumber && <p><strong>Grant/Contract #:</strong> {g.contractNumber}</p>}
-                <p><strong>Role:</strong> {g.role || 'None'}</p>
-                {(g.totalAmount || g.yourShare) && (
-                  <p><strong>Amount:</strong> {g.totalAmount ? `${g.totalAmount}` : 'N/A'} {g.yourShare ? `(Your share: ${g.yourShare})` : ''}</p>
-                )}
-                <p><strong>Duration:</strong> {g.startDate ? new Date(g.startDate).toLocaleDateString() : 'N/A'} to {g.endDate ? new Date(g.endDate).toLocaleDateString() : 'N/A'}</p>
-                {g.coPIs && g.coPIs.length > 0 && g.coPIs.some(coPI => coPI.name) && (
-                  <p><strong>Co-PIs:</strong> {g.coPIs.filter(coPI => coPI.name).map((coPI, i) => 
-                    `${coPI.name} (${coPI.affiliation || 'N/A'})`
-                  ).join(', ')}</p>
-                )}
-                {g.notes && <p><strong>Notes:</strong> {g.notes}</p>}
-              </div>
-              <div className='service-actions'>
-                <button 
-                  className="yar-button-secondary edit-service"
-                  onClick={() => handleEditGrant(index)}
-                  disabled={loading}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="yar-button-secondary delete-service"
-                  onClick={() => handleDeleteGrant(index)}
-                  disabled={loading}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Display saved conferences */}
-        {conferences.map((conf, index) => (
-          <div key={index} className="course-card">
-            <div className="card-content">
-              <h3>Conference Participation</h3>
-              <p><strong>Name:</strong> {conf.name || 'None'}</p>
-              <p><strong>Duration:</strong> {conf.startDate ? new Date(conf.startDate).toLocaleDateString() : 'N/A'} to {conf.endDate ? new Date(conf.endDate).toLocaleDateString() : 'N/A'}</p>
-              {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
-            </div>
-            <div className="service-actions">
-              <button 
-                className="yar-button-secondary edit-service"
-                onClick={() => handleEditConference(index)}
-                disabled={loading}
-              >
-                Edit
-              </button>
-              <button 
-                className="yar-button-secondary delete-service"
-                onClick={() => handleDeleteConference(index)}
-                disabled={loading}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-
         {/* Publication Form */}
         {showPublicationForm && (
           <div className="course-card">
@@ -1067,7 +996,102 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           </div>
         )}
 
+        {/* Display saved publications */}
+        {publications.map((pub, index) => (
+          <div key={index} className="course-card">
+            <div className="card-content">
+              <h3>{pub.publicationType}</h3>
+              <p><strong>Title:</strong> {pub.title || 'None'}</p>
+              <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName || 'None'}</p>
+              <p><strong>Publication Status:</strong> {pub.publicationStatus || 'None'}</p>
+            </div>
+            <div className="service-actions">
+              <button 
+                className="yar-button-secondary edit-service"
+                onClick={() => handleEditPublication(index)}
+                disabled={loading}
+              >
+                Edit
+              </button>
+              <button 
+                className="yar-button-secondary delete-service"
+                onClick={() => handleDeletePublication(index)}
+                disabled={loading}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
 
+        {/* Display saved grants */}
+        {grants.map((g, index) => (
+          <div key={index} className="course-card">
+            <div className="card-header">
+              <div>
+                <h3>{formatGrantType(g.type)}</h3>
+                <p><strong>Title:</strong> {g.title || 'None'}</p>
+                <p><strong>Client/Sponsor:</strong> {g.client || 'None'}</p>
+                {g.contractNumber && <p><strong>Grant/Contract #:</strong> {g.contractNumber}</p>}
+                <p><strong>Role:</strong> {g.role || 'None'}</p>
+                {(g.totalAmount || g.yourShare) && (
+                  <p><strong>Amount:</strong> {g.totalAmount ? `${g.totalAmount}` : 'N/A'} {g.yourShare ? `(Your share: ${g.yourShare})` : ''}</p>
+                )}
+                <p><strong>Duration:</strong> {g.startDate ? new Date(g.startDate).toLocaleDateString() : 'N/A'} to {g.endDate ? new Date(g.endDate).toLocaleDateString() : 'N/A'}</p>
+                {g.coPIs && g.coPIs.length > 0 && g.coPIs.some(coPI => coPI.name) && (
+                  <p><strong>Co-PIs:</strong> {g.coPIs.filter(coPI => coPI.name).map((coPI, i) => 
+                    `${coPI.name} (${coPI.affiliation || 'N/A'})`
+                  ).join(', ')}</p>
+                )}
+                {g.notes && <p><strong>Notes:</strong> {g.notes}</p>}
+              </div>
+              <div className='service-actions'>
+                <button 
+                  className="yar-button-secondary edit-service"
+                  onClick={() => handleEditGrant(index)}
+                  disabled={loading}
+                >
+                  Edit
+                </button>
+                <button 
+                  className="yar-button-secondary delete-service"
+                  onClick={() => handleDeleteGrant(index)}
+                  disabled={loading}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Display saved conferences */}
+        {conferences.map((conf, index) => (
+          <div key={index} className="course-card">
+            <div className="card-content">
+              <h3>Conference Participation</h3>
+              <p><strong>Name:</strong> {conf.name || 'None'}</p>
+              <p><strong>Duration:</strong> {conf.startDate ? new Date(conf.startDate).toLocaleDateString() : 'N/A'} to {conf.endDate ? new Date(conf.endDate).toLocaleDateString() : 'N/A'}</p>
+              {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
+            </div>
+            <div className="service-actions">
+              <button 
+                className="yar-button-secondary edit-service"
+                onClick={() => handleEditConference(index)}
+                disabled={loading}
+              >
+                Edit
+              </button>
+              <button 
+                className="yar-button-secondary delete-service"
+                onClick={() => handleDeleteConference(index)}
+                disabled={loading}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
         <AddResearchSection
           onAddPublication={() => setShowPublicationForm(true)}
           onAddGrant={() => setShowGrantForm(true)}
@@ -1098,6 +1122,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           margin-top: 15px;
           display: flex;
           justify-content: flex-end;
+          gap: 10px;
         }
         
         .delete-service {
@@ -1114,6 +1139,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           background-color: #fbe9e7;
           border-color: #ffcdd2;
         }
+        
         .edit-service {
           background-color: #f8f8f8;
           border: 1px solid #e0e0e0;
@@ -1127,6 +1153,22 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         .edit-service:hover {
           background-color: #EAE6F4;
           border-color: #C8BEE6;
+        }
+        
+        /* Animation for form transitions */
+        .course-card {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>
