@@ -331,7 +331,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                   opacity: !newService.type || loading ? 0.6 : 1
                 }}
               >
-                {loading ? 'Saving...' : 'Save'}
+                {loading ? 'Saving' : 'Save'}
               </button>
             </div>
           </div>
@@ -362,7 +362,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? '...' : 'Next'} 
+            {loading ? 'Next' : 'Next'} 
           </button>
         </div>
       </div>
