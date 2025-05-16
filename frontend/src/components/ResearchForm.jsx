@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -1113,7 +1114,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             className="yar-button-next"
             disabled={loading}
           >
-            {loading ? 'Previous' : 'Next'}
+            {loading ? 'Saving...' : 'Next'}
           </button>
         </div>
       </div>
