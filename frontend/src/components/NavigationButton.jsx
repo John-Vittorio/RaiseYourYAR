@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // This component is a replacement for the standard navigation buttons
 // with built-in fixes to ensure proper navigation between YAR sections
@@ -9,10 +10,12 @@ const NavigationButton = ({
   isNext = false, 
   targetSection = null,
   className = '',
+  directPath = null, // Added direct path parameter for explicit navigation
   ...props 
 }) => {
   const [clicked, setClicked] = useState(false);
   const [delayComplete, setDelayComplete] = useState(false);
+  const navigate = useNavigate(); // Add navigate hook to allow direct navigation
   
   // Standard button class based on type
   const buttonClass = isNext ? 'yar-button-next' : 'yar-button-secondary';
@@ -37,8 +40,13 @@ const NavigationButton = ({
       // Mark delay as complete
       setDelayComplete(true);
       
-      // Call the provided onClick handler
-      if (onClick) {
+      // If directPath is provided, navigate directly to that path
+      if (directPath) {
+        console.log(`NavigationButton: Direct navigation to path: ${directPath}`);
+        navigate(directPath);
+      } 
+      // Otherwise call the provided onClick handler
+      else if (onClick) {
         onClick(e);
       }
       
