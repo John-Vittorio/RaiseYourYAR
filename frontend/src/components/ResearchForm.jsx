@@ -1089,7 +1089,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             className="yar-button-next"
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next'}
+            {loading ? '...' : '...'}
           </button>
         </div>
       </div>
