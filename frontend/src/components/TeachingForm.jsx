@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ResumeNotification from './ResumeNotification';
+import NavigationButton from './NavigationButton';
 
 const TeachingForm = ({ onNext, reportId }) => {
   const [courses, setCourses] = useState([]);
@@ -20,6 +22,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [originalSectionNotes, setOriginalSectionNotes] = useState('');
 
   const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate(); // Add the navigate hook for routing
 
   // Fetch existing teaching data if available
   useEffect(() => {
@@ -431,6 +434,32 @@ const TeachingForm = ({ onNext, reportId }) => {
     }
   };
 
+  // Handle navigating back to YARArchive page
+  const handlePrevious = async () => {
+    if (isNavigating) return; // Prevent double clicks
+    
+    try {
+      setIsNavigating(true);
+      console.log("TeachingForm: Previous button clicked - saving and returning to YARArchive");
+      
+      // Auto-save any changes before navigating away
+      if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
+        sectionNotes !== originalSectionNotes) {
+        await autoSaveTeachingData();
+      }
+      
+      // Navigate to YARArchive page
+      setTimeout(() => {
+        navigate('/'); // Navigate to the main YARArchive page
+      }, 100);
+      
+    } catch (error) {
+      console.error("TeachingForm: Error during navigation:", error);
+      setError('Failed to save your data before proceeding. Please try again.');
+      setIsNavigating(false);
+    }
+  };
+
   if (loading && courses.length === 0) {
     return <div className="loading">Loading...</div>;
   }
@@ -748,19 +777,25 @@ const TeachingForm = ({ onNext, reportId }) => {
           <span style={{ marginLeft: '8px', color: '#4B2E83' }}>Add course</span>
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation Buttons - Using the NavigationButton component */}
         <div className="navigation-buttons">
-          <button className="yar-button-secondary" disabled>
+          <NavigationButton 
+            onClick={handlePrevious}
+            targetSection="YARArchive"
+            className="yar-button-previous"
+          >
             Previous
-          </button>
-          <button
+          </NavigationButton>
+          
+          <NavigationButton
             onClick={handleNext}
-            className="yar-button-next"
+            isNext={true}
+            targetSection="Research"
             disabled={isNavigating || loading}
             id="to-research-button"
           >
-            {isNavigating ? '...' : 'Next'} 
-          </button>
+            Next
+          </NavigationButton>
         </div>
       </div>
 
