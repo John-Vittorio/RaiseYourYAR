@@ -69,7 +69,7 @@ const NavigationButton = ({
   
   // Determine button text based on state
   const buttonText = clicked ? 
-    (isNext ? 'Next' : 'Next') : 
+    (isNext ? 'Previous' : 'Next') : 
     children;
   
   return (
