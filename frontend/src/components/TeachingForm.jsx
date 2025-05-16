@@ -759,7 +759,7 @@ const TeachingForm = ({ onNext, reportId }) => {
             disabled={isNavigating || loading}
             id="to-research-button"
           >
-            {isNavigating ? 'Moving to Research...' : 'Next'} 
+            {isNavigating ? '...' : 'Next'} 
           </button>
         </div>
       </div>
