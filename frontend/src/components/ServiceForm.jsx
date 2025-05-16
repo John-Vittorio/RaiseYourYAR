@@ -362,7 +362,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next: General Notes'} 
+            {loading ? 'General Notes...' : 'Next'} 
           </button>
         </div>
       </div>
