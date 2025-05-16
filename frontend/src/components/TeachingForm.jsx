@@ -95,7 +95,7 @@ const TeachingForm = ({ onNext, reportId }) => {
 
             setCourses(mappedCourses);
             setOriginalCourses(JSON.parse(JSON.stringify(mappedCourses)));
-
+            
             // If we found existing data, this is a resumed draft
             if (mappedCourses.length > 0) {
               setIsResuming(true);
@@ -406,11 +406,11 @@ const TeachingForm = ({ onNext, reportId }) => {
   // Handle navigating to research section
   const handleNext = async () => {
     if (isNavigating) return; // Prevent double clicks
-
+    
     try {
       setIsNavigating(true);
       console.log("TeachingForm: Next button clicked - saving and proceeding to Research");
-
+      
       // If there are any unsaved changes, save them before proceeding
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
         sectionNotes !== originalSectionNotes) {
@@ -421,9 +421,9 @@ const TeachingForm = ({ onNext, reportId }) => {
       setTimeout(() => {
         // Call the parent's onNext function to navigate to research
         console.log("TeachingForm: Calling parent onNext to navigate to research");
-        onNext();
+        onNext(); 
       }, 100);
-
+      
     } catch (error) {
       console.error("TeachingForm: Error during navigation:", error);
       setError('Failed to save your data before proceeding. Please try again.');
@@ -439,7 +439,7 @@ const TeachingForm = ({ onNext, reportId }) => {
     <div className="teaching-container">
       <div className="teaching-form-content">
         {isResuming && <ResumeNotification reportId={reportId} />}
-
+        
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">
@@ -749,12 +749,8 @@ const TeachingForm = ({ onNext, reportId }) => {
         </div>
 
         {/* Navigation Buttons */}
-        {/* Navigation Buttons */}
         <div className="navigation-buttons">
-          <button
-            className="yar-button-secondary"
-            onClick={() => navigate('/')}
-          >
+          <button className="yar-button-secondary" disabled>
             Previous
           </button>
           <button
@@ -763,7 +759,7 @@ const TeachingForm = ({ onNext, reportId }) => {
             disabled={isNavigating || loading}
             id="to-research-button"
           >
-            {isNavigating ? '...' : 'Next'}
+            {isNavigating ? '...' : 'Next'} 
           </button>
         </div>
       </div>
