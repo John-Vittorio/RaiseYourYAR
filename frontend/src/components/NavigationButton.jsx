@@ -67,11 +67,6 @@ const NavigationButton = ({
     };
   }, []);
   
-  // Determine button text based on state
-  // const buttonText = clicked ? 
-  //   (isNext ? '...' : '...') : 
-  //   children;
-  
   return (
     <button
       className={combinedClassName}
@@ -79,7 +74,9 @@ const NavigationButton = ({
       disabled={disabled || clicked}
       data-section-target={targetSection}
       {...props}
-    >      
+    >
+      {children}
+      
       <style jsx>{`
         .${buttonClass} {
           position: relative;
