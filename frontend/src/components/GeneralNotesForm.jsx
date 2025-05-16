@@ -170,7 +170,7 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Next: Review'} 
+            {loading ? 'Saving' : 'Next'} 
           </button>
         </div>
       </div>
