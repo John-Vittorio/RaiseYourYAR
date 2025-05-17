@@ -61,7 +61,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     publicationType: 'Journal Article',
     title: '',
     journalName: '',
-    publicationStatus: 'In Progress'
+    publicationStatus: 'In Progress',
+    coAuthors: [{ name: '', affiliation: '' }]
   });
 
   const [grant, setGrant] = useState({
@@ -214,6 +215,26 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
   const addCoPI = () => {
     setGrant(prev => ({ ...prev, coPIs: [...prev.coPIs, { name: '', affiliation: '' }] }));
+  };
+
+  const updateCoAuthor = (index, field, value) => {
+    const updatedCoAuthors = [...newPublication.coAuthors];
+    updatedCoAuthors[index][field] = value;
+    setNewPublication(prev => ({ ...prev, coAuthors: updatedCoAuthors }));
+  };
+
+  // Add a new co-author field
+  const addCoAuthor = () => {
+    setNewPublication(prev => ({
+      ...prev,
+      coAuthors: [...prev.coAuthors, { name: '', affiliation: '' }]
+    }));
+  };
+
+  // Remove a co-author field
+  const removeCoAuthor = (index) => {
+    const updatedCoAuthors = newPublication.coAuthors.filter((_, i) => i !== index);
+    setNewPublication(prev => ({ ...prev, coAuthors: updatedCoAuthors }));
   };
 
   const scrollToTop = () => {
@@ -584,7 +605,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const formatGrantType = (type) => {
     switch (type) {
       case 'Grant':
-        return 'Research Grant/Contract';
+        return 'Research Grant / Contract';
       case 'NonFundedResearch':
         return 'Non-Funded Research';
       case 'FundedResearch':
@@ -604,7 +625,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       publicationType: 'Journal Article',
       title: '',
       journalName: '',
-      publicationStatus: 'In Progress'
+      publicationStatus: 'In Progress',
+      coAuthors: [{ name: '', affiliation: '' }]
     });
   };
 
@@ -699,7 +721,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 />
               </div>
               <div className="yar-form-group">
-                <label className="course-label">Journal/Conference/Publisher Name *</label>
+                <label className="course-label">Journal / Conference / Publisher Name *</label>
                 <input
                   className="course-form-input"
                   value={newPublication.journalName}
@@ -721,6 +743,45 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                   <option value="Published">Published</option>
                 </select>
               </div>
+              <div className="yar-form-group">
+                <label className="course-label">Co-Authors</label>
+                {newPublication.coAuthors.map((coAuthor, i) => (
+                  <div key={i} className="co-author-row">
+                    <div className="yar-form-group">
+                      <label>Co-Author Name</label>
+                      <input
+                        className="course-form-input"
+                        value={coAuthor.name}
+                        onChange={e => updateCoAuthor(i, 'name', e.target.value)}
+                      />
+                    </div>
+                    <div className="yar-form-group">
+                      <label>Affiliation</label>
+                      <input
+                        className="course-form-input"
+                        value={coAuthor.affiliation}
+                        onChange={e => updateCoAuthor(i, 'affiliation', e.target.value)}
+                      />
+                    </div>
+                    {i > 0 && (
+                      <button
+                        type="button"
+                        className="remove-button"
+                        onClick={() => removeCoAuthor(i)}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addCoAuthor}
+                  className="yar-button-secondary"
+                >
+                  + Add Co-Author
+                </button>
+              </div>
             </div>
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={handleCancelPublicationEdit}>Cancel</button>
@@ -738,9 +799,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {/* Grant Form */}
         {showGrantForm && (
           <div className="course-card">
-            <h3>{editingGrantIndex >= 0 ? 'Edit Research Grant/Contract' : 'Add Research Grant/Contract'}</h3>
+            <h3>{editingGrantIndex >= 0 ? 'Edit Research Grant / Contract' : 'Add Research Grant / Contract'}</h3>
             <div className="yar-form-group">
-              <label>Client/Sponsor</label>
+              <label>Client / Sponsor</label>
               <input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} />
             </div>
             <div className="yar-form-group">
@@ -748,7 +809,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               <input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} />
             </div>
             <div className="yar-form-group">
-              <label>Grant/Contract #</label>
+              <label>Grant / Contract #</label>
               <input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} />
             </div>
             <div className="yar-form-group">
@@ -808,9 +869,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {/* Non-Funded Research Form */}
         {showNonFundedResearchForm && (
           <div className="course-card">
-            <h3>Non-Funded Research/Creative Work</h3>
+            <h3>Non-Funded Research / Creative Work</h3>
             <div className="yar-form-group">
-              <label>Client/Sponsor</label>
+              <label>Client / Sponsor</label>
               <input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} />
             </div>
             <div className="yar-form-group">
@@ -868,7 +929,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           <div className="course-card">
             <h3>Funded Research/Creative Work</h3>
             <div className="yar-form-group">
-              <label>Client/Sponsor</label>
+              <label>Client / Sponsor</label>
               <input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} />
             </div>
             <div className="yar-form-group">
@@ -876,7 +937,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               <input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} />
             </div>
             <div className="yar-form-group">
-              <label>Grant/Contract #</label>
+              <label>Grant / Contract #</label>
               <input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} />
             </div>
             <div className="yar-form-group">
@@ -929,9 +990,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         {showOtherFundingForm && (
           <div className="course-card">
             <h3>Other Funding Awards</h3>
-            <div className="yar-form-group"><label>Client/Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Client / Sponsor</label><input className="course-form-input" value={grant.client} onChange={e => handleGrantChange('client', e.target.value)} /></div>
             <div className="yar-form-group"><label>Title</label><input className="course-form-input" value={grant.title} onChange={e => handleGrantChange('title', e.target.value)} /></div>
-            <div className="yar-form-group"><label>Grant/Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
+            <div className="yar-form-group"><label>Grant / Contract #</label><input className="course-form-input" value={grant.contractNumber} onChange={e => handleGrantChange('contractNumber', e.target.value)} /></div>
             <div className="yar-form-group"><label>Role</label><input className="course-form-input" value={grant.role} onChange={e => handleGrantChange('role', e.target.value)} /></div>
             <div className="yar-form-group"><label>Amount of Award</label><input className="course-form-input" type="number" value={grant.totalAmount} onChange={e => handleGrantChange('totalAmount', e.target.value)} /></div>
             <div className="yar-form-group"><label>Amount Dedicated to You</label><input className="course-form-input" type="number" value={grant.yourShare} onChange={e => handleGrantChange('yourShare', e.target.value)} /></div>
@@ -1006,6 +1067,11 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               <p><strong>Title:</strong> {pub.title || 'None'}</p>
               <p><strong>Journal/Conference/Publisher:</strong> {pub.journalName || 'None'}</p>
               <p><strong>Publication Status:</strong> {pub.publicationStatus || 'None'}</p>
+              {pub.coAuthors && pub.coAuthors.length > 0 && pub.coAuthors.some(coAuthor => coAuthor.name) && (
+                <p><strong>Co-Authors:</strong> {pub.coAuthors.filter(coAuthor => coAuthor.name).map((coAuthor, i) =>
+                  `${coAuthor.name} (${coAuthor.affiliation || 'N/A'})`
+                ).join(', ')}</p>
+              )}
             </div>
             <div className="service-actions">
               <button
@@ -1033,8 +1099,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               <div>
                 <h3>{formatGrantType(g.type)}</h3>
                 <p><strong>Title:</strong> {g.title || 'None'}</p>
-                <p><strong>Client/Sponsor:</strong> {g.client || 'None'}</p>
-                {g.contractNumber && <p><strong>Grant/Contract #:</strong> {g.contractNumber}</p>}
+                <p><strong>Client / Sponsor:</strong> {g.client || 'None'}</p>
+                {g.contractNumber && <p><strong>Grant / Contract #:</strong> {g.contractNumber}</p>}
                 <p><strong>Role:</strong> {g.role || 'None'}</p>
                 {(g.totalAmount || g.yourShare) && (
                   <p><strong>Amount:</strong> {g.totalAmount ? `${g.totalAmount}` : 'N/A'} {g.yourShare ? `(Your share: ${g.yourShare})` : ''}</p>
@@ -1171,6 +1237,37 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+
+          /* Add this to your existing styles */
+        .co-author-row {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 10px;
+          align-items: flex-end;
+          position: relative;
+        }
+        
+        .co-author-row .yar-form-group {
+          flex: 1;
+          margin-bottom: 0;
+        }
+        
+        .remove-button {
+          background-color: #f8f8f8;
+          border: 1px solid #e0e0e0;
+          color: #d32f2f;
+          padding: 5px 10px;
+          border-radius: 4px;
+          font-size: 13px;
+          height: 36px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        
+        .remove-button:hover {
+          background-color: #fbe9e7;
+          border-color: #ffcdd2;
         }
       `}</style>
     </div>

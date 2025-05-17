@@ -5,6 +5,11 @@ const CoPISchema = new mongoose.Schema({
   affiliation: { type: String }
 });
 
+const CoAuthorSchema = new mongoose.Schema({
+  name: { type: String },
+  affiliation: { type: String }
+});
+
 const PublicationSchema = new mongoose.Schema({
   publicationType: {
     type: String,
@@ -38,6 +43,7 @@ const PublicationSchema = new mongoose.Schema({
     ],
     default: 'In Progress'
   },
+  coAuthors: [CoAuthorSchema],
   createdAt: {
     type: Date,
     default: Date.now
