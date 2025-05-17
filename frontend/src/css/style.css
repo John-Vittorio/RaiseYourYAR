@@ -290,7 +290,7 @@ hr {
     font-family: "Encode Sans";
     color: #495057;
     background-color: #FFFFFF;
-    width: 200px;
+    width: 150px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -304,7 +304,7 @@ hr {
     padding: 10px;
     border-radius: 10px;
     border: 1px solid #e5e5e5;
-    width: 200px;
+    width: 150px;
     font-family: "Montserrat";
     background-color: #32006E;
     color: #FFFFFF;
