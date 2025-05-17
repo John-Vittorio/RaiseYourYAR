@@ -74,39 +74,40 @@ body {
     color: #4B2E83;
     font-weight: 600;
     margin: 20px auto 15px;
-    /* Changed to auto for horizontal centering */
     font-size: 18px;
     padding-bottom: 8px;
     text-align: center;
-    /* Center the text */
     position: relative;
-    display: flex;
-    flex-direction: column;
-    /* Stack elements vertically */
-    align-items: center;
-    /* Center alignment */
+    display: inline-block;
+    /* Changed to inline-block to match text width naturally */
     width: auto;
-    /* Auto width instead of 100% */
-    max-width: 80%;
-    /* Limit the maximum width to 80% of container */
+    /* Width will adjust to content */
+    max-width: 100%;
+    /* Prevent overflow */
 }
 
-/* Modified to be a centered line below the text */
+/* Create the underline that exactly matches text width */
 .teaching-section-header-two::after {
     content: '';
-    display: block;
-    width: 50%;
-    /* Make the line 50% of the header width */
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* Takes full width of the text */
     height: 2px;
     background-color: rgba(75, 46, 131, 0.15);
-    margin-top: 8px;
-    /* Space between text and line */
     border-radius: 2px;
 }
 
-/* Remove the previous ::before pseudo-element with the vertical line */
+/* Remove the previous ::before element */
 .teaching-section-header-two::before {
     display: none;
+}
+
+/* Wrapper to center the header */
+.teaching-header-container {
+    text-align: center;
+    width: 100%;
 }
 
 .nav-bar ul li {
