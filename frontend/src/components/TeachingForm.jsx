@@ -536,7 +536,7 @@ const TeachingForm = ({ onNext, reportId }) => {
               rows="6"
               value={expectationNotes}
               onChange={handleExpectationNotesChange}
-              placeholder="Enter your teaching, research, and service expectations here..."
+              placeholder="Enter your teaching, research, and service expectations here... Ex: (40/40/20)"
               style={{ width: '100%', padding: '12px', marginTop: '15px' }}
             ></textarea>
           </div>
