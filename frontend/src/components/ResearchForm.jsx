@@ -846,7 +846,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 </div>
               </div>
             ))}
-            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+            <button onClick={addCoPI} className="yar-button-secondary co-pi">+ Add Co-PI</button>
 
             <div className="yar-form-group">
               <label>Additional Notes</label>
@@ -904,7 +904,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 </div>
               </div>
             ))}
-            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+            <button onClick={addCoPI} className="yar-button-secondary co-pi">+ Add Co-PI</button>
 
             <div className="yar-form-group">
               <label>Additional Notes</label>
@@ -970,7 +970,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 <input className="course-form-input" value={coPI.affiliation} onChange={e => updateCoPI(i, 'affiliation', e.target.value)} />
               </div>
             ))}
-            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+            <button onClick={addCoPI} className="yar-button-secondary co-pi">+ Add Co-PI</button>
 
             <div className="yar-form-group">
               <label>Additional Notes</label>
@@ -1014,7 +1014,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 <input className="course-form-input" value={coPI.affiliation} onChange={e => updateCoPI(i, 'affiliation', e.target.value)} />
               </div>
             ))}
-            <button onClick={addCoPI} className="yar-button-secondary">+ Add Co-PI</button>
+            <button onClick={addCoPI} className="yar-button-secondary co-pi">+ Add Co-PI</button>
 
             <div className="yar-form-group">
               <label>Additional Notes</label>
