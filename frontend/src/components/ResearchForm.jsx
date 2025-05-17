@@ -1260,7 +1260,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           padding: 5px 10px;
           border-radius: 4px;
           font-size: 13px;
-          height: 36px;
+          height: 40px;
           cursor: pointer;
           transition: all 0.3s ease;
         }
