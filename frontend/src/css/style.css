@@ -69,6 +69,14 @@ body {
     width: 100%;
 }
 
+.teaching-section-header-two {
+    font-family: "Encode Sans";
+    color: #4B2E83;
+    font-weight: 600;
+    margin: 20px 0 15px 0;
+    font-size: 18px;
+}
+
 .nav-bar ul li {
     flex: 1 0 0;
     position: relative;

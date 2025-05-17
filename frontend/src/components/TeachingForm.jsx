@@ -507,6 +507,7 @@ const TeachingForm = ({ onNext, reportId }) => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
+        <h2 className="teaching-section-header-two">Please enter your student credit hours when you select "Add Course"</h2>
 
         {/* Section Notes */}
         <div className="course-card">
