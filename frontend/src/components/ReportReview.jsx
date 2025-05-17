@@ -317,9 +317,6 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <h3 className="review-section-title">Research</h3>
               {research ? (
                 <div className="review-section-content">
-// Find the publications section in ReportReview.jsx and update it to include co-authors
-                  // Look for this code around line 304 in your ReportReview component
-
                   {research.publications && research.publications.length > 0 && (
                     <>
                       {research.publications.map((pub, index) => (
