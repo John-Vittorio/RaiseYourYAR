@@ -16,6 +16,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   const [autoSaveTimer, setAutoSaveTimer] = useState(null);
   const [isResuming, setIsResuming] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [expectationNotes, setExpectationNotes] = useState('');
+  const [originalExpectationNotes, setOriginalExpectationNotes] = useState('');
 
   // New state for section notes
   const [sectionNotes, setSectionNotes] = useState('');
@@ -35,7 +37,8 @@ const TeachingForm = ({ onNext, reportId }) => {
   useEffect(() => {
     // Only set up auto-save if we have courses and they're not the initial empty state
     if ((courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) ||
-      (sectionNotes !== originalSectionNotes)) {
+      (sectionNotes !== originalSectionNotes) ||
+      (expectationNotes !== originalExpectationNotes)) {  // Add this condition
       // Clear any existing timer
       if (autoSaveTimer) {
         clearTimeout(autoSaveTimer);
@@ -58,7 +61,7 @@ const TeachingForm = ({ onNext, reportId }) => {
         clearTimeout(autoSaveTimer);
       }
     };
-  }, [courses, sectionNotes]);
+  }, [courses, sectionNotes, expectationNotes]); // Add expectationNotes to dependency array
 
   const fetchTeachingData = async () => {
     try {
@@ -103,6 +106,12 @@ const TeachingForm = ({ onNext, reportId }) => {
             if (mappedCourses.length > 0) {
               setIsResuming(true);
             }
+          }
+
+          // Load expectation notes if present
+          if (data.expectationNotes) {
+            setExpectationNotes(data.expectationNotes);
+            setOriginalExpectationNotes(data.expectationNotes);
           }
 
           // Load section notes if present
@@ -155,15 +164,16 @@ const TeachingForm = ({ onNext, reportId }) => {
         {
           courses: apiCourses,
           taughtOutsideDept: apiCourses.some(course => course.outsideDept),
-          sectionNotes: sectionNotes // Include section notes in the request
+          sectionNotes: sectionNotes, // Include section notes in the request
+          expectationNotes: expectationNotes // Add expectation notes to the request
         },
         config
       );
 
-      // Update original courses to match current state
+      // Update original expectation notes along with others
       setOriginalCourses(JSON.parse(JSON.stringify(courses)));
       setOriginalSectionNotes(sectionNotes);
-      setAutoSaveStatus('saved');
+      setOriginalExpectationNotes(expectationNotes); // Add this line
 
       // Clear auto-save status after 3 seconds
       setTimeout(() => {
@@ -315,6 +325,11 @@ const TeachingForm = ({ onNext, reportId }) => {
     });
   };
 
+  // Handle expectation notes change
+  const handleExpectationNotesChange = (e) => {
+    setExpectationNotes(e.target.value);
+  };
+
   // Handle radio button changes for courses
   const handleRadioChange = (courseId, field, value) => {
     setCourses(prevCourses =>
@@ -415,11 +430,12 @@ const TeachingForm = ({ onNext, reportId }) => {
       console.log("TeachingForm: Next button clicked - saving and proceeding to Research");
 
       // If there are any unsaved changes, save them before proceeding
+      // Auto-save any changes before navigating away
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
-        sectionNotes !== originalSectionNotes) {
+        sectionNotes !== originalSectionNotes ||
+        expectationNotes !== originalExpectationNotes) { // Add this check
         await autoSaveTeachingData();
       }
-
       // Wait a short moment before triggering navigation
       setTimeout(() => {
         // Call the parent's onNext function to navigate to research
@@ -445,8 +461,10 @@ const TeachingForm = ({ onNext, reportId }) => {
       console.log("TeachingForm: Previous button clicked - saving and returning to YARArchive");
 
       // Auto-save any changes before navigating away
+      // Auto-save any changes before navigating away
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
-        sectionNotes !== originalSectionNotes) {
+        sectionNotes !== originalSectionNotes ||
+        expectationNotes !== originalExpectationNotes) { // Add this check
         await autoSaveTeachingData();
       }
 
@@ -508,6 +526,21 @@ const TeachingForm = ({ onNext, reportId }) => {
 
         {error && <div className="error-message">{error}</div>}
         <h2 className="teaching-section-header-two">Please enter your student credit hours when you select "Add Course"</h2>
+
+        {/* Expectation Notes */}
+        <div className="course-card">
+          <h3 className="course-title">Teaching/Research/Service Expectation</h3>
+          <div className="yar-form-group">
+            <textarea
+              className="course-notes"
+              rows="6"
+              value={expectationNotes}
+              onChange={handleExpectationNotesChange}
+              placeholder="Enter your teaching, research, and service expectations here..."
+              style={{ width: '100%', padding: '12px', marginTop: '15px' }}
+            ></textarea>
+          </div>
+        </div>
 
         {/* Section Notes */}
         <div className="course-card">
