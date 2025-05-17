@@ -79,7 +79,7 @@ body {
     position: relative;
     display: inline-block;
     /* Changed to inline-block to match text width */
-    width: auto;
+    width: 100%;
     /* Width will adjust to content */
 }
 
