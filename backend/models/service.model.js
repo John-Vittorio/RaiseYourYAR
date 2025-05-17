@@ -36,7 +36,7 @@ const ServiceSchema = new Schema({
   description: { 
     type: String 
   },
-  // New fields for thesis/dissertation committees
+  // Thesis/dissertation committee specific fields
   committeeName: {
     type: String
   },

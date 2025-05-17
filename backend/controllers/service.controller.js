@@ -42,7 +42,7 @@ export const createService = async (req, res) => {
       department, 
       description, 
       notes,
-      // New fields for thesis/dissertation committee
+      // Thesis/dissertation committee specific fields
       committeeName,
       degreeType,
       students
@@ -68,7 +68,7 @@ export const createService = async (req, res) => {
       notes
     };
 
-    // Add thesis/dissertation committee specific fields if available
+    // Add thesis/dissertation committee specific fields if applicable
     if (type === 'Thesis / Dissertation Committee') {
       serviceData.committeeName = committeeName;
       serviceData.degreeType = degreeType;
@@ -77,15 +77,14 @@ export const createService = async (req, res) => {
 
     const newService = await Service.create(serviceData);
 
-    // If this is the first service entry, update the report
+    // If this is the first service entry, initialize the serviceSection array
     if (!report.serviceSection) {
       report.serviceSection = [newService._id];
-      await report.save();
     } else {
       // Add this service to the serviceSection array
       report.serviceSection.push(newService._id);
-      await report.save();
     }
+    await report.save();
 
     res.status(201).json(newService);
   } catch (error) {
@@ -103,7 +102,7 @@ export const updateService = async (req, res) => {
       department, 
       description, 
       notes,
-      // New fields for thesis/dissertation committee
+      // Thesis/dissertation committee specific fields
       committeeName,
       degreeType,
       students
@@ -122,16 +121,16 @@ export const updateService = async (req, res) => {
     service.type = type || service.type;
     service.role = role || service.role;
     service.department = department || service.department;
-    service.description = description || service.description;
-    service.notes = notes || service.notes;
+    service.description = description !== undefined ? description : service.description;
+    service.notes = notes !== undefined ? notes : service.notes;
 
     // Update thesis/dissertation committee specific fields if applicable
     if (type === 'Thesis / Dissertation Committee') {
-      service.committeeName = committeeName;
-      service.degreeType = degreeType;
+      service.committeeName = committeeName !== undefined ? committeeName : service.committeeName;
+      service.degreeType = degreeType !== undefined ? degreeType : service.degreeType;
       
       // Only update students array if it's provided in the request
-      if (students) {
+      if (students !== undefined) {
         service.students = students;
       }
     }
