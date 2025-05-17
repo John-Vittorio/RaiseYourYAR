@@ -262,7 +262,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 {/* Display Teaching/Research/Service Expectation */}
                 {expectationNotes && (
                   <div className="expectation-notes">
-                    <p><strong>Teaching/Research/Service Expectation:</strong> {expectationNotes}</p>
+                    <p><strong>Teaching / Research / Service Distribution:</strong> {expectationNotes}</p>
                   </div>
                 )}
               </div>
