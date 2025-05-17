@@ -16,7 +16,6 @@ const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResear
 
   return (
     <div className="section-buttons">
-      <h2 className="teaching-section-header-two">Please add your research work under the respective categories</h2>
       {actions.map((action, index) => (
         <div
           key={index}
@@ -666,6 +665,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             <span className="inactive">Review</span>
           </div>
         </div>
+        <h2 className="teaching-section-header-two">Please add your research work under the respective categories</h2>
 
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
