@@ -513,7 +513,7 @@ const TeachingForm = ({ onNext, reportId }) => {
         <div className="course-card">
           <h3 className="course-title">Teaching Section Notes</h3>
           <p className="notes-instruction">
-            For committees for which you are not a chair, please add that in the service section, under thesis service (under drop-down), thesis/dissertation committee member.
+            For committees in which you are not a chair, please add that in the service section.
           </p>
           <div className="yar-form-group">
             <textarea
@@ -739,31 +739,7 @@ const TeachingForm = ({ onNext, reportId }) => {
                   onClick={() => handleCancelCourse(course.id)}
                   className="yar-button-secondary course-button"
                 >
-                  Remove
-                </button>
-                <button
-                  onClick={() => {
-                    // Reset to original values
-                    const originalCourse = originalCourses.find(c => c.id === course.id);
-                    if (originalCourse) {
-                      setCourses(prevCourses =>
-                        prevCourses.map(c =>
-                          c.id === course.id ? JSON.parse(JSON.stringify(originalCourse)) : c
-                        )
-                      );
-                    }
-                    // Clear validation errors
-                    if (validationErrors[course.id]) {
-                      setValidationErrors(prev => {
-                        const updated = { ...prev };
-                        delete updated[course.id];
-                        return updated;
-                      });
-                    }
-                  }}
-                  className="yar-button-secondary course-button"
-                >
-                  Reset
+                  Cancel
                 </button>
                 <button
                   onClick={() => handleSaveCourse(course.id)}
