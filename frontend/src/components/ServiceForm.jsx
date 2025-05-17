@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -19,10 +20,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     role: '',
     department: '',
     description: '',
-    notes: '',
-    committeeName: '',
-    degreeType: '',
-    students: []
+    notes: ''
   });
 
   // Function to scroll to top when editing
@@ -120,36 +118,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }));
   };
   
-  // Handle adding a new student
-  const handleAddStudent = () => {
-    setNewService(prev => ({
-      ...prev,
-      students: [...prev.students, { name: '' }]
-    }));
-  };
-
-  // Handle student name change
-  const handleStudentNameChange = (index, value) => {
-    const updatedStudents = [...newService.students];
-    updatedStudents[index] = { name: value };
-    
-    setNewService(prev => ({
-      ...prev,
-      students: updatedStudents
-    }));
-  };
-
-  // Handle removing a student
-  const handleRemoveStudent = (index) => {
-    const updatedStudents = [...newService.students];
-    updatedStudents.splice(index, 1);
-    
-    setNewService(prev => ({
-      ...prev,
-      students: updatedStudents
-    }));
-  };
-  
   // Function to handle editing a service
   const handleEditService = (service, index) => {
     setNewService({
@@ -157,10 +125,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       role: service.role || '',
       department: service.department || '',
       description: service.description || '',
-      notes: service.notes || '',
-      committeeName: service.committeeName || '',
-      degreeType: service.degreeType || '',
-      students: service.students || []
+      notes: service.notes || ''
     });
     setEditingServiceIndex(index);
     setShowForm(true);
@@ -208,10 +173,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         role: '',
         department: '',
         description: '',
-        notes: '',
-        committeeName: '',
-        degreeType: '',
-        students: []
+        notes: ''
       });
       
       // Hide form and reset editing state
@@ -281,73 +243,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }
   };
 
-  // Render form fields based on service type
-  const renderServiceTypeFields = () => {
-    if (newService.type === 'Thesis / Dissertation Committee') {
-      return (
-        <>
-          <div className="yar-form-group">
-            <label className="course-label">Committee Name <span className="required-indicator">*</span></label>
-            <input
-              type="text"
-              className="course-form-input"
-              value={newService.committeeName}
-              onChange={(e) => handleInputChange('committeeName', e.target.value)}
-              placeholder="Name of the committee"
-            />
-          </div>
-
-          <div className="yar-form-group">
-            <label className="course-label">Degree Type <span className="required-indicator">*</span></label>
-            <select
-              className="course-form-input"
-              value={newService.degreeType}
-              onChange={(e) => handleInputChange('degreeType', e.target.value)}
-            >
-              <option value="" disabled>Select Degree Type</option>
-              <option value="Undergraduate">Undergraduate</option>
-              <option value="Graduate">Graduate</option>
-              <option value="Ph.D.">Ph.D.</option>
-            </select>
-          </div>
-
-          <div className="yar-form-group">
-            <label className="course-label">Students</label>
-            
-            {newService.students.map((student, index) => (
-              <div key={index} className="student-input-group">
-                <input
-                  type="text"
-                  className="course-form-input student-name-input"
-                  value={student.name}
-                  onChange={(e) => handleStudentNameChange(index, e.target.value)}
-                  placeholder="Student name"
-                />
-                <button 
-                  type="button" 
-                  className="remove-student-button"
-                  onClick={() => handleRemoveStudent(index)}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            
-            <button 
-              type="button" 
-              className="yar-button-secondary add-student-button"
-              onClick={handleAddStudent}
-            >
-              + Add Student
-            </button>
-          </div>
-        </>
-      );
-    }
-    
-    return null;
-  };
-
   if (loading && services.length === 0) {
     return <div className="loading">Loading...</div>;
   }
@@ -391,16 +286,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 <option value="University Committee">University Committee</option>
                 <option value="Professional Service">Professional Service</option>
                 <option value="Community Service">Community Service</option>
-                <option value="Admissions Committee">Admissions Committee</option>
-                <option value="Thesis / Dissertation Committee">Thesis / Dissertation Committee</option>
                 <option value="Other">Other</option>
               </select>
             </div>
 
-            {/* Render fields based on service type */}
-            {renderServiceTypeFields()}
-
-            {/* Always show these fields for all service types */}
             <div className="yar-form-group">
               <label className="course-label">Service Role</label>
               <input
@@ -455,10 +344,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     role: '',
                     department: '',
                     description: '',
-                    notes: '',
-                    committeeName: '',
-                    degreeType: '',
-                    students: []
+                    notes: ''
                   });
                 }}
                 className="yar-button-secondary"
@@ -468,9 +354,9 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               <button
                 onClick={handleSaveService}
                 className="yar-button-primary"
-                disabled={!newService.type || (newService.type === 'Thesis / Dissertation Committee' && (!newService.committeeName || !newService.degreeType)) || loading}
+                disabled={!newService.type || loading}
                 style={{
-                  opacity: !newService.type || (newService.type === 'Thesis / Dissertation Committee' && (!newService.committeeName || !newService.degreeType)) || loading ? 0.6 : 1
+                  opacity: !newService.type || loading ? 0.6 : 1
                 }}
               >
                 {loading ? 'Saving' : editingServiceIndex >= 0 ? 'Update' : 'Save'}
@@ -483,22 +369,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         {services.map((service, index) => (
           <div key={service._id} className="course-card">
             <h3 className="course-title">{service.type}</h3>
-            {service.type === 'Thesis / Dissertation Committee' && (
-              <>
-                {service.committeeName && <p><strong>Committee Name:</strong> {service.committeeName}</p>}
-                {service.degreeType && <p><strong>Degree Type:</strong> {service.degreeType}</p>}
-                {service.students && service.students.length > 0 && (
-                  <div className="student-list">
-                    <p><strong>Students:</strong></p>
-                    <ul>
-                      {service.students.map((student, idx) => (
-                        <li key={idx}>{student.name}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
-            )}
             {service.role && <p><strong>Role:</strong> {service.role}</p>}
             {service.department && <p><strong>Department:</strong> {service.department}</p>}
             {service.description && <p><strong>Description:</strong> {service.description}</p>}
@@ -594,57 +464,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         .edit-service:hover {
           background-color: #EAE6F4;
           border-color: #C8BEE6;
-        }
-        
-        /* Student form styling */
-        .student-input-group {
-          display: flex;
-          align-items: center;
-          margin-bottom: 10px;
-        }
-        
-        .student-name-input {
-          flex: 1;
-        }
-        
-        .remove-student-button {
-          margin-left: 10px;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          border: 1px solid #e0e0e0;
-          background: #f8f8f8;
-          color: #888;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        
-        .remove-student-button:hover {
-          background: #f1f1f1;
-          color: #d32f2f;
-          border-color: #d32f2f;
-        }
-        
-        .add-student-button {
-          margin-top: 5px;
-          font-size: 14px;
-          padding: 5px 12px;
-        }
-        
-        .student-list ul {
-          margin: 5px 0 15px 20px;
-          padding: 0;
-        }
-        
-        .student-list li {
-          margin-bottom: 3px;
-        }
-        
-        .required-indicator {
-          color: #d32f2f;
         }
         
         /* Animation for form transitions */

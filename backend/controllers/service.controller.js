@@ -36,7 +36,7 @@ export const getService = async (req, res) => {
 export const createService = async (req, res) => {
   try {
     const { reportId } = req.params;
-    const { type, role, department, description, notes, committeeName, degreeType, students } = req.body;
+    const { type, role, department, description, notes } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
       return res.status(400).json({ message: "Invalid report ID" });
@@ -49,16 +49,12 @@ export const createService = async (req, res) => {
 
     const newService = await Service.create({
       facultyId: req.user._id,  // Add faculty ID
-      reportId: reportId,
+      reportId: reportId,       // Changed from reportID to reportId
       type,
       role,
       department,
       description,
-      notes,
-      // Add new fields for thesis/dissertation committees
-      committeeName,
-      degreeType,
-      students
+      notes
     });
 
     // If this is the first service entry, update the report
@@ -81,7 +77,7 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
   try {
     const { serviceId } = req.params;
-    const { type, role, department, description, notes, committeeName, degreeType, students } = req.body;
+    const { type, role, department, description, notes } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(serviceId)) {
       return res.status(400).json({ message: "Invalid service ID" });
@@ -97,13 +93,6 @@ export const updateService = async (req, res) => {
     service.department = department || service.department;
     service.description = description || service.description;
     service.notes = notes || service.notes;
-    
-    // Update thesis/dissertation committee fields if provided
-    if (type === 'Thesis / Dissertation Committee') {
-      service.committeeName = committeeName || service.committeeName;
-      service.degreeType = degreeType || service.degreeType;
-      service.students = students || service.students;
-    }
 
     const updatedService = await service.save();
     res.json(updatedService);
