@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -7,6 +6,7 @@ import ResumeNotification from './ResumeNotification';
 const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [services, setServices] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showThesisForm, setShowThesisForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -22,6 +22,18 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     description: '',
     notes: ''
   });
+
+  const [thesisService, setThesisService] = useState({
+    type: 'Thesis / Dissertation Committee',
+    role: 'Committee Member',
+    department: '',
+    committeeName: '',
+    degreeType: '',
+    students: [],
+    notes: ''
+  });
+
+  const [newStudent, setNewStudent] = useState('');
 
   // Function to scroll to top when editing
   const scrollToTop = () => {
@@ -117,18 +129,59 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       [field]: value
     }));
   };
+
+  const handleThesisInputChange = (field, value) => {
+    setThesisService(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  // Function to add a student to the thesis committee service
+  const handleAddStudent = () => {
+    if (newStudent.trim()) {
+      setThesisService(prev => ({
+        ...prev,
+        students: [...prev.students, newStudent.trim()]
+      }));
+      setNewStudent('');
+    }
+  };
+
+  // Function to remove a student from the thesis committee service
+  const handleRemoveStudent = (indexToRemove) => {
+    setThesisService(prev => ({
+      ...prev,
+      students: prev.students.filter((_, index) => index !== indexToRemove)
+    }));
+  };
   
   // Function to handle editing a service
   const handleEditService = (service, index) => {
-    setNewService({
-      type: service.type || '',
-      role: service.role || '',
-      department: service.department || '',
-      description: service.description || '',
-      notes: service.notes || ''
-    });
+    // Check if this is a thesis committee service
+    if (service.type === 'Thesis / Dissertation Committee') {
+      setThesisService({
+        type: service.type,
+        role: service.role || 'Committee Member',
+        department: service.department || '',
+        committeeName: service.committeeName || '',
+        degreeType: service.degreeType || '',
+        students: service.students || [],
+        notes: service.notes || ''
+      });
+      setShowThesisForm(true);
+    } else {
+      setNewService({
+        type: service.type || '',
+        role: service.role || '',
+        department: service.department || '',
+        description: service.description || '',
+        notes: service.notes || ''
+      });
+      setShowForm(true);
+    }
+    
     setEditingServiceIndex(index);
-    setShowForm(true);
     scrollToTop();
   };
   
@@ -187,6 +240,91 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save service');
       console.error('Error saving service:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveThesisService = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Create description from committee details
+      const descriptionParts = [];
+      if (thesisService.committeeName) {
+        descriptionParts.push(`Committee: ${thesisService.committeeName}`);
+      }
+      if (thesisService.degreeType) {
+        descriptionParts.push(`Degree Type: ${thesisService.degreeType}`);
+      }
+      if (thesisService.students && thesisService.students.length > 0) {
+        descriptionParts.push(`Students: ${thesisService.students.join(', ')}`);
+      }
+      
+      const serviceData = {
+        type: thesisService.type,
+        role: thesisService.role,
+        department: thesisService.department,
+        description: descriptionParts.join(' | '),
+        committeeName: thesisService.committeeName,
+        degreeType: thesisService.degreeType,
+        students: thesisService.students,
+        notes: thesisService.notes
+      };
+      
+      if (editingServiceIndex >= 0) {
+        // Update existing thesis committee service
+        const serviceId = services[editingServiceIndex]._id;
+        
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentUser.token}`
+          }
+        };
+        
+        const response = await axios.put(
+          `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+          serviceData,
+          config
+        );
+        
+        // Update the service in the local state
+        const updatedServices = [...services];
+        updatedServices[editingServiceIndex] = response.data;
+        setServices(updatedServices);
+        
+        setSuccessMessage('Thesis committee service updated successfully!');
+      } else {
+        // Create new thesis committee service
+        const data = await createService(serviceData);
+        setServices(prev => [...prev, data]);
+        setSuccessMessage('Thesis committee service saved successfully!');
+      }
+      
+      // Reset form
+      setThesisService({
+        type: 'Thesis / Dissertation Committee',
+        role: 'Committee Member',
+        department: '',
+        committeeName: '',
+        degreeType: '',
+        students: [],
+        notes: ''
+      });
+      
+      // Hide form and reset editing state
+      setShowThesisForm(false);
+      setEditingServiceIndex(-1);
+      
+      // Clear success message after delay
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to save thesis committee service');
+      console.error('Error saving thesis committee service:', error);
     } finally {
       setLoading(false);
     }
@@ -268,7 +406,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
 
-        {/* Service Form - Now at the top for editing */}
+        {/* Regular Service Form */}
         {showForm && (
           <div className="course-card">
             <h3 className="course-title">{editingServiceIndex >= 0 ? 'Edit Service' : 'Service Details'}</h3>
@@ -365,12 +503,164 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           </div>
         )}
 
+        {/* Thesis / Dissertation Committee Form */}
+        {showThesisForm && (
+          <div className="course-card">
+            <h3 className="course-title">
+              {editingServiceIndex >= 0 ? 'Edit Thesis / Dissertation Committee' : 'Thesis / Dissertation Committee'}
+            </h3>
+
+            <div className="yar-form-group">
+              <label className="course-label">Committee Name <span className="required-indicator">*</span></label>
+              <input
+                type="text"
+                className="course-form-input"
+                value={thesisService.committeeName}
+                onChange={(e) => handleThesisInputChange('committeeName', e.target.value)}
+                placeholder="Name of the committee"
+              />
+            </div>
+
+            <div className="yar-form-group">
+              <label className="course-label">Degree Type <span className="required-indicator">*</span></label>
+              <select
+                className="course-form-input"
+                value={thesisService.degreeType}
+                onChange={(e) => handleThesisInputChange('degreeType', e.target.value)}
+              >
+                <option value="" disabled>Select Degree Type</option>
+                <option value="Undergraduate">Undergraduate</option>
+                <option value="Graduate">Graduate</option>
+                <option value="Ph.D.">Ph.D.</option>
+              </select>
+            </div>
+
+            <div className="yar-form-group">
+              <label className="course-label">Department</label>
+              <input
+                type="text"
+                className="course-form-input"
+                value={thesisService.department}
+                onChange={(e) => handleThesisInputChange('department', e.target.value)}
+                placeholder="Department or unit"
+              />
+            </div>
+
+            <div className="yar-form-group">
+              <label className="course-label">Your Role</label>
+              <input
+                type="text"
+                className="course-form-input"
+                value={thesisService.role}
+                onChange={(e) => handleThesisInputChange('role', e.target.value)}
+                placeholder="Your role in this committee"
+              />
+            </div>
+
+            <div className="yar-form-group">
+              <label className="course-label">Students</label>
+              
+              {/* Display list of students already added */}
+              {thesisService.students.length > 0 && (
+                <div className="student-list">
+                  {thesisService.students.map((student, index) => (
+                    <div key={index} className="student-item">
+                      <span>{student}</span>
+                      <button 
+                        type="button"
+                        className="remove-student-btn"
+                        onClick={() => handleRemoveStudent(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Add new student input and button */}
+              <div className="add-student-row">
+                <input
+                  type="text"
+                  className="course-form-input student-input"
+                  value={newStudent}
+                  onChange={(e) => setNewStudent(e.target.value)}
+                  placeholder="Student name"
+                />
+                <button 
+                  type="button"
+                  className="yar-button-secondary"
+                  onClick={handleAddStudent}
+                  disabled={!newStudent.trim()}
+                >
+                  Add Student
+                </button>
+              </div>
+            </div>
+
+            <div className="yar-form-group">
+              <label className="course-label">Notes</label>
+              <textarea
+                className="course-form-textarea"
+                rows="4"
+                value={thesisService.notes}
+                onChange={(e) => handleThesisInputChange('notes', e.target.value)}
+                placeholder="Additional details about this committee"
+              ></textarea>
+            </div>
+
+            <div className="yar-button-group">
+              <button
+                onClick={() => {
+                  setShowThesisForm(false);
+                  setEditingServiceIndex(-1);
+                  setThesisService({
+                    type: 'Thesis / Dissertation Committee',
+                    role: 'Committee Member',
+                    department: '',
+                    committeeName: '',
+                    degreeType: '',
+                    students: [],
+                    notes: ''
+                  });
+                }}
+                className="yar-button-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveThesisService}
+                className="yar-button-primary"
+                disabled={!thesisService.committeeName || !thesisService.degreeType || loading}
+                style={{
+                  opacity: !thesisService.committeeName || !thesisService.degreeType || loading ? 0.6 : 1
+                }}
+              >
+                {loading ? 'Saving' : editingServiceIndex >= 0 ? 'Update' : 'Save'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Services List */}
         {services.map((service, index) => (
           <div key={service._id} className="course-card">
             <h3 className="course-title">{service.type}</h3>
             {service.role && <p><strong>Role:</strong> {service.role}</p>}
             {service.department && <p><strong>Department:</strong> {service.department}</p>}
+            
+            {/* For Thesis/Dissertation Committee */}
+            {service.type === 'Thesis / Dissertation Committee' && (
+              <>
+                {service.committeeName && <p><strong>Committee:</strong> {service.committeeName}</p>}
+                {service.degreeType && <p><strong>Degree Type:</strong> {service.degreeType}</p>}
+                {service.students && service.students.length > 0 && (
+                  <p><strong>Students:</strong> {service.students.join(', ')}</p>
+                )}
+              </>
+            )}
+            
+            {/* For Regular Services */}
             {service.description && <p><strong>Description:</strong> {service.description}</p>}
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
             
@@ -391,21 +681,42 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           </div>
         ))}
 
-        {/* Add Service Button - only show when not editing */}
-        {!showForm && (
-          <div
-            className="add-course-button"
-            onClick={() => {
-              setShowForm(true);
-              setEditingServiceIndex(-1);
-              scrollToTop();
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Add Service</span>
+        {/* Add Service Buttons Container */}
+        {!showForm && !showThesisForm && (
+          <div className="add-service-buttons-container">
+            {/* Add Regular Service Button */}
+            <div
+              className="add-course-button"
+              onClick={() => {
+                setShowForm(true);
+                setShowThesisForm(false);
+                setEditingServiceIndex(-1);
+                scrollToTop();
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Service</span>
+            </div>
+
+            {/* Add Thesis Committee Button */}
+            <div
+              className="add-course-button thesis-button"
+              onClick={() => {
+                setShowThesisForm(true);
+                setShowForm(false);
+                setEditingServiceIndex(-1);
+                scrollToTop();
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Add Thesis / Dissertation Committee Service</span>
+            </div>
           </div>
         )}
 
@@ -464,6 +775,55 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         .edit-service:hover {
           background-color: #EAE6F4;
           border-color: #C8BEE6;
+        }
+        
+        /* Add Service Buttons Container */
+        .add-service-buttons-container {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+        
+        /* Styling for Thesis Button */
+        .thesis-button {
+          background-color: #F5F5F5;
+          border: 1px dashed #4B2E83;
+        }
+        
+        /* Student List Styling */
+        .student-list {
+          margin-bottom: 10px;
+        }
+        
+        .student-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #f9f9f9;
+          border: 1px solid #e0e0e0;
+          padding: 8px 12px;
+          margin-bottom: 5px;
+          border-radius: 4px;
+        }
+        
+        .remove-student-btn {
+          background: none;
+          border: none;
+          color: #d32f2f;
+          font-size: 16px;
+          cursor: pointer;
+          padding: 0 5px;
+        }
+        
+        .add-student-row {
+          display: flex;
+          gap: 10px;
+          width: 100%;
+        }
+        
+        .student-input {
+          flex-grow: 1;
         }
         
         /* Animation for form transitions */
