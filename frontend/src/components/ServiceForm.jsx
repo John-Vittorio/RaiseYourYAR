@@ -146,8 +146,8 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: [...prev.students, newStudent.trim()]
       }));
       setNewStudent('');
+      // Input field remains visible to add more students
     }
-    // Keep the input field visible to add more students
   };
 
   // Function to toggle student input visibility
@@ -178,6 +178,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         notes: service.notes || ''
       });
       setShowThesisForm(true);
+      setShowStudentInput(true); // Show the student input field when editing
     } else {
       setNewService({
         type: service.type || '',
@@ -587,34 +588,24 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 </div>
               )}
               
-              {/* Add new student input and button */}
-              {showStudentInput ? (
-                <div className="add-student-row">
-                  <input
-                    type="text"
-                    className="course-form-input student-input"
-                    value={newStudent}
-                    onChange={(e) => setNewStudent(e.target.value)}
-                    placeholder="Student name"
-                  />
-                  <button 
-                    type="button"
-                    className="yar-button-secondary"
-                    onClick={handleAddStudent}
-                    disabled={!newStudent.trim()}
-                  >
-                    Add Student
-                  </button>
-                </div>
-              ) : (
+              {/* Add new student input and button - always visible now */}
+              <div className="add-student-row">
+                <input
+                  type="text"
+                  className="course-form-input student-input"
+                  value={newStudent}
+                  onChange={(e) => setNewStudent(e.target.value)}
+                  placeholder="Student name"
+                />
                 <button 
                   type="button"
-                  className="yar-button-add-student"
-                  onClick={toggleStudentInput}
+                  className="yar-button-secondary"
+                  onClick={handleAddStudent}
+                  disabled={!newStudent.trim()}
                 >
-                  + Add Student
+                  Add Student
                 </button>
-              )}
+              </div>
             </div>
 
             <div className="yar-form-group">
@@ -728,7 +719,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 setShowThesisForm(true);
                 setShowForm(false);
                 setEditingServiceIndex(-1);
-                setShowStudentInput(false);
+                setShowStudentInput(true);
                 scrollToTop();
               }}
             >
