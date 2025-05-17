@@ -6,7 +6,7 @@ import ResumeNotification from './ResumeNotification';
 
 const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResearch, onAddFundedResearch, onAddOtherFunding, onAddConference }) => {
   const actions = [
-    { label: "Add Publication", onClick: onAddPublication },
+    { label: "Add Refereed Publication", onClick: onAddPublication },
     { label: "Add Research Grants/Contract", onClick: onAddGrant },
     { label: "Non Funded Research/Creative Work", onClick: onAddNonFundedResearch },
     { label: "Funded Research/Creative Work", onClick: onAddFundedResearch },
