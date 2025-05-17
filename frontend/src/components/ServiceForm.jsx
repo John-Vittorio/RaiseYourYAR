@@ -570,7 +570,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             </div>
 
             <div className="yar-form-group">
-              <label className="course-label">Students</label>
+              <label className="course-label">Student Information</label>
               
               {/* Display list of students already added */}
               {thesisService.students.length > 0 && (
