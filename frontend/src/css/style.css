@@ -73,30 +73,41 @@ body {
     font-family: "Encode Sans";
     color: #4B2E83;
     font-weight: 600;
-    margin: 20px 0 15px 0;
+    margin: 20px auto 15px;
+    /* Changed to auto for horizontal centering */
     font-size: 18px;
     padding-bottom: 8px;
-    border-bottom: 2px solid rgba(75, 46, 131, 0.15);
+    text-align: center;
+    /* Center the text */
     position: relative;
     display: flex;
+    flex-direction: column;
+    /* Stack elements vertically */
     align-items: center;
-    width: 100%; /* Add this to constrain width */
-    box-sizing: border-box; /* Add this to include padding in width calculation */
-    max-width: 100%; /* Add this to prevent overflow */
-    overflow-wrap: break-word; /* Add this to handle long text */
-  }
-  
-  /* Keep the rest of your styles the same */
-  .teaching-section-header-two::before {
+    /* Center alignment */
+    width: auto;
+    /* Auto width instead of 100% */
+    max-width: 80%;
+    /* Limit the maximum width to 80% of container */
+}
+
+/* Modified to be a centered line below the text */
+.teaching-section-header-two::after {
     content: '';
-    display: inline-block;
-    width: 4px;
-    height: 18px;
-    background-color: #4B2E83;
-    margin-right: 10px;
+    display: block;
+    width: 50%;
+    /* Make the line 50% of the header width */
+    height: 2px;
+    background-color: rgba(75, 46, 131, 0.15);
+    margin-top: 8px;
+    /* Space between text and line */
     border-radius: 2px;
-    flex-shrink: 0; /* Add this to prevent the element from shrinking */
-  }
+}
+
+/* Remove the previous ::before pseudo-element with the vertical line */
+.teaching-section-header-two::before {
+    display: none;
+}
 
 .nav-bar ul li {
     flex: 1 0 0;
@@ -740,7 +751,8 @@ hr {
     width: 100%;
 }
 
-.course-title, h3 {
+.course-title,
+h3 {
     margin: 0 0 20px 0;
     color: #333;
 }
