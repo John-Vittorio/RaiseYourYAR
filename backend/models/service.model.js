@@ -1,16 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-// Define the Student schema
-const StudentSchema = new Schema({
-  name: { 
-    type: String 
-  },
-  role: { 
-    type: String 
-  }
-});
-
 // Service Schema
 const ServiceSchema = new Schema({
   facultyId: {
@@ -32,7 +22,6 @@ const ServiceSchema = new Schema({
       'Professional Service', 
       'Community Service',
       'Admissions Committee',
-      'Thesis / Dissertation Committee',
       'Other'
     ],
     required: true 
@@ -49,15 +38,6 @@ const ServiceSchema = new Schema({
   notes: { 
     type: String 
   },
-  // Fields for thesis committees
-  committeeName: {
-    type: String
-  },
-  degreeType: {
-    type: String,
-    enum: ['Undergraduate', 'Graduate', 'Ph.D.', '']
-  },
-  students: [StudentSchema],
   createdAt: { 
     type: Date, 
     default: Date.now 
