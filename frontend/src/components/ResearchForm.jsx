@@ -713,11 +713,11 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                   value={newPublication.publicationStatus}
                   onChange={(e) => handlePublicationChange('publicationStatus', e.target.value)}
                 >
-                  <option value="In Progress">In Progress</option>
                   <option value="75%+ Completed">75%+ Completed</option>
                   <option value="Under Review">Under Review</option>
                   <option value="Revise and Resubmit">Revise and Resubmit</option>
                   <option value="Accepted with Revisions">Accepted with Revisions</option>
+                  <option value="In Progress">In Production</option>
                   <option value="Published">Published</option>
                 </select>
               </div>
