@@ -558,18 +558,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 placeholder="Department or unit"
               />
             </div>
-
-            <div className="yar-form-group">
-              <label className="course-label">Your Role</label>
-              <input
-                type="text"
-                className="course-form-input"
-                value={thesisService.role}
-                onChange={(e) => handleThesisInputChange('role', e.target.value)}
-                placeholder="Your role in this committee"
-              />
-            </div>
-
             <div className="yar-form-group">
               <label className="course-label">Student Information</label>
               
