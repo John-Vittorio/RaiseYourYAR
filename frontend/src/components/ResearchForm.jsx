@@ -687,8 +687,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             <span className="inactive">Review</span>
           </div>
         </div>
-        <h2 className="teaching-section-header-two">Please add your research work under the respective categories</h2>
-
+        <div className='teaching-header-wrapper'>
+          <h2 className="teaching-section-header-two">Please add your research work under the respective categories</h2>
+        </div>
         {error && <div className="error-message">{error}</div>}
         {successMessage && <div className="success-message">{successMessage}</div>}
 
