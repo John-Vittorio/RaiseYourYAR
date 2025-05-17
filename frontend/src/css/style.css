@@ -71,6 +71,7 @@ body {
 
 .teaching-section-header-two {
     font-family: "Encode Sans";
+    width: 100%;
     color: #4B2E83;
     font-weight: 600;
     margin: 20px 0 15px 0;
@@ -80,12 +81,6 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    max-width: 100%;        /* Use max-width instead of width */
-    width: fit-content;     /* Allow content to determine width but not exceed parent */
-    box-sizing: border-box;
-    overflow: hidden;
-    flex-shrink: 1;         /* Allow element to shrink if needed */
-    transform: translateZ(0); /* Force hardware acceleration */
 }
 
 .teaching-section-header-two::before {
