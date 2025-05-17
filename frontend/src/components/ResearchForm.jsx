@@ -831,7 +831,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             </div>
             <div className="yar-form-group">
               <label>End Date</label>
-              <input type="date" className></input>
+              <input type="date" className="course-form-input" value={grant.endDate} onChange={e => handleGrantChange('endDate', e.target.value)} />
             </div>
 
             {grant.coPIs.map((coPI, i) => (
