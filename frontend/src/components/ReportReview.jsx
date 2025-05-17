@@ -16,7 +16,8 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
   const [research, setResearch] = useState(null);
   const [services, setServices] = useState([]);
   const [serviceSectionNotes, setServiceSectionNotes] = useState('');
-
+  // Add this with your other state declarations
+  const [expectationNotes, setExpectationNotes] = useState('');
   const { currentUser } = useContext(AuthContext);
 
   // Fetch all data on component mount
@@ -77,6 +78,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
         // Get section notes from teaching data if it exists there
         if (teachingData && teachingData.sectionNotes) {
           setTeachingSectionNotes(teachingData.sectionNotes);
+        }
+
+        // Get expectation notes from teaching data
+        if (teachingData && teachingData.expectationNotes) {
+          setExpectationNotes(teachingData.expectationNotes);
         }
       } catch (teachingError) {
         console.log('No teaching data or error fetching teaching data:', teachingError);
@@ -252,9 +258,15 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                 <p><strong>Academic Year:</strong> {report.academicYear}</p>
                 <p><strong>Status:</strong> {report.status}</p>
                 <p><strong>Generated:</strong> {formatDate(new Date())}</p>
+
+                {/* Display Teaching/Research/Service Expectation */}
+                {expectationNotes && (
+                  <div className="expectation-notes">
+                    <p><strong>Teaching/Research/Service Expectation:</strong> {expectationNotes}</p>
+                  </div>
+                )}
               </div>
             )}
-
             <div className="review-section teaching-section">
               <h3 className="review-section-title">Teaching</h3>
               {teaching && teaching.courses && teaching.courses.length > 0 ? (
