@@ -146,7 +146,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: [...prev.students, newStudent.trim()]
       }));
       setNewStudent('');
-      // Input field remains visible to add more students
+      // Keep the input field visible to add more students
     }
   };
 
@@ -618,6 +618,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     className="yar-button-secondary"
                     onClick={handleAddStudent}
                     disabled={!newStudent.trim()}
+                    style={{
+                      opacity: !newStudent.trim() ? 0.6 : 1,
+                      cursor: !newStudent.trim() ? 'not-allowed' : 'pointer'
+                    }}
                   >
                     Add Student
                   </button>
@@ -858,6 +862,14 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         
         .student-input {
           flex-grow: 1;
+        }
+        
+        /* Disabled button styling */
+        .yar-button-secondary:disabled {
+          background-color: #f5f5f5;
+          color: #999;
+          border-color: #ddd;
+          cursor: not-allowed;
         }
         
         /* Animation for form transitions */
