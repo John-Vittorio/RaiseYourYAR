@@ -75,6 +75,21 @@ body {
     font-weight: 600;
     margin: 20px 0 15px 0;
     font-size: 18px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(75, 46, 131, 0.15);
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.teaching-section-header-two::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background-color: #4B2E83;
+    margin-right: 10px;
+    border-radius: 2px;
 }
 
 .nav-bar ul li {
