@@ -529,7 +529,7 @@ const TeachingForm = ({ onNext, reportId }) => {
 
         {/* Expectation Notes */}
         <div className="course-card">
-          <h3 className="course-title">Teaching/Research/Service Expectation</h3>
+          <h3 className="course-title">Teaching / Research / Service Distribution</h3>
           <div className="yar-form-group">
             <textarea
               className="course-notes"
