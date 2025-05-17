@@ -76,14 +76,11 @@ body {
     margin: 20px auto 15px;
     font-size: 18px;
     padding-bottom: 8px;
-    text-align: center;
     position: relative;
     display: inline-block;
-    /* Changed to inline-block to match text width naturally */
+    /* Changed to inline-block to match text width */
     width: auto;
     /* Width will adjust to content */
-    max-width: 100%;
-    /* Prevent overflow */
 }
 
 /* Create the underline that exactly matches text width */
@@ -104,8 +101,8 @@ body {
     display: none;
 }
 
-/* Wrapper to center the header */
-.teaching-header-container {
+/* Make the container center its content */
+.teaching-header-wrapper {
     text-align: center;
     width: 100%;
 }
