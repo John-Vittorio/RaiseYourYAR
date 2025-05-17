@@ -744,7 +744,6 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 </select>
               </div>
               <div className="yar-form-group">
-                <label className="course-label">Co-Authors</label>
                 {newPublication.coAuthors.length > 0 && (
                   newPublication.coAuthors.map((coAuthor, i) => (
                     <div key={i} className="co-author-row">
