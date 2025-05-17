@@ -536,7 +536,7 @@ const TeachingForm = ({ onNext, reportId }) => {
               rows="6"
               value={expectationNotes}
               onChange={handleExpectationNotesChange}
-              placeholder="Enter your teaching, research, and service expectations here... Ex: (40/40/20)"
+              placeholder="Enter your teaching, research, and service work distribution here... Ex -> 40/40/20"
               style={{ width: '100%', padding: '12px', marginTop: '15px' }}
             ></textarea>
           </div>
@@ -794,7 +794,7 @@ const TeachingForm = ({ onNext, reportId }) => {
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <span style={{ marginLeft: '8px', color: '#4B2E83' }}>Add course</span>
+          <span style={{ marginLeft: '8px', color: '#4B2E83' }}>Add Course</span>
         </div>
 
         {/* Navigation Buttons - Using the NavigationButton component */}

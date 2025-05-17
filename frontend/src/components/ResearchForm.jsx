@@ -16,6 +16,7 @@ const AddResearchSection = ({ onAddPublication, onAddGrant, onAddNonFundedResear
 
   return (
     <div className="section-buttons">
+      <h2 className="teaching-section-header-two">Please add your research work under the respective categories</h2>
       {actions.map((action, index) => (
         <div
           key={index}
@@ -45,7 +46,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   const [showFundedResearchForm, setShowFundedResearchForm] = useState(false);
   const [showOtherFundingForm, setShowOtherFundingForm] = useState(false);
   const [showConferenceForm, setShowConferenceForm] = useState(false);
-  
+
   // Add states to track editing
   const [editingPublicationIndex, setEditingPublicationIndex] = useState(-1);
   const [editingGrantIndex, setEditingGrantIndex] = useState(-1);
@@ -95,17 +96,17 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
   // Add this useEffect to scroll to top when editing begins
   useEffect(() => {
     if (editingPublicationIndex !== -1 || editingGrantIndex !== -1 || editingConferenceIndex !== -1 ||
-        showPublicationForm || showGrantForm || showNonFundedResearchForm || 
-        showFundedResearchForm || showOtherFundingForm || showConferenceForm) {
+      showPublicationForm || showGrantForm || showNonFundedResearchForm ||
+      showFundedResearchForm || showOtherFundingForm || showConferenceForm) {
       // Scroll to top of the page
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     }
-  }, [editingPublicationIndex, editingGrantIndex, editingConferenceIndex, 
-      showPublicationForm, showGrantForm, showNonFundedResearchForm, 
-      showFundedResearchForm, showOtherFundingForm, showConferenceForm]);
+  }, [editingPublicationIndex, editingGrantIndex, editingConferenceIndex,
+    showPublicationForm, showGrantForm, showNonFundedResearchForm,
+    showFundedResearchForm, showOtherFundingForm, showConferenceForm]);
 
   const fetchResearchData = async () => {
     try {
@@ -136,11 +137,11 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           if (data.conferences) {
             setConferences(data.conferences);
           }
-          
+
           // If we have any data, this is a resumed draft
           if (
-            (data.publications && data.publications.length > 0) || 
-            (data.grants && data.grants.length > 0) || 
+            (data.publications && data.publications.length > 0) ||
+            (data.grants && data.grants.length > 0) ||
             (data.conferences && data.conferences.length > 0)
           ) {
             setIsResuming(true);
@@ -237,9 +238,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     setGrant(grantToEdit);
     setEditingGrantIndex(index);
     scrollToTop();
-    
+
     // Show the appropriate form based on grant type
-    switch(grantToEdit.type) {
+    switch (grantToEdit.type) {
       case 'Grant':
         setShowGrantForm(true);
         break;
@@ -270,7 +271,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       let updatedPublications;
       if (editingPublicationIndex >= 0) {
         // Update existing publication
@@ -280,9 +281,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new publication
         updatedPublications = [...publications, newPublication];
       }
-      
+
       await saveResearchData(updatedPublications, grants, conferences);
-      
+
       setPublications(updatedPublications);
       setNewPublication({
         publicationType: 'Journal Article',
@@ -293,7 +294,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowPublicationForm(false);
       setEditingPublicationIndex(-1);
       setSuccessMessage(editingPublicationIndex >= 0 ? 'Publication updated successfully!' : 'Publication saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save publication');
@@ -306,7 +307,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       let updatedGrants;
       if (editingGrantIndex >= 0) {
         // Update existing grant
@@ -316,9 +317,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new grant
         updatedGrants = [...grants, grant];
       }
-      
+
       await saveResearchData(publications, updatedGrants, conferences);
-      
+
       setGrants(updatedGrants);
       setGrant({
         type: 'Grant',
@@ -336,7 +337,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowGrantForm(false);
       setEditingGrantIndex(-1);
       setSuccessMessage(editingGrantIndex >= 0 ? 'Grant updated successfully!' : 'Grant saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save grant');
@@ -349,12 +350,12 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const nonFundedResearch = {
         ...grant,
         type: 'NonFundedResearch'
       };
-      
+
       let updatedGrants;
       if (editingGrantIndex >= 0) {
         // Update existing non-funded research
@@ -364,9 +365,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new non-funded research
         updatedGrants = [...grants, nonFundedResearch];
       }
-      
+
       await saveResearchData(publications, updatedGrants, conferences);
-      
+
       setGrants(updatedGrants);
       setGrant({
         type: 'Grant',
@@ -384,7 +385,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowNonFundedResearchForm(false);
       setEditingGrantIndex(-1);
       setSuccessMessage(editingGrantIndex >= 0 ? 'Non-funded research updated successfully!' : 'Non-funded research saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save non-funded research');
@@ -397,12 +398,12 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const fundedResearch = {
         ...grant,
         type: 'FundedResearch'
       };
-      
+
       let updatedGrants;
       if (editingGrantIndex >= 0) {
         // Update existing funded research
@@ -412,9 +413,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new funded research
         updatedGrants = [...grants, fundedResearch];
       }
-      
+
       await saveResearchData(publications, updatedGrants, conferences);
-      
+
       setGrants(updatedGrants);
       setGrant({
         type: 'Grant',
@@ -432,7 +433,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowFundedResearchForm(false);
       setEditingGrantIndex(-1);
       setSuccessMessage(editingGrantIndex >= 0 ? 'Funded research updated successfully!' : 'Funded research saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save funded research');
@@ -445,12 +446,12 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const otherFunding = {
         ...grant,
         type: 'OtherFunding'
       };
-      
+
       let updatedGrants;
       if (editingGrantIndex >= 0) {
         // Update existing other funding
@@ -460,9 +461,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new other funding
         updatedGrants = [...grants, otherFunding];
       }
-      
+
       await saveResearchData(publications, updatedGrants, conferences);
-      
+
       setGrants(updatedGrants);
       setGrant({
         type: 'Grant',
@@ -480,7 +481,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowOtherFundingForm(false);
       setEditingGrantIndex(-1);
       setSuccessMessage(editingGrantIndex >= 0 ? 'Other funding updated successfully!' : 'Other funding saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save other funding');
@@ -493,7 +494,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       let updatedConferences;
       if (editingConferenceIndex >= 0) {
         // Update existing conference
@@ -503,9 +504,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         // Add new conference
         updatedConferences = [...conferences, conference];
       }
-      
+
       await saveResearchData(publications, grants, updatedConferences);
-      
+
       setConferences(updatedConferences);
       setConference({
         name: '',
@@ -516,7 +517,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       setShowConferenceForm(false);
       setEditingConferenceIndex(-1);
       setSuccessMessage(editingConferenceIndex >= 0 ? 'Conference updated successfully!' : 'Conference saved successfully!');
-      
+
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to save conference');
@@ -530,10 +531,10 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const updatedPublications = publications.filter((_, i) => i !== index);
       await saveResearchData(updatedPublications, grants, conferences);
-      
+
       setPublications(updatedPublications);
       setSuccessMessage('Publication deleted successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -548,10 +549,10 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const updatedGrants = grants.filter((_, i) => i !== index);
       await saveResearchData(publications, updatedGrants, conferences);
-      
+
       setGrants(updatedGrants);
       setSuccessMessage('Grant deleted successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -566,10 +567,10 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const updatedConferences = conferences.filter((_, i) => i !== index);
       await saveResearchData(publications, grants, updatedConferences);
-      
+
       setConferences(updatedConferences);
       setSuccessMessage('Conference deleted successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -582,7 +583,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
   // Helper function to format grant type for display
   const formatGrantType = (type) => {
-    switch(type) {
+    switch (type) {
       case 'Grant':
         return 'Research Grant/Contract';
       case 'NonFundedResearch':
@@ -648,7 +649,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     <div className="teaching-container">
       <div className="teaching-form-content">
         {isResuming && <ResumeNotification reportId={reportId} />}
-        
+
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">
@@ -723,8 +724,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
             </div>
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={handleCancelPublicationEdit}>Cancel</button>
-              <button 
-                className="yar-button-primary" 
+              <button
+                className="yar-button-primary"
                 onClick={handleSavePublication}
                 disabled={loading}
               >
@@ -793,8 +794,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={() => setShowGrantForm(false)}>Cancel</button>
-              <button 
-                className="yar-button-primary" 
+              <button
+                className="yar-button-primary"
                 onClick={handleSaveGrant}
                 disabled={loading}
               >
@@ -851,8 +852,8 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
 
             <div className="yar-button-group">
               <button className="yar-button-secondary" onClick={() => setShowNonFundedResearchForm(false)}>Cancel</button>
-              <button 
-                className="yar-button-primary" 
+              <button
+                className="yar-button-primary"
                 onClick={handleSaveNonFundedResearch}
                 disabled={loading}
               >
@@ -1007,14 +1008,14 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               <p><strong>Publication Status:</strong> {pub.publicationStatus || 'None'}</p>
             </div>
             <div className="service-actions">
-              <button 
+              <button
                 className="yar-button-secondary edit-service"
                 onClick={() => handleEditPublication(index)}
                 disabled={loading}
               >
                 Edit
               </button>
-              <button 
+              <button
                 className="yar-button-secondary delete-service"
                 onClick={() => handleDeletePublication(index)}
                 disabled={loading}
@@ -1040,21 +1041,21 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                 )}
                 <p><strong>Duration:</strong> {g.startDate ? new Date(g.startDate).toLocaleDateString() : 'N/A'} to {g.endDate ? new Date(g.endDate).toLocaleDateString() : 'N/A'}</p>
                 {g.coPIs && g.coPIs.length > 0 && g.coPIs.some(coPI => coPI.name) && (
-                  <p><strong>Co-PIs:</strong> {g.coPIs.filter(coPI => coPI.name).map((coPI, i) => 
+                  <p><strong>Co-PIs:</strong> {g.coPIs.filter(coPI => coPI.name).map((coPI, i) =>
                     `${coPI.name} (${coPI.affiliation || 'N/A'})`
                   ).join(', ')}</p>
                 )}
                 {g.notes && <p><strong>Notes:</strong> {g.notes}</p>}
               </div>
               <div className='service-actions'>
-                <button 
+                <button
                   className="yar-button-secondary edit-service"
                   onClick={() => handleEditGrant(index)}
                   disabled={loading}
                 >
                   Edit
                 </button>
-                <button 
+                <button
                   className="yar-button-secondary delete-service"
                   onClick={() => handleDeleteGrant(index)}
                   disabled={loading}
@@ -1076,14 +1077,14 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               {conf.notes && <p><strong>Notes:</strong> {conf.notes}</p>}
             </div>
             <div className="service-actions">
-              <button 
+              <button
                 className="yar-button-secondary edit-service"
                 onClick={() => handleEditConference(index)}
                 disabled={loading}
               >
                 Edit
               </button>
-              <button 
+              <button
                 className="yar-button-secondary delete-service"
                 onClick={() => handleDeleteConference(index)}
                 disabled={loading}
