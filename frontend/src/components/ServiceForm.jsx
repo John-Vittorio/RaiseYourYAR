@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -20,7 +19,11 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     role: '',
     department: '',
     description: '',
-    notes: ''
+    notes: '',
+    // Fields for thesis/dissertation committees
+    committeeName: '',
+    degreeType: '',
+    students: []
   });
 
   // Function to scroll to top when editing
@@ -118,14 +121,41 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }));
   };
   
+  // Function to add a new student to the committee
+  const addStudent = () => {
+    setNewService(prev => ({
+      ...prev,
+      students: [...prev.students, { name: '', role: '' }]
+    }));
+  };
+
+  // Function to update a student's information
+  const updateStudent = (index, field, value) => {
+    const updatedStudents = [...newService.students];
+    updatedStudents[index][field] = value;
+    setNewService(prev => ({ ...prev, students: updatedStudents }));
+  };
+
+  // Function to remove a student
+  const removeStudent = (index) => {
+    const updatedStudents = newService.students.filter((_, i) => i !== index);
+    setNewService(prev => ({ ...prev, students: updatedStudents }));
+  };
+  
   // Function to handle editing a service
   const handleEditService = (service, index) => {
+    // Ensure students array exists
+    const students = service.students || [];
+    
     setNewService({
       type: service.type || '',
       role: service.role || '',
       department: service.department || '',
       description: service.description || '',
-      notes: service.notes || ''
+      notes: service.notes || '',
+      committeeName: service.committeeName || '',
+      degreeType: service.degreeType || '',
+      students: students
     });
     setEditingServiceIndex(index);
     setShowForm(true);
@@ -173,7 +203,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         role: '',
         department: '',
         description: '',
-        notes: ''
+        notes: '',
+        committeeName: '',
+        degreeType: '',
+        students: []
       });
       
       // Hide form and reset editing state
@@ -243,6 +276,81 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }
   };
 
+  // Render thesis/dissertation committee fields when that service type is selected
+  const renderServiceTypeSpecificFields = () => {
+    if (newService.type === 'Thesis / Dissertation Committee') {
+      return (
+        <>
+          <div className="yar-form-group">
+            <label className="course-label">Committee Name <span className="required-indicator">*</span></label>
+            <input
+              type="text"
+              className="course-form-input"
+              value={newService.committeeName}
+              onChange={(e) => handleInputChange('committeeName', e.target.value)}
+              placeholder="Name of the committee"
+            />
+          </div>
+
+          <div className="yar-form-group">
+            <label className="course-label">Degree Type <span className="required-indicator">*</span></label>
+            <select
+              className="course-form-input"
+              value={newService.degreeType}
+              onChange={(e) => handleInputChange('degreeType', e.target.value)}
+            >
+              <option value="" disabled>Select Degree Type</option>
+              <option value="Undergraduate">Undergraduate</option>
+              <option value="Graduate">Graduate</option>
+              <option value="Ph.D.">Ph.D.</option>
+            </select>
+          </div>
+
+          <div className="yar-form-group">
+            <label className="course-label">Students <span className="required-indicator">*</span></label>
+            
+            {newService.students.map((student, index) => (
+              <div key={index} className="co-author-row">
+                <div className="co-author-inputs">
+                  <input
+                    type="text"
+                    className="course-form-input"
+                    value={student.name}
+                    onChange={(e) => updateStudent(index, 'name', e.target.value)}
+                    placeholder="Student Name"
+                  />
+                  <input
+                    type="text"
+                    className="course-form-input"
+                    value={student.role}
+                    onChange={(e) => updateStudent(index, 'role', e.target.value)}
+                    placeholder="Student Role (e.g., Candidate)"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="remove-co-author"
+                  onClick={() => removeStudent(index)}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            
+            <button
+              type="button"
+              className="add-co-author-button"
+              onClick={addStudent}
+            >
+              + Add Student
+            </button>
+          </div>
+        </>
+      );
+    }
+    return null;
+  };
+
   if (loading && services.length === 0) {
     return <div className="loading">Loading...</div>;
   }
@@ -287,42 +395,51 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 <option value="Professional Service">Professional Service</option>
                 <option value="Community Service">Community Service</option>
                 <option value="Admissions Committee">Admissions Committee</option>
+                <option value="Thesis / Dissertation Committee">Thesis / Dissertation Committee</option>
                 <option value="Other">Other</option>
               </select>
             </div>
 
-            <div className="yar-form-group">
-              <label className="course-label">Service Role</label>
-              <input
-                type="text"
-                className="course-form-input"
-                value={newService.role}
-                onChange={(e) => handleInputChange('role', e.target.value)}
-                placeholder="Your role in this service"
-              />
-            </div>
+            {/* Render thesis committee specific fields if that type is selected */}
+            {renderServiceTypeSpecificFields()}
 
-            <div className="yar-form-group">
-              <label className="course-label">Department</label>
-              <input
-                type="text"
-                className="course-form-input"
-                value={newService.department}
-                onChange={(e) => handleInputChange('department', e.target.value)}
-                placeholder="Department or unit for this service"
-              />
-            </div>
+            {/* General fields for all service types */}
+            {newService.type !== 'Thesis / Dissertation Committee' && (
+              <>
+                <div className="yar-form-group">
+                  <label className="course-label">Service Role</label>
+                  <input
+                    type="text"
+                    className="course-form-input"
+                    value={newService.role}
+                    onChange={(e) => handleInputChange('role', e.target.value)}
+                    placeholder="Your role in this service"
+                  />
+                </div>
 
-            <div className="yar-form-group">
-              <label className="course-label">Description</label>
-              <textarea
-                className="course-form-textarea"
-                rows="3"
-                value={newService.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Description of service activities"
-              ></textarea>
-            </div>
+                <div className="yar-form-group">
+                  <label className="course-label">Department</label>
+                  <input
+                    type="text"
+                    className="course-form-input"
+                    value={newService.department}
+                    onChange={(e) => handleInputChange('department', e.target.value)}
+                    placeholder="Department or unit for this service"
+                  />
+                </div>
+
+                <div className="yar-form-group">
+                  <label className="course-label">Description</label>
+                  <textarea
+                    className="course-form-textarea"
+                    rows="3"
+                    value={newService.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    placeholder="Description of service activities"
+                  ></textarea>
+                </div>
+              </>
+            )}
 
             <div className="yar-form-group">
               <label className="course-label">Notes</label>
@@ -345,7 +462,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     role: '',
                     department: '',
                     description: '',
-                    notes: ''
+                    notes: '',
+                    committeeName: '',
+                    degreeType: '',
+                    students: []
                   });
                 }}
                 className="yar-button-secondary"
@@ -355,9 +475,16 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               <button
                 onClick={handleSaveService}
                 className="yar-button-primary"
-                disabled={!newService.type || loading}
+                disabled={
+                  !newService.type || 
+                  loading || 
+                  (newService.type === 'Thesis / Dissertation Committee' && 
+                   (!newService.committeeName || !newService.degreeType))
+                }
                 style={{
-                  opacity: !newService.type || loading ? 0.6 : 1
+                  opacity: (!newService.type || loading || 
+                    (newService.type === 'Thesis / Dissertation Committee' && 
+                     (!newService.committeeName || !newService.degreeType))) ? 0.6 : 1
                 }}
               >
                 {loading ? 'Saving' : editingServiceIndex >= 0 ? 'Update' : 'Save'}
@@ -369,10 +496,36 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         {/* Services List */}
         {services.map((service, index) => (
           <div key={service._id} className="course-card">
-            <h3 className="course-title">{service.type}</h3>
-            {service.role && <p><strong>Role:</strong> {service.role}</p>}
-            {service.department && <p><strong>Department:</strong> {service.department}</p>}
-            {service.description && <p><strong>Description:</strong> {service.description}</p>}
+            <h3 className="course-title">
+              {service.type}
+              {service.type === 'Thesis / Dissertation Committee' && service.committeeName && ` - ${service.committeeName}`}
+            </h3>
+            
+            {service.type === 'Thesis / Dissertation Committee' ? (
+              <>
+                {service.degreeType && <p><strong>Degree Type:</strong> {service.degreeType}</p>}
+                {service.students && service.students.length > 0 && (
+                  <div>
+                    <p><strong>Students:</strong></p>
+                    <ul className="student-list">
+                      {service.students.map((student, i) => (
+                        <li key={i}>
+                          {student.name}
+                          {student.role && ` (${student.role})`}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {service.role && <p><strong>Role:</strong> {service.role}</p>}
+                {service.department && <p><strong>Department:</strong> {service.department}</p>}
+                {service.description && <p><strong>Description:</strong> {service.description}</p>}
+              </>
+            )}
+            
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
             
             <div className="service-actions">
@@ -481,6 +634,60 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+
+        /* Student list styling */
+        .student-list {
+          margin-top: 5px;
+          padding-left: 20px;
+        }
+
+        .student-list li {
+          margin-bottom: 5px;
+        }
+
+        /* Co-author styling for student entry */
+        .co-author-row {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+
+        .co-author-inputs {
+          display: flex;
+          flex: 1;
+          gap: 10px;
+        }
+
+        .co-author-inputs input {
+          flex: 1;
+        }
+
+        .remove-co-author {
+          background: none;
+          border: none;
+          color: #d32f2f;
+          cursor: pointer;
+          font-size: 16px;
+          padding: 0 10px;
+        }
+
+        .add-co-author-button {
+          background-color: #f8f8f8;
+          border: 1px dashed #4B2E83;
+          color: #4B2E83;
+          padding: 8px 12px;
+          border-radius: 4px;
+          margin-top: 5px;
+          cursor: pointer;
+          width: 100%;
+          text-align: center;
+          transition: all 0.3s ease;
+        }
+
+        .add-co-author-button:hover {
+          background-color: #EAE6F4;
         }
       `}</style>
     </div>
