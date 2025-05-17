@@ -30,7 +30,7 @@ export const getTeaching = async (req, res) => {
 export const postTeaching = async (req, res) => {
   try {
     const { reportId } = req.params;
-    const { courses, taughtOutsideDept, sectionNotes } = req.body; // Add sectionNotes to destructuring
+    const { courses, taughtOutsideDept, sectionNotes, expectationNotes } = req.body; // Add expectationNotes here
 
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
       return res.status(400).json({ message: "Invalid report ID" });
@@ -70,12 +70,14 @@ export const postTeaching = async (req, res) => {
     if (teachingData) {
       // Update existing teaching data
       teachingData.courses = validatedCourses;
-      teachingData.taughtOutsideDept = taughtOutsideDept; // Store this value too
-      teachingData.sectionNotes = sectionNotes || ""; // Ensure sectionNotes is stored
+      teachingData.taughtOutsideDept = taughtOutsideDept;
+      teachingData.sectionNotes = sectionNotes || "";
+      teachingData.expectationNotes = expectationNotes || ""; // Add this line
       const updatedTeaching = await teachingData.save();
 
-      // Also update the teaching notes in the report
+      // Also update the expectation notes in the report if needed
       report.teachingNotes = sectionNotes || "";
+      // You may want to store expectationNotes in the Report model too
       await report.save();
 
       res.json(updatedTeaching);
@@ -85,8 +87,9 @@ export const postTeaching = async (req, res) => {
         facultyId: req.user._id,
         reportId: reportId,
         courses: validatedCourses,
-        taughtOutsideDept: taughtOutsideDept, // Store this value too
-        sectionNotes: sectionNotes || "" // Store section notes
+        taughtOutsideDept: taughtOutsideDept,
+        sectionNotes: sectionNotes || "",
+        expectationNotes: expectationNotes || "" // Add this line
       });
 
       // Update the report with the teaching section ID and notes
@@ -141,6 +144,7 @@ export const postCourse = async (req, res) => {
     };
 
     // Find teaching data for the report
+    // Find teaching data for the report
     let teachingData = null;
     if (report.teachingSection) {
       teachingData = await Teaching.findById(report.teachingSection);
@@ -165,8 +169,8 @@ export const postCourse = async (req, res) => {
         teachingData.courses.push(courseData);
       }
 
-      // Make sure we preserve the section notes during single course updates
-      // (the sectionNotes field should have already existed on the teachingData)
+      // We need to preserve the expectationNotes when updating a single course
+      // (The expectationNotes field should have already existed on the teachingData)
       const updatedTeaching = await teachingData.save();
       res.json(updatedTeaching);
     } else {
@@ -175,7 +179,8 @@ export const postCourse = async (req, res) => {
         facultyId: req.user._id,
         reportId: reportId,
         courses: [courseData],
-        sectionNotes: "" // Initialize with empty section notes
+        sectionNotes: "", // Initialize with empty section notes
+        expectationNotes: "" // Initialize with empty expectation notes
       });
 
       // Update the report with the teaching section ID

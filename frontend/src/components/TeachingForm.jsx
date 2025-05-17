@@ -34,11 +34,12 @@ const TeachingForm = ({ onNext, reportId }) => {
   }, [reportId]);
 
   // Set up auto-save whenever courses data changes
+  // In frontend/src/components/TeachingForm.jsx - Check the useEffect dependency array
   useEffect(() => {
     // Only set up auto-save if we have courses and they're not the initial empty state
     if ((courses.length > 0 && JSON.stringify(courses) !== JSON.stringify(originalCourses)) ||
       (sectionNotes !== originalSectionNotes) ||
-      (expectationNotes !== originalExpectationNotes)) {  // Add this condition
+      (expectationNotes !== originalExpectationNotes)) {  // Make sure this condition is here
       // Clear any existing timer
       if (autoSaveTimer) {
         clearTimeout(autoSaveTimer);
@@ -61,7 +62,7 @@ const TeachingForm = ({ onNext, reportId }) => {
         clearTimeout(autoSaveTimer);
       }
     };
-  }, [courses, sectionNotes, expectationNotes]); // Add expectationNotes to dependency array
+  }, [courses, sectionNotes, expectationNotes]); // Make sure expectationNotes is in the dependency array
 
   const fetchTeachingData = async () => {
     try {
@@ -108,13 +109,12 @@ const TeachingForm = ({ onNext, reportId }) => {
             }
           }
 
-          // Load expectation notes if present
           if (data.expectationNotes) {
+            console.log("Found expectationNotes:", data.expectationNotes);
             setExpectationNotes(data.expectationNotes);
             setOriginalExpectationNotes(data.expectationNotes);
           }
 
-          // Load section notes if present
           if (data.sectionNotes) {
             setSectionNotes(data.sectionNotes);
             setOriginalSectionNotes(data.sectionNotes);
@@ -159,31 +159,31 @@ const TeachingForm = ({ onNext, reportId }) => {
         }
       };
 
+      // Make sure we're sending expectationNotes in the request
       await axios.post(
         `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
         {
           courses: apiCourses,
           taughtOutsideDept: apiCourses.some(course => course.outsideDept),
-          sectionNotes: sectionNotes, // Include section notes in the request
-          expectationNotes: expectationNotes // Add expectation notes to the request
+          sectionNotes: sectionNotes,
+          expectationNotes: expectationNotes // Make sure this is included
         },
         config
       );
 
-      // Update original expectation notes along with others
+      // Update original states to match current states
       setOriginalCourses(JSON.parse(JSON.stringify(courses)));
       setOriginalSectionNotes(sectionNotes);
-      setOriginalExpectationNotes(expectationNotes); // Add this line
+      setOriginalExpectationNotes(expectationNotes); // Update this too
 
-      // Clear auto-save status after 3 seconds
+      // Set auto-save status and clear it after a delay
+      setAutoSaveStatus('saved');
       setTimeout(() => {
         setAutoSaveStatus('');
       }, 3000);
     } catch (error) {
       console.error('Auto-save error:', error);
       setAutoSaveStatus('error');
-
-      // Clear error status after 3 seconds
       setTimeout(() => {
         setAutoSaveStatus('');
       }, 3000);
@@ -422,6 +422,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   };
 
   // Handle navigating to research section
+  // In frontend/src/components/TeachingForm.jsx - Update handleNext function
   const handleNext = async () => {
     if (isNavigating) return; // Prevent double clicks
 
@@ -430,15 +431,14 @@ const TeachingForm = ({ onNext, reportId }) => {
       console.log("TeachingForm: Next button clicked - saving and proceeding to Research");
 
       // If there are any unsaved changes, save them before proceeding
-      // Auto-save any changes before navigating away
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
         sectionNotes !== originalSectionNotes ||
-        expectationNotes !== originalExpectationNotes) { // Add this check
+        expectationNotes !== originalExpectationNotes) { // Make sure this check is here
         await autoSaveTeachingData();
       }
+
       // Wait a short moment before triggering navigation
       setTimeout(() => {
-        // Call the parent's onNext function to navigate to research
         console.log("TeachingForm: Calling parent onNext to navigate to research");
         onNext();
       }, 100);
@@ -453,6 +453,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   // Handle navigating back to YARArchive page
   // Handle navigating back to YARArchive page
   // Handle navigating back to YARArchive page
+  // In frontend/src/components/TeachingForm.jsx - Update handlePrevious function
   const handlePrevious = async () => {
     if (isNavigating) return; // Prevent double clicks
 
@@ -461,10 +462,9 @@ const TeachingForm = ({ onNext, reportId }) => {
       console.log("TeachingForm: Previous button clicked - saving and returning to YARArchive");
 
       // Auto-save any changes before navigating away
-      // Auto-save any changes before navigating away
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
         sectionNotes !== originalSectionNotes ||
-        expectationNotes !== originalExpectationNotes) { // Add this check
+        expectationNotes !== originalExpectationNotes) { // Make sure this check is here
         await autoSaveTeachingData();
       }
 

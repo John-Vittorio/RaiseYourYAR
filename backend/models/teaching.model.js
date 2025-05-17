@@ -66,6 +66,7 @@ const courseSchema = new mongoose.Schema({
   }
 });
 
+// In backend/models/teaching.model.js - Add expectationNotes field to teaching schema
 const teachingSchema = new mongoose.Schema({
   facultyId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -81,13 +82,16 @@ const teachingSchema = new mongoose.Schema({
     type: [courseSchema],
     default: []
   },
-  // Add taughtOutsideDept field to match frontend data
   taughtOutsideDept: {
     type: Boolean,
     default: false
   },
-  // Add sectionNotes field
   sectionNotes: {
+    type: String,
+    default: ""
+  },
+  // Add the expectationNotes field
+  expectationNotes: {
     type: String,
     default: ""
   },
