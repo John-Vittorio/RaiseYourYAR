@@ -36,7 +36,17 @@ export const getService = async (req, res) => {
 export const createService = async (req, res) => {
   try {
     const { reportId } = req.params;
-    const { type, role, department, description, notes } = req.body;
+    const { 
+      type, 
+      role, 
+      department, 
+      description, 
+      notes,
+      // New fields for thesis/dissertation committee
+      committeeName,
+      degreeType,
+      students
+    } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
       return res.status(400).json({ message: "Invalid report ID" });
@@ -47,19 +57,29 @@ export const createService = async (req, res) => {
       return res.status(404).json({ message: "Report not found" });
     }
 
-    const newService = await Service.create({
-      facultyId: req.user._id,  // Add faculty ID
-      reportId: reportId,       // Changed from reportID to reportId
+    // Create service object with all possible fields
+    const serviceData = {
+      facultyId: req.user._id,
+      reportId: reportId,
       type,
       role,
       department,
       description,
       notes
-    });
+    };
+
+    // Add thesis/dissertation committee specific fields if available
+    if (type === 'Thesis / Dissertation Committee') {
+      serviceData.committeeName = committeeName;
+      serviceData.degreeType = degreeType;
+      serviceData.students = students || [];
+    }
+
+    const newService = await Service.create(serviceData);
 
     // If this is the first service entry, update the report
     if (!report.serviceSection) {
-      report.serviceSection = [newService._id];  // Changed to array since serviceSection is an array
+      report.serviceSection = [newService._id];
       await report.save();
     } else {
       // Add this service to the serviceSection array
@@ -77,7 +97,17 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
   try {
     const { serviceId } = req.params;
-    const { type, role, department, description, notes } = req.body;
+    const { 
+      type, 
+      role, 
+      department, 
+      description, 
+      notes,
+      // New fields for thesis/dissertation committee
+      committeeName,
+      degreeType,
+      students
+    } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(serviceId)) {
       return res.status(400).json({ message: "Invalid service ID" });
@@ -88,11 +118,23 @@ export const updateService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
+    // Update common fields
     service.type = type || service.type;
     service.role = role || service.role;
     service.department = department || service.department;
     service.description = description || service.description;
     service.notes = notes || service.notes;
+
+    // Update thesis/dissertation committee specific fields if applicable
+    if (type === 'Thesis / Dissertation Committee') {
+      service.committeeName = committeeName;
+      service.degreeType = degreeType;
+      
+      // Only update students array if it's provided in the request
+      if (students) {
+        service.students = students;
+      }
+    }
 
     const updatedService = await service.save();
     res.json(updatedService);
@@ -115,7 +157,16 @@ export const deleteService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    // Use findByIdAndDelete instead of remove()
+    // Find the report and remove this service from its serviceSection array
+    const report = await Report.findById(service.reportId);
+    if (report && report.serviceSection) {
+      report.serviceSection = report.serviceSection.filter(
+        id => id.toString() !== serviceId
+      );
+      await report.save();
+    }
+
+    // Delete the service
     await Service.findByIdAndDelete(serviceId);
     res.json({ message: "Service removed" });
   } catch (error) {

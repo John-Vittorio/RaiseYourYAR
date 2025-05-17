@@ -22,6 +22,7 @@ const ServiceSchema = new Schema({
       'Professional Service', 
       'Community Service',
       'Admissions Committee',
+      'Thesis / Dissertation Committee',
       'Other'
     ],
     required: true 
@@ -34,6 +35,18 @@ const ServiceSchema = new Schema({
   },
   description: { 
     type: String 
+  },
+  // New fields for thesis/dissertation committees
+  committeeName: {
+    type: String
+  },
+  degreeType: {
+    type: String,
+    enum: ['Undergraduate', 'Graduate', 'Ph.D.', '']
+  },
+  students: {
+    type: [String],
+    default: []
   },
   notes: { 
     type: String 
