@@ -21,7 +21,6 @@ const ServiceSchema = new Schema({
       'University Committee', 
       'Professional Service', 
       'Community Service',
-      'Admissions Committee',
       'Thesis / Dissertation Committee',
       'Other'
     ],

@@ -13,7 +13,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [isResuming, setIsResuming] = useState(false);
   const [editingServiceIndex, setEditingServiceIndex] = useState(-1);
   const [showStudentInput, setShowStudentInput] = useState(false);
-  
+
   const { currentUser } = useContext(AuthContext);
   const API_URL = 'https://raiseyouryar-3.onrender.com/api';
 
@@ -34,6 +34,29 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     students: [],
     notes: ''
   });
+
+  // Add this near the top of your component function
+  const validateService = (serviceData) => {
+    const errors = {};
+
+    if (!serviceData.type) {
+      errors.type = 'Service type is required';
+    }
+
+    if (serviceData.type === 'Thesis / Dissertation Committee') {
+      if (!serviceData.committeeName) {
+        errors.committeeName = 'Committee name is required';
+      }
+      if (!serviceData.degreeType) {
+        errors.degreeType = 'Degree type is required';
+      }
+    }
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors
+    };
+  };
 
   const [newStudent, setNewStudent] = useState('');
 
@@ -56,22 +79,22 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       try {
         const { data } = await axios.get(
           `${API_URL}/service/${reportId}`,
           config
         );
-      
+
         if (data) {
           setServices(data);
-          
+
           // If we found existing data, this is a resumed draft
           if (data.length > 0) {
             setIsResuming(true);
@@ -83,7 +106,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           console.error('Error fetching service entries:', error);
         }
       }
-      
+
     } catch (error) {
       if (error.response?.status !== 404) {
         setError(error.response?.data?.message || 'Failed to fetch service data');
@@ -100,7 +123,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       setLoading(true);
       setError('');
       setSuccessMessage('');
-      
+
       // If there are no services added yet, we need to create at least a placeholder
       if (services.length === 0) {
         await createService({
@@ -109,9 +132,9 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           notes: 'No service activities reported for this period'
         });
       }
-      
+
       setSuccessMessage('Service data saved successfully!');
-      
+
       // Proceed to general notes page
       setTimeout(() => {
         onNext();
@@ -137,8 +160,9 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       [field]: value
     }));
   };
-  
+
   // Function to add a student to the thesis committee service
+  // Replace your current handleAddStudent function with this improved version
   const handleAddStudent = () => {
     if (newStudent.trim()) {
       setThesisService(prev => ({
@@ -146,6 +170,11 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: [...prev.students, newStudent.trim()]
       }));
       setNewStudent('');
+      // Keep focus on the input field for better UX when adding multiple students
+      setTimeout(() => {
+        const studentInput = document.querySelector('.student-input');
+        if (studentInput) studentInput.focus();
+      }, 0);
     }
   };
 
@@ -162,7 +191,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       students: prev.students.filter((_, index) => index !== indexToRemove)
     }));
   };
-  
+
   // Function to handle editing a service
   const handleEditService = (service, index) => {
     // Check if this is a thesis committee service
@@ -190,38 +219,46 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       setShowForm(true);
       setShowThesisForm(false);
     }
-    
+
     setEditingServiceIndex(index);
     scrollToTop();
   };
-  
+
   const handleSaveService = async () => {
     try {
+      // Validate before saving
+      const { isValid, errors } = validateService(newService);
+      if (!isValid) {
+        const errorMessages = Object.values(errors).join(', ');
+        setError(errorMessages);
+        return;
+      }
+
       setLoading(true);
       setError('');
-      
+
       if (editingServiceIndex >= 0) {
         // Update existing service
         const serviceId = services[editingServiceIndex]._id;
-        
+
         const config = {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentUser.token}`
           }
         };
-        
+
         const response = await axios.put(
           `${API_URL}/service/${serviceId}`,
           newService,
           config
         );
-        
+
         // Update the service in the local state
         const updatedServices = [...services];
         updatedServices[editingServiceIndex] = response.data;
         setServices(updatedServices);
-        
+
         setSuccessMessage('Service updated successfully!');
       } else {
         // Create new service
@@ -229,7 +266,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         setServices(prev => [...prev, data]);
         setSuccessMessage('Service saved successfully!');
       }
-      
+
       // Reset form
       setNewService({
         type: '',
@@ -238,11 +275,11 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         description: '',
         notes: ''
       });
-      
+
       // Hide form and reset editing state
       setShowForm(false);
       setEditingServiceIndex(-1);
-      
+
       // Clear success message after delay
       setTimeout(() => {
         setSuccessMessage('');
@@ -257,9 +294,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
   const handleSaveThesisService = async () => {
     try {
+      // Validate before saving
+      const { isValid, errors } = validateService(thesisService);
+      if (!isValid) {
+        const errorMessages = Object.values(errors).join(', ');
+        setError(errorMessages);
+        return;
+      }
+
       setLoading(true);
       setError('');
-      
+
       // Create the service data object with thesis committee fields
       const serviceData = {
         type: thesisService.type,
@@ -271,7 +316,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: thesisService.students,
         notes: thesisService.notes
       };
-      
+
       // Also add a formatted description for display purposes
       const descriptionParts = [];
       if (thesisService.committeeName) {
@@ -284,29 +329,29 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         descriptionParts.push(`Students: ${thesisService.students.join(', ')}`);
       }
       serviceData.description = descriptionParts.join(' | ');
-      
+
       if (editingServiceIndex >= 0) {
         // Update existing thesis committee service
         const serviceId = services[editingServiceIndex]._id;
-        
+
         const config = {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentUser.token}`
           }
         };
-        
+
         const response = await axios.put(
           `${API_URL}/service/${serviceId}`,
           serviceData,
           config
         );
-        
+
         // Update the service in the local state
         const updatedServices = [...services];
         updatedServices[editingServiceIndex] = response.data;
         setServices(updatedServices);
-        
+
         setSuccessMessage('Thesis committee service updated successfully!');
       } else {
         // Create new thesis committee service
@@ -314,7 +359,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         setServices(prev => [...prev, data]);
         setSuccessMessage('Thesis committee service saved successfully!');
       }
-      
+
       // Reset form
       setThesisService({
         type: 'Thesis / Dissertation Committee',
@@ -325,12 +370,12 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: [],
         notes: ''
       });
-      
+
       // Hide form and reset editing state
       setShowThesisForm(false);
       setEditingServiceIndex(-1);
       setShowStudentInput(false);
-      
+
       // Clear success message after delay
       setTimeout(() => {
         setSuccessMessage('');
@@ -342,7 +387,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       setLoading(false);
     }
   };
-  
+
   const createService = async (serviceData) => {
     const config = {
       headers: {
@@ -350,13 +395,13 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         'Authorization': `Bearer ${currentUser.token}`
       }
     };
-    
+
     const { data } = await axios.post(
       `${API_URL}/service/${reportId}`,
       serviceData,
       config
     );
-    
+
     return data;
   };
 
@@ -364,28 +409,28 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       await axios.delete(
         `${API_URL}/service/${serviceId}`,
         config
       );
-      
+
       // Update local state to remove the deleted service
       setServices(prev => prev.filter(service => service._id !== serviceId));
-      
+
       setSuccessMessage('Service entry deleted successfully!');
-      
+
       // Clear success message after delay
       setTimeout(() => {
         setSuccessMessage('');
       }, 2000);
-      
+
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to delete service');
       console.error('Error deleting service:', error);
@@ -402,7 +447,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     <div className="teaching-container">
       <div className="teaching-form-content">
         {isResuming && <ResumeNotification reportId={reportId} />}
-        
+
         <div className="teaching-header">
           <h1 className="yar-title">Yearly Activity Report</h1>
           <div className="teaching-breadcrumb">
@@ -560,14 +605,14 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             </div>
             <div className="yar-form-group">
               <label className="course-label">Student Information</label>
-              
+
               {/* Display list of students already added */}
               {thesisService.students && thesisService.students.length > 0 && (
                 <div className="student-list">
                   {thesisService.students.map((student, index) => (
                     <div key={index} className="student-item">
                       <span>{student}</span>
-                      <button 
+                      <button
                         type="button"
                         className="remove-student-btn"
                         onClick={() => handleRemoveStudent(index)}
@@ -578,10 +623,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                   ))}
                 </div>
               )}
-              
+
               {/* Add Student button - shows input when clicked */}
               {!showStudentInput ? (
-                <button 
+                <button
                   type="button"
                   className="yar-button-secondary"
                   onClick={toggleStudentInput}
@@ -602,7 +647,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     onChange={(e) => setNewStudent(e.target.value)}
                     placeholder="Student name"
                   />
-                  <button 
+                  <button
                     type="button"
                     className="yar-button-secondary"
                     onClick={handleAddStudent}
@@ -614,7 +659,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                   >
                     Add Student
                   </button>
-                  <button 
+                  <button
                     type="button"
                     className="yar-button-secondary"
                     onClick={() => {
@@ -679,7 +724,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             <h3 className="course-title">{service.type}</h3>
             {service.role && <p><strong>Role:</strong> {service.role}</p>}
             {service.department && <p><strong>Department:</strong> {service.department}</p>}
-            
+
             {/* For Thesis/Dissertation Committee */}
             {service.type === 'Thesis / Dissertation Committee' && (
               <>
@@ -690,18 +735,18 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 )}
               </>
             )}
-            
+
             {service.description && <p><strong>Description:</strong> {service.description}</p>}
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
-            
+
             <div className="service-actions">
-              <button 
+              <button
                 onClick={() => handleEditService(service, index)}
                 className="yar-button-secondary edit-service"
               >
                 Edit
               </button>
-              <button 
+              <button
                 onClick={() => handleDeleteService(service._id)}
                 className="yar-button-secondary delete-service"
               >
@@ -765,11 +810,11 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Next' : 'Next'} 
+            {loading ? 'Next' : 'Next'}
           </button>
         </div>
       </div>
-      
+
       <style jsx>{`
         .service-actions {
           margin-top: 15px;
