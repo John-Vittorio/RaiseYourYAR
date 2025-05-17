@@ -326,6 +326,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                             <p><strong>Type:</strong> {pub.publicationType}</p>
                             <p><strong>Journal/Publisher:</strong> {pub.journalName}</p>
                             <p><strong>Status:</strong> {pub.publicationStatus}</p>
+                            {pub.coAuthors && pub.coAuthors.length > 0 && (
+                              <p><strong>Co-Authors:</strong> {pub.coAuthors.map(author =>
+                                `${author.name}${author.affiliation ? ` (${author.affiliation})` : ''}`
+                              ).join(', ')}</p>
+                            )}
                             {pub.notes && <p className="wrap-text"><strong>Notes:</strong> {pub.notes}</p>}
                           </div>
                         </div>
