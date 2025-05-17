@@ -62,7 +62,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
     title: '',
     journalName: '',
     publicationStatus: 'In Progress',
-    coAuthors: [{ name: '', affiliation: '' }]
+    coAuthors: [] // Change from [{ name: '', affiliation: '' }] to empty array
   });
 
   const [grant, setGrant] = useState({
@@ -626,7 +626,7 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
       title: '',
       journalName: '',
       publicationStatus: 'In Progress',
-      coAuthors: [{ name: '', affiliation: '' }]
+      coAuthors: [] // Change to empty array
     });
   };
 
@@ -745,25 +745,25 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
               </div>
               <div className="yar-form-group">
                 <label className="course-label">Co-Authors</label>
-                {newPublication.coAuthors.map((coAuthor, i) => (
-                  <div key={i} className="co-author-row">
-                    <div className="yar-form-group">
-                      <label>Co-Author Name</label>
-                      <input
-                        className="course-form-input"
-                        value={coAuthor.name}
-                        onChange={e => updateCoAuthor(i, 'name', e.target.value)}
-                      />
-                    </div>
-                    <div className="yar-form-group">
-                      <label>Affiliation</label>
-                      <input
-                        className="course-form-input"
-                        value={coAuthor.affiliation}
-                        onChange={e => updateCoAuthor(i, 'affiliation', e.target.value)}
-                      />
-                    </div>
-                    {i > 0 && (
+                {newPublication.coAuthors.length > 0 && (
+                  newPublication.coAuthors.map((coAuthor, i) => (
+                    <div key={i} className="co-author-row">
+                      <div className="yar-form-group">
+                        <label>Co-Author Name</label>
+                        <input
+                          className="course-form-input"
+                          value={coAuthor.name}
+                          onChange={e => updateCoAuthor(i, 'name', e.target.value)}
+                        />
+                      </div>
+                      <div className="yar-form-group">
+                        <label>Affiliation</label>
+                        <input
+                          className="course-form-input"
+                          value={coAuthor.affiliation}
+                          onChange={e => updateCoAuthor(i, 'affiliation', e.target.value)}
+                        />
+                      </div>
                       <button
                         type="button"
                         className="remove-button"
@@ -771,9 +771,9 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
                       >
                         Remove
                       </button>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  ))
+                )}
                 <button
                   type="button"
                   onClick={addCoAuthor}
