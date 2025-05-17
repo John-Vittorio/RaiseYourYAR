@@ -12,6 +12,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isResuming, setIsResuming] = useState(false);
   const [editingServiceIndex, setEditingServiceIndex] = useState(-1);
+  const [showStudentInput, setShowStudentInput] = useState(false);
   
   const { currentUser } = useContext(AuthContext);
 
@@ -146,6 +147,13 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       }));
       setNewStudent('');
     }
+    // Keep the input field visible to add more students
+  };
+
+  // Function to toggle student input visibility
+  const toggleStudentInput = () => {
+    setShowStudentInput(true);
+    setNewStudent('');
   };
 
   // Function to remove a student from the thesis committee service
@@ -317,6 +325,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // Hide form and reset editing state
       setShowThesisForm(false);
       setEditingServiceIndex(-1);
+      setShowStudentInput(false);
       
       // Clear success message after delay
       setTimeout(() => {
@@ -579,23 +588,33 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               )}
               
               {/* Add new student input and button */}
-              <div className="add-student-row">
-                <input
-                  type="text"
-                  className="course-form-input student-input"
-                  value={newStudent}
-                  onChange={(e) => setNewStudent(e.target.value)}
-                  placeholder="Student name"
-                />
+              {showStudentInput ? (
+                <div className="add-student-row">
+                  <input
+                    type="text"
+                    className="course-form-input student-input"
+                    value={newStudent}
+                    onChange={(e) => setNewStudent(e.target.value)}
+                    placeholder="Student name"
+                  />
+                  <button 
+                    type="button"
+                    className="yar-button-secondary"
+                    onClick={handleAddStudent}
+                    disabled={!newStudent.trim()}
+                  >
+                    Add Student
+                  </button>
+                </div>
+              ) : (
                 <button 
                   type="button"
-                  className="yar-button-secondary"
-                  onClick={handleAddStudent}
-                  disabled={!newStudent.trim()}
+                  className="yar-button-add-student"
+                  onClick={toggleStudentInput}
                 >
-                  Add Student
+                  + Add Student
                 </button>
-              </div>
+              )}
             </div>
 
             <div className="yar-form-group">
@@ -623,6 +642,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     students: [],
                     notes: ''
                   });
+                  setShowStudentInput(false);
                 }}
                 className="yar-button-secondary"
               >
@@ -708,6 +728,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 setShowThesisForm(true);
                 setShowForm(false);
                 setEditingServiceIndex(-1);
+                setShowStudentInput(false);
                 scrollToTop();
               }}
             >
@@ -820,10 +841,28 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           display: flex;
           gap: 10px;
           width: 100%;
+          margin-bottom: 10px;
         }
         
         .student-input {
           flex-grow: 1;
+        }
+        
+        .yar-button-add-student {
+          background-color: #f5f5f5;
+          border: 1px dashed #4B2E83;
+          color: #4B2E83;
+          padding: 8px 12px;
+          border-radius: 4px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          font-size: 14px;
+          transition: all 0.2s ease;
+        }
+        
+        .yar-button-add-student:hover {
+          background-color: #EAE6F4;
         }
         
         /* Animation for form transitions */
