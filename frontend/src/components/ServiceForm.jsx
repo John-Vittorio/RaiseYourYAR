@@ -594,7 +594,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               {!showStudentInput ? (
                 <button 
                   type="button"
-                  className="yar-button-add-student"
+                  className="yar-button-secondary"
                   onClick={toggleStudentInput}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
@@ -858,26 +858,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         
         .student-input {
           flex-grow: 1;
-        }
-        
-        .yar-button-add-student {
-          background-color: #f5f5f5;
-          border: 1px solid #e0e0e0;
-          color: #4B2E83;
-          padding: 10px 15px;
-          border-radius: 4px;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          transition: all 0.2s ease;
-          margin-bottom: 10px;
-        }
-        
-        .yar-button-add-student:hover {
-          background-color: #EAE6F4;
-          border-color: #C8BEE6;
         }
         
         /* Animation for form transitions */
