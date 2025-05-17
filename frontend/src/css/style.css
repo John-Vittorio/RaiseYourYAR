@@ -71,7 +71,7 @@ body {
 
 .teaching-section-header-two {
     font-family: "Encode Sans";
-    width: 100%;
+    max-width: 50%;
     color: #4B2E83;
     font-weight: 600;
     margin: 20px 0 15px 0;
