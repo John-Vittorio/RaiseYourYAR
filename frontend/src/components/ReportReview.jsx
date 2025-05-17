@@ -317,6 +317,9 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
               <h3 className="review-section-title">Research</h3>
               {research ? (
                 <div className="review-section-content">
+// Find the publications section in ReportReview.jsx and update it to include co-authors
+                  // Look for this code around line 304 in your ReportReview component
+
                   {research.publications && research.publications.length > 0 && (
                     <>
                       {research.publications.map((pub, index) => (
@@ -326,6 +329,12 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                             <p><strong>Type:</strong> {pub.publicationType}</p>
                             <p><strong>Journal / Publisher:</strong> {pub.journalName}</p>
                             <p><strong>Status:</strong> {pub.publicationStatus}</p>
+                            {/* Display co-authors if they exist */}
+                            {pub.coAuthors && pub.coAuthors.length > 0 && (
+                              <p><strong>Co-Authors:</strong> {pub.coAuthors.map(author =>
+                                `${author.name}${author.affiliation ? ` (${author.affiliation})` : ''}`
+                              ).join(', ')}</p>
+                            )}
                             {pub.notes && <p className="wrap-text"><strong>Notes:</strong> {pub.notes}</p>}
                           </div>
                         </div>
