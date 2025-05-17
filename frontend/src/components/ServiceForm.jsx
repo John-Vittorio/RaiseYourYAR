@@ -15,6 +15,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [showStudentInput, setShowStudentInput] = useState(false);
   
   const { currentUser } = useContext(AuthContext);
+  const API_URL = 'https://raiseyouryar-3.onrender.com/api';
 
   const [newService, setNewService] = useState({
     type: '',
@@ -62,10 +63,9 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         }
       };
       
-      // Get service entries
       try {
         const { data } = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
+          `${API_URL}/service/${reportId}`,
           config
         );
       
@@ -146,7 +146,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         students: [...prev.students, newStudent.trim()]
       }));
       setNewStudent('');
-      // Keep the input field visible to add more students
     }
   };
 
@@ -179,7 +178,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       });
       setShowThesisForm(true);
       setShowForm(false);
-      setShowStudentInput(true); // Show the student input field when editing
+      setShowStudentInput(service.students?.length > 0);
     } else {
       setNewService({
         type: service.type || '',
@@ -213,7 +212,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         };
         
         const response = await axios.put(
-          `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+          `${API_URL}/service/${serviceId}`,
           newService,
           config
         );
@@ -261,7 +260,19 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       setLoading(true);
       setError('');
       
-      // Create description from committee details
+      // Create the service data object with thesis committee fields
+      const serviceData = {
+        type: thesisService.type,
+        role: thesisService.role,
+        department: thesisService.department,
+        // Add these fields directly instead of embedding in description
+        committeeName: thesisService.committeeName,
+        degreeType: thesisService.degreeType,
+        students: thesisService.students,
+        notes: thesisService.notes
+      };
+      
+      // Also add a formatted description for display purposes
       const descriptionParts = [];
       if (thesisService.committeeName) {
         descriptionParts.push(`Committee: ${thesisService.committeeName}`);
@@ -272,17 +283,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       if (thesisService.students && thesisService.students.length > 0) {
         descriptionParts.push(`Students: ${thesisService.students.join(', ')}`);
       }
-      
-      const serviceData = {
-        type: thesisService.type,
-        role: thesisService.role,
-        department: thesisService.department,
-        description: descriptionParts.join(' | '),
-        committeeName: thesisService.committeeName,
-        degreeType: thesisService.degreeType,
-        students: thesisService.students,
-        notes: thesisService.notes
-      };
+      serviceData.description = descriptionParts.join(' | ');
       
       if (editingServiceIndex >= 0) {
         // Update existing thesis committee service
@@ -296,7 +297,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         };
         
         const response = await axios.put(
-          `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+          `${API_URL}/service/${serviceId}`,
           serviceData,
           config
         );
@@ -351,7 +352,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     };
     
     const { data } = await axios.post(
-      `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
+      `${API_URL}/service/${reportId}`,
       serviceData,
       config
     );
@@ -371,7 +372,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       };
       
       await axios.delete(
-        `https://raiseyouryar-3.onrender.com/api/service/${serviceId}`,
+        `${API_URL}/service/${serviceId}`,
         config
       );
       
@@ -573,7 +574,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               <label className="course-label">Student Information</label>
               
               {/* Display list of students already added */}
-              {thesisService.students.length > 0 && (
+              {thesisService.students && thesisService.students.length > 0 && (
                 <div className="student-list">
                   {thesisService.students.map((student, index) => (
                     <div key={index} className="student-item">
@@ -702,7 +703,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               </>
             )}
             
-            {/* For Regular Services */}
             {service.description && <p><strong>Description:</strong> {service.description}</p>}
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
             
