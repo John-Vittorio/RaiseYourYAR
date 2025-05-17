@@ -178,6 +178,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         notes: service.notes || ''
       });
       setShowThesisForm(true);
+      setShowForm(false);
       setShowStudentInput(true); // Show the student input field when editing
     } else {
       setNewService({
@@ -188,6 +189,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         notes: service.notes || ''
       });
       setShowForm(true);
+      setShowThesisForm(false);
     }
     
     setEditingServiceIndex(index);
@@ -588,24 +590,49 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 </div>
               )}
               
-              {/* Add new student input and button - always visible now */}
-              <div className="add-student-row">
-                <input
-                  type="text"
-                  className="course-form-input student-input"
-                  value={newStudent}
-                  onChange={(e) => setNewStudent(e.target.value)}
-                  placeholder="Student name"
-                />
+              {/* Add Student button - shows input when clicked */}
+              {!showStudentInput ? (
                 <button 
                   type="button"
-                  className="yar-button-secondary"
-                  onClick={handleAddStudent}
-                  disabled={!newStudent.trim()}
+                  className="yar-button-add-student"
+                  onClick={toggleStudentInput}
                 >
-                  Add Student
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B2E83" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Add Student</span>
                 </button>
-              </div>
+              ) : (
+                /* Add new student input and button - visible only when showStudentInput is true */
+                <div className="add-student-row">
+                  <input
+                    type="text"
+                    className="course-form-input student-input"
+                    value={newStudent}
+                    onChange={(e) => setNewStudent(e.target.value)}
+                    placeholder="Student name"
+                  />
+                  <button 
+                    type="button"
+                    className="yar-button-secondary"
+                    onClick={handleAddStudent}
+                    disabled={!newStudent.trim()}
+                  >
+                    Add Student
+                  </button>
+                  <button 
+                    type="button"
+                    className="yar-button-secondary"
+                    onClick={() => {
+                      setShowStudentInput(false);
+                      setNewStudent('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="yar-form-group">
@@ -692,7 +719,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           </div>
         ))}
 
-        {/* Add Service Buttons Container */}
+        {/* Add Service Buttons Container - Only show when no forms are open */}
         {!showForm && !showThesisForm && (
           <div className="add-service-buttons-container">
             {/* Add Regular Service Button */}
@@ -714,12 +741,12 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
             {/* Add Thesis Committee Button */}
             <div
-              className="add-course-button thesis-button"
+              className="add-course-button"
               onClick={() => {
                 setShowThesisForm(true);
                 setShowForm(false);
                 setEditingServiceIndex(-1);
-                setShowStudentInput(true);
+                setShowStudentInput(false);
                 scrollToTop();
               }}
             >
@@ -797,12 +824,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           margin-bottom: 20px;
         }
         
-        /* Styling for Thesis Button */
-        .thesis-button {
-          background-color: #F5F5F5;
-          border: 1px dashed #4B2E83;
-        }
-        
         /* Student List Styling */
         .student-list {
           margin-bottom: 10px;
@@ -841,19 +862,22 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         
         .yar-button-add-student {
           background-color: #f5f5f5;
-          border: 1px dashed #4B2E83;
+          border: 1px solid #e0e0e0;
           color: #4B2E83;
-          padding: 8px 12px;
+          padding: 10px 15px;
           border-radius: 4px;
           cursor: pointer;
           display: inline-flex;
           align-items: center;
+          gap: 8px;
           font-size: 14px;
           transition: all 0.2s ease;
+          margin-bottom: 10px;
         }
         
         .yar-button-add-student:hover {
           background-color: #EAE6F4;
+          border-color: #C8BEE6;
         }
         
         /* Animation for form transitions */
