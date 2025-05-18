@@ -646,7 +646,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                         className="remove-student-btn"
                         onClick={() => handleRemoveStudent(index)}
                       >
-                    Add Students
+                        Add Students
                       </button>
                     </div>
                   ))}
