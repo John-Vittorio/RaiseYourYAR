@@ -219,8 +219,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     if (service.type === 'Thesis / Dissertation Committee') {
       setThesisService({
         type: service.type,
-        role: service.role || 'Committee Member',
-        department: service.department || '',
+        // Don't include role and department for thesis committees
         committeeName: service.committeeName || '',
         degreeType: service.degreeType || '',
         students: service.students || [],
@@ -340,19 +339,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       setError('');
       setFormErrors({});
 
-      // Create the service data object with thesis committee fields
+      // Create the service data object with ONLY thesis committee fields
+      // Removing role and department which aren't needed for thesis committees
       const serviceData = {
-        type: thesisService.type,
-        role: thesisService.role,
-        department: thesisService.department,
-        // Add these fields directly
+        type: 'Thesis / Dissertation Committee',
         committeeName: thesisService.committeeName,
         degreeType: thesisService.degreeType,
         students: thesisService.students,
         notes: thesisService.notes
       };
-
-      // No description field needed - this is the key fix
 
       if (editingServiceIndex >= 0) {
         // Update existing thesis committee service
@@ -387,8 +382,8 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // Reset form
       setThesisService({
         type: 'Thesis / Dissertation Committee',
-        role: 'Committee Member',
-        department: '',
+        role: '', // Clear role
+        department: '', // Clear department
         committeeName: '',
         degreeType: '',
         students: [],
@@ -638,16 +633,6 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             </div>
 
             <div className="yar-form-group">
-              <label className="course-label">Department</label>
-              <input
-                type="text"
-                className="course-form-input"
-                value={thesisService.department}
-                onChange={(e) => handleThesisInputChange('department', e.target.value)}
-                placeholder="Department or unit"
-              />
-            </div>
-            <div className="yar-form-group">
               <label className="course-label">Student Information</label>
 
               {/* Display list of students already added */}
@@ -741,7 +726,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                   setEditingServiceIndex(-1);
                   setThesisService({
                     type: 'Thesis / Dissertation Committee',
-                    role: 'Committee Member',
+                    role: '',
                     department: '',
                     committeeName: '',
                     degreeType: '',
@@ -773,23 +758,26 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         {services.map((service, index) => (
           <div key={service._id} className="course-card">
             <h3 className="course-title">{service.type}</h3>
-            {service.role && <p><strong>Role:</strong> {service.role}</p>}
-            {service.department && <p><strong>Department:</strong> {service.department}</p>}
 
-            {/* For Thesis/Dissertation Committee */}
-            {service.type === 'Thesis / Dissertation Committee' && (
+            {/* Show Role and Department only for non-thesis committees */}
+            {service.type !== 'Thesis / Dissertation Committee' && (
               <>
-                {service.committeeName && <p><strong>Committee:</strong> {service.committeeName}</p>}
-                {service.degreeType && <p><strong>Degree Type:</strong> {service.degreeType}</p>}
-                {service.students && service.students.length > 0 && (
-                  <p><strong>Students:</strong> {service.students.join(', ')}</p>
-                )}
+                {service.role && <p><strong>Role:</strong> {service.role}</p>}
+                {service.department && <p><strong>Department:</strong> {service.department}</p>}
+                {service.description && <p><strong>Description:</strong> {service.description}</p>}
               </>
             )}
 
-            {/* Only show description if it exists and this is not a thesis committee */}
-            {service.description && service.type !== 'Thesis / Dissertation Committee' &&
-              <p><strong>Description:</strong> {service.description}</p>}
+            {/* For Thesis/Dissertation Committee, only show the relevant fields */}
+            {service.type === 'Thesis / Dissertation Committee' && (
+              <>
+                {service.committeeName && <p><strong>Committee Name:</strong> {service.committeeName}</p>}
+                {service.degreeType && <p><strong>Degree Type:</strong> {service.degreeType}</p>}
+                {service.students && service.students.length > 0 && (
+                  <p><strong>Student Information:</strong> {service.students.join(', ')}</p>
+                )}
+              </>
+            )}
 
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
 
