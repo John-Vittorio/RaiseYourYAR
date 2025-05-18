@@ -115,62 +115,86 @@ export const updateReport = async (req, res) => {
 
 export const deleteReport = asyncHandler(async (req, res) => {
   const { reportId } = req.params;
+  
+  console.log('Delete report request received');
+  console.log('Report ID:', reportId);
+  console.log('User ID:', req.user._id);
+  console.log('User role:', req.user.role);
+  
   const session = await mongoose.startSession();
   
   try {
-    // Start a MongoDB transaction
+    // Start transaction
     session.startTransaction();
 
+    // Validate report ID
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
+      console.log('Invalid report ID format');
       await session.abortTransaction();
       session.endSession();
       return res.status(400).json({ message: "Invalid report ID format" });
     }
 
-    // Find the report with all populated sections to get their IDs
+    // Find the report
     const report = await Report.findById(reportId)
       .populate('teachingSection')
       .populate('researchSection')
       .populate('serviceSection')
       .session(session);
 
+    console.log('Report found:', report ? 'Yes' : 'No');
+    if (report) {
+      console.log('Report status:', report.status);
+    }
+
     if (!report) {
+      console.log('Report not found');
       await session.abortTransaction();
       session.endSession();
       return res.status(404).json({ message: "Report not found" });
     }
 
+    // Check ownership
     const isOwner = report.facultyId.toString() === req.user._id.toString();
     const isAdmin = req.user.role === 'admin';
     
-    // Modified to allow faculty to delete their own drafts and submitted reports
-    // Admins can delete any report
+    console.log('Is Owner:', isOwner);
+    console.log('Is Admin:', isAdmin);
+
     if (!isOwner && !isAdmin) {
+      console.log('Not authorized - not owner or admin');
       await session.abortTransaction();
       session.endSession();
       return res.status(403).json({ message: "You can only delete your own reports" });
     }
 
-    // Only allow faculty to delete drafts and submitted reports
-    // Admins can delete any report
+    // IMPORTANT CHANGE: Allow faculty to delete both draft and submitted reports
+    // Only prevent faculty from deleting approved reports
     if (!isAdmin && report.status === 'approved') {
+      console.log('Not authorized - faculty cannot delete approved reports');
       await session.abortTransaction();
       session.endSession();
       return res.status(403).json({ message: "Approved reports cannot be deleted by faculty" });
     }
 
+    // Explicitly log that we're allowing this deletion
+    console.log(`Allowing deletion of ${report.status} report by ${isAdmin ? 'admin' : 'faculty'}`);
+
     // Delete teaching section if exists
     if (report.teachingSection) {
+      console.log('Deleting teaching section');
       await Teaching.findByIdAndDelete(report.teachingSection._id).session(session);
     }
 
     // Delete research section if exists
     if (report.researchSection) {
+      console.log('Deleting research section');
       await Research.findByIdAndDelete(report.researchSection._id).session(session);
     }
 
     // Delete all service sections if they exist
     if (report.serviceSection && report.serviceSection.length > 0) {
+      console.log('Deleting service sections');
       const serviceIds = report.serviceSection.map(service => 
         typeof service === 'object' ? service._id : service
       );
@@ -178,23 +202,26 @@ export const deleteReport = asyncHandler(async (req, res) => {
     }
 
     // Finally delete the report itself
+    console.log('Deleting report');
     await Report.findByIdAndDelete(reportId).session(session);
 
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
+    console.log('Transaction committed - report deleted successfully');
 
     res.status(200).json({ 
       message: "Report and all associated sections deleted successfully",
-      deletedReport: reportId
+      deletedReport: reportId,
+      status: report.status // Include the status in the response for confirmation
     });
     
   } catch (error) {
     // If an error occurs, abort the transaction
+    console.error('Error during report deletion:', error);
     await session.abortTransaction();
     session.endSession();
     
-    console.error('Error during report deletion:', error);
     res.status(500).json({ 
       message: "Failed to delete report and associated sections", 
       error: error.message 

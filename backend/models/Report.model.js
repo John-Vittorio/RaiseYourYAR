@@ -57,39 +57,44 @@ const reportSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
+    createdAt: {
+        type: Date,
+        default: Date.now
     },
-    updatedAt: { 
-        type: Date, 
-        default: Date.now 
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
 // Update the 'updatedAt' field on save
-reportSchema.pre('save', function(next) {
+reportSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
 });
 
 reportSchema.methods.isComplete = function () {
     return (
-      this.teachingSection !== undefined &&
-      this.researchSection !== undefined &&
-      this.serviceSection && this.serviceSection.length > 0
+        this.teachingSection !== undefined &&
+        this.researchSection !== undefined &&
+        this.serviceSection && this.serviceSection.length > 0
     );
 };
-  
+
 reportSchema.methods.submit = function () {
     if (this.isComplete()) {
-      this.status = "submitted";
-      this.submittedDate = new Date();
-      return true;
+        this.status = "submitted";
+        this.submittedDate = new Date();
+        return true;
     }
     return false;
 };
-  
+
+reportSchema.methods.isComplete = function () {
+    return this.teachingSection && this.researchSection && this.serviceSection.length > 0;
+};
+
+
 const Report = mongoose.model("Report", reportSchema);
-  
+
 export default Report;
