@@ -1,71 +1,95 @@
-// Fix for Report.model.js - Remove any pre-delete hooks that restrict deletion
-
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
-  facultyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Faculty',
-    required: true
-  },
-  academicYear: {
-    type: String,
-    required: true
-  },
-  teachingSection: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Teaching'
-  },
-  researchSection: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Research'
-  },
-  serviceSection: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Service'
-  }],
-  notes: {
-    type: String
-  },
-  serviceNotes: {
-    type: String
-  },
-  teachingNotes: {
-    type: String
-  },
-  status: {
-    type: String,
-    enum: ['draft', 'submitted', 'approved', 'reviewed'],
-    default: 'draft'
-  },
-  submittedDate: {
-    type: Date
-  },
-  approvedDate: {
-    type: Date
-  },
-  reviewedDate: {
-    type: Date
-  }
-}, { timestamps: true });
-
-// Remove any pre-delete hooks that might be checking report status
-// If your model has something like this, it needs to be modified:
-/*
-reportSchema.pre('deleteOne', async function(next) {
-  const report = await this.model.findOne(this.getQuery());
-  if (report.status !== 'draft') {
-    throw new Error('Only drafts can be deleted');
-  }
-  next();
+    facultyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faculty",
+        required: true
+    },
+    academicYear: {
+        type: String,
+        required: true,
+        default: () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            // If it's after September, then the academic year is current year to next year
+            if (month >= 8) {
+                return `${year}-${year + 1}`;
+            }
+            // If it's before September, then the academic year is previous year to current year
+            return `${year - 1}-${year}`;
+        },
+    },
+    status: {
+        type: String,
+        enum: ["draft", "submitted", "reviewed", "approved"],
+        default: "draft",
+    },
+    submittedDate: {
+        type: Date,
+    },
+    approvedDate: {
+        type: Date,
+    },
+    teachingSection: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Teaching",
+    },
+    researchSection: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Research",
+    },
+    serviceSection: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Service",
+        default: []
+    },
+    notes: {
+        type: String,
+    },
+    // New fields for section notes
+    teachingNotes: {
+        type: String,
+        default: ""
+    },
+    serviceNotes: {
+        type: String,
+        default: ""
+    },
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    },
+    updatedAt: { 
+        type: Date, 
+        default: Date.now 
+    }
 });
-*/
 
-// Add a method to check if report is complete (if needed)
-reportSchema.methods.isComplete = function() {
-  return this.teachingSection && this.researchSection && this.serviceSection.length > 0;
+// Update the 'updatedAt' field on save
+reportSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+reportSchema.methods.isComplete = function () {
+    return (
+      this.teachingSection !== undefined &&
+      this.researchSection !== undefined &&
+      this.serviceSection && this.serviceSection.length > 0
+    );
 };
-
-const Report = mongoose.model('Report', reportSchema);
-
+  
+reportSchema.methods.submit = function () {
+    if (this.isComplete()) {
+      this.status = "submitted";
+      this.submittedDate = new Date();
+      return true;
+    }
+    return false;
+};
+  
+const Report = mongoose.model("Report", reportSchema);
+  
 export default Report;

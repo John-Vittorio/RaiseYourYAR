@@ -48,6 +48,11 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         config
       );
 
+      // const { data } = await axios.get(
+      //   'http://localhost:5001/api/reports',
+      //   config
+      // );
+
       setReports(data);
     } catch (error) {
       console.error('Error fetching reports:', error);
@@ -100,20 +105,21 @@ const YARArchive = ({ onStart, onEditDraft }) => {
 
       const config = {
         headers: {
-          'Authorization': `Bearer ${currentUser.token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${currentUser.token}`
         }
       };
 
-      // Make sure we log what we're deleting
-      console.log('Attempting to delete report:', reportToDelete);
-      console.log('Report status:', reportToDeleteStatus);
-
-      // Use the correct delete endpoint
+      // Use our direct MongoDB delete endpoint
+      console.log('Sending delete request for report:', reportToDelete);
       const response = await axios.delete(
         `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
         config
       );
+
+      // const response = await axios.delete(
+      //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+      //   config
+      // );
 
       console.log('Delete response:', response.data);
 
@@ -149,7 +155,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     setDeleteSuccess('');
   };
 
-  // Toggle functions for hiding/unhiding reports
+  // New functions for hiding/unhiding reports
   const toggleHideReport = (reportId) => {
     let updatedHiddenReports;
 
@@ -251,7 +257,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
             ) : (
               <>
                 <p>
-                  {reportToDeleteStatus === 'draft'
+                  {reportToDeleteStatus === 'draft' 
                     ? 'Are you sure you want to delete this draft report? This action cannot be undone.'
                     : 'Are you sure you want to delete this submitted report? This will permanently remove all data associated with this report. This action cannot be undone.'}
                 </p>
