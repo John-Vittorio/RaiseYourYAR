@@ -196,6 +196,38 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
     return date.toLocaleDateString();
   };
 
+  // Render specific content for thesis committee services
+  const renderThesisCommitteeContent = (service) => {
+    return (
+      <div className="review-item-details">
+        {service.committeeName && (
+          <p><strong>Committee Name:</strong> {service.committeeName}</p>
+        )}
+        {service.degreeType && (
+          <p><strong>Degree Type:</strong> {service.degreeType}</p>
+        )}
+        {service.students && service.students.length > 0 && (
+          <p><strong>Students:</strong> {service.students.join(', ')}</p>
+        )}
+        {service.notes && (
+          <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>
+        )}
+      </div>
+    );
+  };
+
+  // Render standard service content
+  const renderStandardServiceContent = (service) => {
+    return (
+      <div className="review-item-details">
+        {service.role && <p><strong>Role:</strong> {service.role}</p>}
+        {service.department && <p><strong>Dept:</strong> {service.department}</p>}
+        {service.description && <p className="wrap-text"><strong>Description:</strong> {service.description}</p>}
+        {service.notes && <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>}
+      </div>
+    );
+  };
+
   if (loading) {
     return <div className="loading">Loading your report data...</div>;
   }
@@ -400,12 +432,11 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
                   {services.map((service, index) => (
                     <div key={index} className="review-item">
                       <h4>{service.type}</h4>
-                      <div className="review-item-details">
-                        {service.role && <p><strong>Role:</strong> {service.role}</p>}
-                        {service.department && <p><strong>Dept:</strong> {service.department}</p>}
-                        {service.description && <p className="wrap-text"><strong>Description:</strong> {service.description}</p>}
-                        {service.notes && <p className="wrap-text"><strong>Notes:</strong> {service.notes}</p>}
-                      </div>
+                      {/* Conditionally render thesis committee or standard service content */}
+                      {service.type === 'Thesis / Dissertation Committee' 
+                        ? renderThesisCommitteeContent(service) 
+                        : renderStandardServiceContent(service)
+                      }
                     </div>
                   ))}
 
