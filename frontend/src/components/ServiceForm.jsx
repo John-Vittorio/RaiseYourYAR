@@ -9,6 +9,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [showThesisForm, setShowThesisForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [isResuming, setIsResuming] = useState(false);
   const [editingServiceIndex, setEditingServiceIndex] = useState(-1);
@@ -35,7 +36,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     notes: ''
   });
 
-  // Add this near the top of your component function
+  // Improved validation with field-specific error messages
   const validateService = (serviceData) => {
     const errors = {};
 
@@ -148,6 +149,15 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   };
 
   const handleInputChange = (field, value) => {
+    // Clear field-specific error when the user makes a change
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
+
     setNewService(prev => ({
       ...prev,
       [field]: value
@@ -155,14 +165,22 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   };
 
   const handleThesisInputChange = (field, value) => {
+    // Clear field-specific error when the user makes a change
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
+
     setThesisService(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  // Function to add a student to the thesis committee service
-  // Replace your current handleAddStudent function with this improved version
+  // Improved function to add a student to the thesis committee service
   const handleAddStudent = () => {
     if (newStudent.trim()) {
       setThesisService(prev => ({
@@ -192,8 +210,11 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     }));
   };
 
-  // Function to handle editing a service
+  // Improved function to handle editing a service
   const handleEditService = (service, index) => {
+    // Reset any form errors
+    setFormErrors({});
+
     // Check if this is a thesis committee service
     if (service.type === 'Thesis / Dissertation Committee') {
       setThesisService({
@@ -229,6 +250,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // Validate before saving
       const { isValid, errors } = validateService(newService);
       if (!isValid) {
+        setFormErrors(errors);
         const errorMessages = Object.values(errors).join(', ');
         setError(errorMessages);
         return;
@@ -236,6 +258,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
       setLoading(true);
       setError('');
+      setFormErrors({});
 
       if (editingServiceIndex >= 0) {
         // Update existing service
@@ -285,7 +308,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         setSuccessMessage('');
       }, 3000);
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to save service');
+      const errorMsg = error.response?.data?.message || 'Failed to save service';
+      setError(errorMsg);
+
+      // Set specific form errors if the error message matches a validation issue
+      if (errorMsg.includes('Committee name')) {
+        setFormErrors(prev => ({ ...prev, committeeName: 'Committee name is required' }));
+      }
+      if (errorMsg.includes('Degree type')) {
+        setFormErrors(prev => ({ ...prev, degreeType: 'Degree type is required' }));
+      }
+
       console.error('Error saving service:', error);
     } finally {
       setLoading(false);
@@ -297,6 +330,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
       // Validate before saving
       const { isValid, errors } = validateService(thesisService);
       if (!isValid) {
+        setFormErrors(errors);
         const errorMessages = Object.values(errors).join(', ');
         setError(errorMessages);
         return;
@@ -304,13 +338,14 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
 
       setLoading(true);
       setError('');
+      setFormErrors({});
 
       // Create the service data object with thesis committee fields
       const serviceData = {
         type: thesisService.type,
         role: thesisService.role,
         department: thesisService.department,
-        // Add these fields directly instead of embedding in description
+        // Add these fields directly
         committeeName: thesisService.committeeName,
         degreeType: thesisService.degreeType,
         students: thesisService.students,
@@ -381,7 +416,17 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         setSuccessMessage('');
       }, 3000);
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to save thesis committee service');
+      const errorMsg = error.response?.data?.message || 'Failed to save thesis committee service';
+      setError(errorMsg);
+
+      // Set specific form errors if the error message matches a validation issue
+      if (errorMsg.includes('Committee name')) {
+        setFormErrors(prev => ({ ...prev, committeeName: 'Committee name is required' }));
+      }
+      if (errorMsg.includes('Degree type')) {
+        setFormErrors(prev => ({ ...prev, degreeType: 'Degree type is required' }));
+      }
+
       console.error('Error saving thesis committee service:', error);
     } finally {
       setLoading(false);
@@ -443,6 +488,12 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
     return <div className="loading">Loading...</div>;
   }
 
+  // Helper to check if a field has an error
+  const hasError = (field) => formErrors[field] ? true : false;
+
+  // Helper to get error message for a field
+  const getErrorMessage = (field) => formErrors[field] || '';
+
   return (
     <div className="teaching-container">
       <div className="teaching-form-content">
@@ -469,10 +520,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
           <div className="course-card">
             <h3 className="course-title">{editingServiceIndex >= 0 ? 'Edit Service' : 'Service Details'}</h3>
 
-            <div className="yar-form-group">
+            <div className={`yar-form-group ${hasError('type') ? 'has-error' : ''}`}>
               <label className="course-label">Service Type <span className="required-indicator">*</span></label>
               <select
-                className="course-form-input"
+                className={`course-form-input ${hasError('type') ? 'input-error' : ''}`}
                 value={newService.type}
                 onChange={(e) => handleInputChange('type', e.target.value)}
               >
@@ -484,6 +535,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 <option value="Community Service">Community Service</option>
                 <option value="Other">Other</option>
               </select>
+              {hasError('type') && <div className="error-text">{getErrorMessage('type')}</div>}
             </div>
 
             <div className="yar-form-group">
@@ -542,6 +594,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     description: '',
                     notes: ''
                   });
+                  setFormErrors({});
                 }}
                 className="yar-button-secondary"
               >
@@ -568,21 +621,22 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               {editingServiceIndex >= 0 ? 'Edit Thesis / Dissertation Committee' : 'Thesis / Dissertation Committee'}
             </h3>
 
-            <div className="yar-form-group">
+            <div className={`yar-form-group ${hasError('committeeName') ? 'has-error' : ''}`}>
               <label className="course-label">Committee Name <span className="required-indicator">*</span></label>
               <input
                 type="text"
-                className="course-form-input"
+                className={`course-form-input ${hasError('committeeName') ? 'input-error' : ''}`}
                 value={thesisService.committeeName}
                 onChange={(e) => handleThesisInputChange('committeeName', e.target.value)}
                 placeholder="Name of the committee"
               />
+              {hasError('committeeName') && <div className="error-text">{getErrorMessage('committeeName')}</div>}
             </div>
 
-            <div className="yar-form-group">
+            <div className={`yar-form-group ${hasError('degreeType') ? 'has-error' : ''}`}>
               <label className="course-label">Degree Type <span className="required-indicator">*</span></label>
               <select
-                className="course-form-input"
+                className={`course-form-input ${hasError('degreeType') ? 'input-error' : ''}`}
                 value={thesisService.degreeType}
                 onChange={(e) => handleThesisInputChange('degreeType', e.target.value)}
               >
@@ -591,6 +645,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 <option value="Graduate">Graduate</option>
                 <option value="Ph.D.">Ph.D.</option>
               </select>
+              {hasError('degreeType') && <div className="error-text">{getErrorMessage('degreeType')}</div>}
             </div>
 
             <div className="yar-form-group">
@@ -646,6 +701,12 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     value={newStudent}
                     onChange={(e) => setNewStudent(e.target.value)}
                     placeholder="Student name"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newStudent.trim()) {
+                        e.preventDefault();
+                        handleAddStudent();
+                      }
+                    }}
                   />
                   <button
                     type="button"
@@ -699,6 +760,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                     notes: ''
                   });
                   setShowStudentInput(false);
+                  setFormErrors({});
                 }}
                 className="yar-button-secondary"
               >
@@ -766,6 +828,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 setShowForm(true);
                 setShowThesisForm(false);
                 setEditingServiceIndex(-1);
+                setFormErrors({});
                 scrollToTop();
               }}
             >
@@ -784,6 +847,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
                 setShowForm(false);
                 setEditingServiceIndex(-1);
                 setShowStudentInput(false);
+                setFormErrors({});
                 scrollToTop();
               }}
             >
@@ -810,7 +874,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handleSaveAndNext}
             disabled={loading}
           >
-            {loading ? 'Next' : 'Next'}
+            {loading ? 'Saving...' : 'Next'}
           </button>
         </div>
       </div>
