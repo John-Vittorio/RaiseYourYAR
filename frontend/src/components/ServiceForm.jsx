@@ -352,18 +352,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
         notes: thesisService.notes
       };
 
-      // Also add a formatted description for display purposes
-      const descriptionParts = [];
-      if (thesisService.committeeName) {
-        descriptionParts.push(`Committee: ${thesisService.committeeName}`);
-      }
-      if (thesisService.degreeType) {
-        descriptionParts.push(`Degree Type: ${thesisService.degreeType}`);
-      }
-      if (thesisService.students && thesisService.students.length > 0) {
-        descriptionParts.push(`Students: ${thesisService.students.join(', ')}`);
-      }
-      serviceData.description = descriptionParts.join(' | ');
+      // No description field needed - this is the key fix
 
       if (editingServiceIndex >= 0) {
         // Update existing thesis committee service
@@ -798,7 +787,10 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
               </>
             )}
 
-            {service.description && <p><strong>Description:</strong> {service.description}</p>}
+            {/* Only show description if it exists and this is not a thesis committee */}
+            {service.description && service.type !== 'Thesis / Dissertation Committee' &&
+              <p><strong>Description:</strong> {service.description}</p>}
+
             {service.notes && <p><strong>Notes:</strong> {service.notes}</p>}
 
             <div className="service-actions">
