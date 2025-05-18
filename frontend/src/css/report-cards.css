@@ -356,3 +356,93 @@
 .report-card-container[data-status="draft"]:hover::after {
   opacity: 1;
 }
+
+/* Additional CSS for hide/unhide functionality */
+
+/* Hidden report styling */
+.report-card-container.report-hidden {
+  opacity: 0.75;
+  border-left: 4px solid #95a5a6;
+}
+
+/* Hide/Unhide button styling */
+.report-card-hide-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+}
+
+.report-card-hide-btn.hide {
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+}
+
+.report-card-hide-btn.hide:hover {
+  background-color: #d6dbdf;
+}
+
+.report-card-hide-btn.unhide {
+  background-color: #e8f4f8;
+  color: #3498db;
+}
+
+.report-card-hide-btn.unhide:hover {
+  background-color: #d1e8f3;
+}
+
+/* Hidden reports toggle button */
+.hidden-reports-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 20px 15px;
+}
+
+.toggle-hidden-btn {
+  background-color: #f7f9fa;
+  border: 1px solid #e0e6ed;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #34495e;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-hidden-btn svg {
+  margin-right: 6px;
+}
+
+.toggle-hidden-btn:hover {
+  background-color: #ebeef2;
+}
+
+.toggle-hidden-btn.showing-hidden {
+  background-color: #e8f4f8;
+  border-color: #c8e6fa;
+  color: #2980b9;
+}
+
+/* Filter indicator */
+.reports-filter-indicator {
+  margin: 0 20px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  text-align: center;
+  font-size: 14px;
+  color: #5c6670;
+}
+
+.reports-filter-indicator .count {
+  font-weight: bold;
+  color: #3498db;
+}

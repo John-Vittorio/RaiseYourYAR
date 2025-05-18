@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ReportCard = ({ report, onClick, onDelete }) => {
+const ReportCard = ({ report, onClick, onDelete, isHidden, onToggleHide }) => {
   const navigate = useNavigate();
   const isDraft = report.status === 'draft';
   
@@ -50,9 +50,20 @@ const ReportCard = ({ report, onClick, onDelete }) => {
     }
   };
   
+  // Handle hide/unhide button click
+  const handleToggleHide = (e) => {
+    // Stop the click event from bubbling up to the parent
+    e.stopPropagation();
+    
+    // Call the onToggleHide function with the report id
+    if (onToggleHide) {
+      onToggleHide(report._id);
+    }
+  };
+  
   return (
     <div 
-      className="report-card-container" 
+      className={`report-card-container ${isHidden ? 'report-hidden' : ''}`}
       onClick={handleViewReport}
       data-status={report.status}
     >
@@ -87,6 +98,12 @@ const ReportCard = ({ report, onClick, onDelete }) => {
             >
               Delete
             </button>
+            <button 
+              className={`report-card-hide-btn ${isHidden ? 'unhide' : 'hide'}`}
+              onClick={handleToggleHide}
+            >
+              {isHidden ? 'Unhide' : 'Hide'}
+            </button>
             <button className="report-card-view-btn resume">
               {/* Add pencil icon for resume */}
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -98,9 +115,17 @@ const ReportCard = ({ report, onClick, onDelete }) => {
           </>
         )}
         {!isDraft && (
-          <button className="report-card-view-btn">
-            View Report
-          </button>
+          <>
+            <button 
+              className={`report-card-hide-btn ${isHidden ? 'unhide' : 'hide'}`}
+              onClick={handleToggleHide}
+            >
+              {isHidden ? 'Unhide' : 'Hide'}
+            </button>
+            <button className="report-card-view-btn">
+              View Report
+            </button>
+          </>
         )}
       </div>
     </div>
