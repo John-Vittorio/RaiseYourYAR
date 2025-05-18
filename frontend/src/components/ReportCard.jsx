@@ -5,6 +5,7 @@ const ReportCard = ({ report, onClick, onDelete, isHidden, onToggleHide }) => {
   const navigate = useNavigate();
   const isDraft = report.status === 'draft';
   const isSubmitted = report.status === 'submitted';
+  // This is correct - we want to allow deletion of both drafts and submitted reports
   const isDeletable = isDraft || isSubmitted;
   
   // Format date for display
@@ -46,9 +47,14 @@ const ReportCard = ({ report, onClick, onDelete, isHidden, onToggleHide }) => {
     // Stop the click event from bubbling up to the parent
     e.stopPropagation();
     
-    // Call the onDelete function with the report id
-    if (onDelete) {
-      onDelete(report._id);
+    // Check if report is deletable before proceeding
+    if (isDeletable) {
+      // Call the onDelete function with the report id
+      if (onDelete) {
+        onDelete(report._id);
+      }
+    } else {
+      console.error(`Cannot delete report with status: ${report.status}`);
     }
   };
   
@@ -92,6 +98,7 @@ const ReportCard = ({ report, onClick, onDelete, isHidden, onToggleHide }) => {
       </div>
       
       <div className="report-card-footer">
+        {/* Only show delete button if report is deletable */}
         {isDeletable && (
           <button 
             className="report-card-delete-btn"

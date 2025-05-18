@@ -111,6 +111,8 @@ export const updateReport = async (req, res) => {
   }
 };
 
+// Modified deleteReport function in backend/controllers/report.controller.js
+
 export const deleteReport = asyncHandler(async (req, res) => {
   const { reportId } = req.params;
   const session = await mongoose.startSession();
