@@ -14,6 +14,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportToDelete, setReportToDelete] = useState(null);
+  const [reportToDeleteStatus, setReportToDeleteStatus] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState('');
@@ -84,14 +85,15 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     // Find the report in our local state
     const reportToBeDeleted = reports.find(report => report._id === reportId);
 
-    // Only allow deletion of draft reports
-    if (reportToBeDeleted && reportToBeDeleted.status === 'draft') {
+    // Allow deletion of draft and submitted reports
+    if (reportToBeDeleted && (reportToBeDeleted.status === 'draft' || reportToBeDeleted.status === 'submitted')) {
       setReportToDelete(reportId);
+      setReportToDeleteStatus(reportToBeDeleted.status);
       setDeleteError('');
       setDeleteSuccess('');
       setShowDeleteConfirm(true);
     } else {
-      console.error('Cannot delete non-draft reports');
+      console.error('Cannot delete approved reports');
     }
   };
 
@@ -132,6 +134,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       setTimeout(() => {
         setShowDeleteConfirm(false);
         setReportToDelete(null);
+        setReportToDeleteStatus(null);
         setDeleteSuccess('');
       }, 1500);
 
@@ -147,6 +150,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   const cancelDelete = () => {
     setShowDeleteConfirm(false);
     setReportToDelete(null);
+    setReportToDeleteStatus(null);
     setDeleteError('');
     setDeleteSuccess('');
   };
@@ -247,12 +251,16 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       {showDeleteConfirm && (
         <div className="delete-modal-overlay">
           <div className="delete-modal">
-            <h3>Delete Draft Report</h3>
+            <h3>Delete {reportToDeleteStatus === 'draft' ? 'Draft' : 'Submitted'} Report</h3>
             {deleteSuccess ? (
               <div className="delete-success-message">{deleteSuccess}</div>
             ) : (
               <>
-                <p>Are you sure you want to delete this draft report? This action cannot be undone.</p>
+                <p>
+                  {reportToDeleteStatus === 'draft' 
+                    ? 'Are you sure you want to delete this draft report? This action cannot be undone.'
+                    : 'Are you sure you want to delete this submitted report? This will permanently remove all data associated with this report. This action cannot be undone.'}
+                </p>
                 {deleteError && <div className="delete-error-message">{deleteError}</div>}
                 <div className="delete-modal-buttons">
                   <button

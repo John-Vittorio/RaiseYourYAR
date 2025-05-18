@@ -139,18 +139,22 @@ export const deleteReport = asyncHandler(async (req, res) => {
     }
 
     const isOwner = report.facultyId.toString() === req.user._id.toString();
-    const isDraft = report.status === 'draft';
-
-    if (!isOwner) {
+    const isAdmin = req.user.role === 'admin';
+    
+    // Modified to allow faculty to delete their own drafts and submitted reports
+    // Admins can delete any report
+    if (!isOwner && !isAdmin) {
       await session.abortTransaction();
       session.endSession();
       return res.status(403).json({ message: "You can only delete your own reports" });
     }
 
-    if (!isDraft) {
+    // Only allow faculty to delete drafts and submitted reports
+    // Admins can delete any report
+    if (!isAdmin && report.status === 'approved') {
       await session.abortTransaction();
       session.endSession();
-      return res.status(403).json({ message: "Only draft reports can be deleted" });
+      return res.status(403).json({ message: "Approved reports cannot be deleted by faculty" });
     }
 
     // Delete teaching section if exists
