@@ -37,11 +37,25 @@ const ServiceSchema = new Schema({
   },
   // Thesis/dissertation committee specific fields
   committeeName: {
-    type: String
+    type: String,
+    // Make it required only when type is 'Thesis / Dissertation Committee'
+    validate: {
+      validator: function(v) {
+        return this.type !== 'Thesis / Dissertation Committee' || (v && v.trim().length > 0);
+      },
+      message: 'Committee name is required for thesis/dissertation committees'
+    }
   },
   degreeType: {
     type: String,
-    enum: ['Undergraduate', 'Graduate', 'Ph.D.', '']
+    enum: ['Undergraduate', 'Graduate', 'Ph.D.', ''],
+    // Make it required only when type is 'Thesis / Dissertation Committee'
+    validate: {
+      validator: function(v) {
+        return this.type !== 'Thesis / Dissertation Committee' || (v && v.trim().length > 0);
+      },
+      message: 'Degree type is required for thesis/dissertation committees'
+    }
   },
   students: {
     type: [String],
@@ -59,12 +73,3 @@ const ServiceSchema = new Schema({
     default: Date.now 
   }
 });
-
-// Update the 'updatedAt' field on save
-ServiceSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
-const Service = mongoose.model('Service', ServiceSchema);
-export default Service;

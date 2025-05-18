@@ -57,16 +57,30 @@ export const createService = async (req, res) => {
       return res.status(404).json({ message: "Report not found" });
     }
 
-    // Create service object with all possible fields
+    // Validate required fields based on service type
+    if (type === 'Thesis / Dissertation Committee') {
+      if (!committeeName) {
+        return res.status(400).json({ message: "Committee name is required for thesis/dissertation committees" });
+      }
+      if (!degreeType) {
+        return res.status(400).json({ message: "Degree type is required for thesis/dissertation committees" });
+      }
+    }
+
+    // Create service object with common fields
     const serviceData = {
       facultyId: req.user._id,
       reportId: reportId,
       type,
       role,
-      department,
       description,
       notes
     };
+    
+    // Add department only if it's a regular service (not thesis committee)
+    if (type !== 'Thesis / Dissertation Committee' && department) {
+      serviceData.department = department;
+    }
 
     // Add thesis/dissertation committee specific fields if applicable
     if (type === 'Thesis / Dissertation Committee') {
@@ -117,12 +131,28 @@ export const updateService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
+    // Check if we're changing to or updating a thesis committee type
+    if (type === 'Thesis / Dissertation Committee' || service.type === 'Thesis / Dissertation Committee') {
+      if (type === 'Thesis / Dissertation Committee' && (!committeeName || !degreeType)) {
+        return res.status(400).json({ 
+          message: "Committee name and degree type are required for thesis/dissertation committees" 
+        });
+      }
+    }
+
     // Update common fields
     service.type = type || service.type;
     service.role = role || service.role;
-    service.department = department || service.department;
     service.description = description !== undefined ? description : service.description;
     service.notes = notes !== undefined ? notes : service.notes;
+    
+    // Handle department field based on service type
+    if (type !== 'Thesis / Dissertation Committee') {
+      service.department = department !== undefined ? department : service.department;
+    } else {
+      // For thesis committees, we don't want the department field
+      service.department = undefined;
+    }
 
     // Update thesis/dissertation committee specific fields if applicable
     if (type === 'Thesis / Dissertation Committee') {
@@ -133,6 +163,11 @@ export const updateService = async (req, res) => {
       if (students !== undefined) {
         service.students = students;
       }
+    } else {
+      // Clear thesis committee fields if this is no longer a thesis committee
+      service.committeeName = undefined;
+      service.degreeType = undefined;
+      service.students = [];
     }
 
     const updatedService = await service.save();
