@@ -37,6 +37,11 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         'https://raiseyouryar-3.onrender.com/api/reports',
         config
       );
+
+      // const { data } = await axios.get(
+      //   'http://localhost:5001/api/reports',
+      //   config
+      // );
       
       setReports(data);
     } catch (error) {
@@ -70,22 +75,14 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     // Find the report in our local state
     const reportToBeDeleted = reports.find(report => report._id === reportId);
     
-    // Allow deletion of draft AND submitted reports
-    if (reportToBeDeleted && (reportToBeDeleted.status === 'draft' || reportToBeDeleted.status === 'submitted')) {
+    // Only allow deletion of draft reports
+    if (reportToBeDeleted && reportToBeDeleted.status === 'draft') {
       setReportToDelete(reportId);
       setDeleteError('');
       setDeleteSuccess('');
       setShowDeleteConfirm(true);
-    } else if (reportToBeDeleted && reportToBeDeleted.status === 'approved') {
-      // Display error for approved reports which still can't be deleted
-      setDeleteError('Approved reports cannot be deleted.');
-      setShowDeleteConfirm(true);
-      setTimeout(() => {
-        setShowDeleteConfirm(false);
-        setDeleteError('');
-      }, 2000);
     } else {
-      console.error('Cannot delete this report');
+      console.error('Cannot delete non-draft reports');
     }
   };
 
@@ -107,6 +104,11 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         `https://raiseyouryar-3.onrender.com/api/reports/delete/${reportToDelete}`,
         config
       );
+
+      // const response = await axios.delete(
+      //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
+      //   config
+      // );
       
       console.log('Delete response:', response.data);
       
@@ -182,25 +184,13 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       {showDeleteConfirm && (
         <div className="delete-modal-overlay">
           <div className="delete-modal">
-            <h3>Delete Report</h3>
+            <h3>Delete Draft Report</h3>
             {deleteSuccess ? (
               <div className="delete-success-message">{deleteSuccess}</div>
-            ) : deleteError ? (
-              <>
-                <div className="delete-error-message">{deleteError}</div>
-                <div className="delete-modal-buttons">
-                  <button 
-                    className="cancel-delete-btn"
-                    onClick={cancelDelete}
-                    disabled={deleteLoading}
-                  >
-                    Close
-                  </button>
-                </div>
-              </>
             ) : (
               <>
-                <p>Are you sure you want to delete this report? This action cannot be undone.</p>
+                <p>Are you sure you want to delete this draft report? This action cannot be undone.</p>
+                {deleteError && <div className="delete-error-message">{deleteError}</div>}
                 <div className="delete-modal-buttons">
                   <button 
                     className="cancel-delete-btn"
@@ -225,7 +215,56 @@ const YARArchive = ({ onStart, onEditDraft }) => {
 
       {/* Privacy Statement in its own section */}
       <div className="privacy-statement-section">
-        {/* Privacy statement content (unchanged) */}
+        <div className="privacy-form-version">
+          <h2 className="privacy-heading">Privacy Statement</h2>
+          <div className="privacy-content">
+            <p className="opening-paragraph">
+              Our Yearly Activity Report (YAR) tool, RaiseYourYAR, is designed to
+              support department leadership in making strategic, data-informed
+              decisions related to faculty activities such as tenure, promotion,
+              and resource allocation. To accomplish this, YAR uses class
+              enrollment data and associated metrics—such as enrollment credit
+              hours—presented in aggregate form through visualizations and
+              dashboards. We are committed to ensuring transparency, security, and
+              ethical handling of all data. YAR adheres to all University of
+              Washington data governance policies and complies fully with FERPA
+              (Family Educational Rights and Privacy Act) and any relevant faculty
+              confidentiality regulations.
+            </p>
+            <h3 className="section-header">Key Privacy Practices</h3>
+            <ul className="privacy-list">
+              <li>
+                <strong>Data Sources:</strong> Data is securely pulled from
+                institutional sources including the UW Registrar and
+                ORCID-integrated faculty profiles. All access is read-only and
+                authorized through university-approved APIs or exports.
+              </li>
+              <li>
+                <strong>Aggregate Metrics Only:</strong> We do not display
+                individual student information or personally identifiable data.
+                Enrollment and teaching metrics are anonymized and shown in
+                summary formats.
+              </li>
+              <li>
+                <strong>Data Use Limitation:</strong> The data is used exclusively
+                to visualize instructional contributions and departmental trends
+                for academic planning—not for performance evaluation outside
+                established university review procedures.
+              </li>
+              <li>
+                <strong>Role Based Access Control:</strong> Access to dashboards
+                and reports is restricted to authorized faculty leadership (e.g.,
+                department chairs, associate deans) and the faculty member to whom
+                the data pertains, where applicable.
+              </li>
+            </ul>
+            <p className="ending-paragraph">
+              We are committed to open communication. Faculty are welcome to
+              review how their data is presented and can reach out with questions
+              or concerns at any point during the process.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

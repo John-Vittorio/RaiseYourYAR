@@ -111,7 +111,6 @@ export const updateReport = async (req, res) => {
   }
 };
 
-// Modified report.controller.js - deleteReport function
 export const deleteReport = asyncHandler(async (req, res) => {
   const { reportId } = req.params;
   const session = await mongoose.startSession();
@@ -140,7 +139,7 @@ export const deleteReport = asyncHandler(async (req, res) => {
     }
 
     const isOwner = report.facultyId.toString() === req.user._id.toString();
-    const isDeletable = report.status === 'draft' || report.status === 'submitted';
+    const isDraft = report.status === 'draft';
 
     if (!isOwner) {
       await session.abortTransaction();
@@ -148,10 +147,10 @@ export const deleteReport = asyncHandler(async (req, res) => {
       return res.status(403).json({ message: "You can only delete your own reports" });
     }
 
-    if (!isDeletable) {
+    if (!isDraft) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(403).json({ message: "Only draft and submitted reports can be deleted" });
+      return res.status(403).json({ message: "Only draft reports can be deleted" });
     }
 
     // Delete teaching section if exists
