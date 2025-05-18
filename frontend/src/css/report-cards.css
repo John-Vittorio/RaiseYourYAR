@@ -449,3 +449,13 @@
   font-weight: bold;
   color: #3498db;
 }
+
+.reports-filter-active {
+  background-color: #edf7ff;
+  padding: 8px 15px;
+  margin: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  border-left: 3px solid #3498db;
+}

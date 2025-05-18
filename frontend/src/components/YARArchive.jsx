@@ -11,13 +11,13 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   const [error, setError] = useState('');
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reportToDelete, setReportToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState('');
-  
+
   // New state for hidden reports
   const [hiddenReports, setHiddenReports] = useState([]);
   const [showHidden, setShowHidden] = useState(false);
@@ -35,13 +35,13 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       const { data } = await axios.get(
         'https://raiseyouryar-3.onrender.com/api/reports',
         config
@@ -51,7 +51,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       //   'http://localhost:5001/api/reports',
       //   config
       // );
-      
+
       setReports(data);
     } catch (error) {
       console.error('Error fetching reports:', error);
@@ -83,7 +83,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   const handleDeleteClick = (reportId) => {
     // Find the report in our local state
     const reportToBeDeleted = reports.find(report => report._id === reportId);
-    
+
     // Only allow deletion of draft reports
     if (reportToBeDeleted && reportToBeDeleted.status === 'draft') {
       setReportToDelete(reportId);
@@ -100,13 +100,13 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     try {
       setDeleteLoading(true);
       setDeleteError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       // Use our direct MongoDB delete endpoint
       console.log('Sending delete request for report:', reportToDelete);
       const response = await axios.delete(
@@ -118,23 +118,23 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       //   `http://localhost:5001/api/reports/delete/${reportToDelete}`,
       //   config
       // );
-      
+
       console.log('Delete response:', response.data);
-      
+
       // Update local state to remove the deleted report
       const updatedReports = reports.filter(report => report._id !== reportToDelete);
       setReports(updatedReports);
-      
+
       // Show success message
       setDeleteSuccess('Report deleted successfully!');
-      
+
       // Hide modal after a delay
       setTimeout(() => {
         setShowDeleteConfirm(false);
         setReportToDelete(null);
         setDeleteSuccess('');
       }, 1500);
-      
+
     } catch (error) {
       console.error('Error deleting report:', error);
       setDeleteError(error.response?.data?.message || 'Failed to delete report');
@@ -154,7 +154,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   // New functions for hiding/unhiding reports
   const toggleHideReport = (reportId) => {
     let updatedHiddenReports;
-    
+
     if (hiddenReports.includes(reportId)) {
       // Unhide the report
       updatedHiddenReports = hiddenReports.filter(id => id !== reportId);
@@ -162,10 +162,10 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       // Hide the report
       updatedHiddenReports = [...hiddenReports, reportId];
     }
-    
+
     // Update state
     setHiddenReports(updatedHiddenReports);
-    
+
     // Save to localStorage
     localStorage.setItem('hiddenReports', JSON.stringify(updatedHiddenReports));
   };
@@ -173,7 +173,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   const toggleShowHidden = () => {
     setShowHidden(!showHidden);
   };
-  
+
   // Filter reports based on hidden status
   const filteredReports = reports.filter(report => {
     if (showHidden) {
@@ -198,9 +198,9 @@ const YARArchive = ({ onStart, onEditDraft }) => {
       </div>
 
       {/* Toggle button for hidden reports */}
-      {reports.length > 0 && hiddenReports.length > 0 && (
+      {reports.length > 0 && (
         <div className="hidden-reports-toggle">
-          <button 
+          <button
             className={`toggle-hidden-btn ${showHidden ? 'showing-hidden' : ''}`}
             onClick={toggleShowHidden}
           >
@@ -218,9 +218,9 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         ) : filteredReports.length > 0 ? (
           <div className="reports-grid">
             {filteredReports.map(report => (
-              <ReportCard 
-                key={report._id} 
-                report={report} 
+              <ReportCard
+                key={report._id}
+                report={report}
                 onClick={(reportId) => handleReportClick(reportId, report.status)}
                 onDelete={handleDeleteClick}
                 isHidden={hiddenReports.includes(report._id)}
@@ -242,7 +242,7 @@ const YARArchive = ({ onStart, onEditDraft }) => {
           </div>
         )}
       </div>
-      
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="delete-modal-overlay">
@@ -255,14 +255,14 @@ const YARArchive = ({ onStart, onEditDraft }) => {
                 <p>Are you sure you want to delete this draft report? This action cannot be undone.</p>
                 {deleteError && <div className="delete-error-message">{deleteError}</div>}
                 <div className="delete-modal-buttons">
-                  <button 
+                  <button
                     className="cancel-delete-btn"
                     onClick={cancelDelete}
                     disabled={deleteLoading}
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     className="confirm-delete-btn"
                     onClick={confirmDelete}
                     disabled={deleteLoading}
