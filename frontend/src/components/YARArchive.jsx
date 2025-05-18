@@ -17,9 +17,18 @@ const YARArchive = ({ onStart, onEditDraft }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState('');
+  
+  // New state for hidden reports
+  const [hiddenReports, setHiddenReports] = useState([]);
+  const [showHidden, setShowHidden] = useState(false);
 
   useEffect(() => {
     fetchReports();
+    // Load hidden reports from localStorage
+    const savedHiddenReports = localStorage.getItem('hiddenReports');
+    if (savedHiddenReports) {
+      setHiddenReports(JSON.parse(savedHiddenReports));
+    }
   }, []);
 
   const fetchReports = async () => {
@@ -142,6 +151,38 @@ const YARArchive = ({ onStart, onEditDraft }) => {
     setDeleteSuccess('');
   };
 
+  // New functions for hiding/unhiding reports
+  const toggleHideReport = (reportId) => {
+    let updatedHiddenReports;
+    
+    if (hiddenReports.includes(reportId)) {
+      // Unhide the report
+      updatedHiddenReports = hiddenReports.filter(id => id !== reportId);
+    } else {
+      // Hide the report
+      updatedHiddenReports = [...hiddenReports, reportId];
+    }
+    
+    // Update state
+    setHiddenReports(updatedHiddenReports);
+    
+    // Save to localStorage
+    localStorage.setItem('hiddenReports', JSON.stringify(updatedHiddenReports));
+  };
+
+  const toggleShowHidden = () => {
+    setShowHidden(!showHidden);
+  };
+  
+  // Filter reports based on hidden status
+  const filteredReports = reports.filter(report => {
+    if (showHidden) {
+      return hiddenReports.includes(report._id);
+    } else {
+      return !hiddenReports.includes(report._id);
+    }
+  });
+
   return (
     <div className="yar-container">
       {/* Top section - Start button */}
@@ -156,22 +197,44 @@ const YARArchive = ({ onStart, onEditDraft }) => {
         </div>
       </div>
 
+      {/* Toggle button for hidden reports */}
+      {reports.length > 0 && hiddenReports.length > 0 && (
+        <div className="hidden-reports-toggle">
+          <button 
+            className={`toggle-hidden-btn ${showHidden ? 'showing-hidden' : ''}`}
+            onClick={toggleShowHidden}
+          >
+            {showHidden ? 'Show Visible Reports' : `Show Hidden Reports (${hiddenReports.length})`}
+          </button>
+        </div>
+      )}
+
       {/* Display reports if available */}
       <div className="reports-section">
         {loading ? (
           <div className="loading">Loading your reports...</div>
         ) : error ? (
           <div className="error-message">{error}</div>
-        ) : reports.length > 0 ? (
+        ) : filteredReports.length > 0 ? (
           <div className="reports-grid">
-            {reports.map(report => (
+            {filteredReports.map(report => (
               <ReportCard 
                 key={report._id} 
                 report={report} 
                 onClick={(reportId) => handleReportClick(reportId, report.status)}
                 onDelete={handleDeleteClick}
+                isHidden={hiddenReports.includes(report._id)}
+                onToggleHide={() => toggleHideReport(report._id)}
               />
             ))}
+          </div>
+        ) : reports.length > 0 ? (
+          <div className="no-reports-message">
+            {showHidden ? (
+              <p>No hidden reports to display.</p>
+            ) : (
+              <p>All reports are currently hidden. Click "Show Hidden Reports" to view them.</p>
+            )}
           </div>
         ) : (
           <div className="no-reports-message">
