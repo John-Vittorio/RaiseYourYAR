@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 export const getAllFaculty = async (req, res) => {
   try {
     // Only allow admins to get all faculty
-    if (req.user.role !== 'faculty') {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({ message: "Not authorized as an admin" });
     }
     
@@ -97,7 +97,7 @@ export const deleteFaculty = async (req, res) => {
     const { id } = req.params;
     
     // Only allow admins to delete faculty
-    if (req.user.role !== 'faculty') {
+    if (req.user.role !== 'admin') {
       return res.status(403).json({ message: "Not authorized as an admin" });
     }
     
