@@ -45,6 +45,7 @@ import "./models/teaching.model.js";
 const PORT = process.env.PORT || 5001;
 
 connectDB().then(() => {
+    console.log("Attempting to connect...")
     // Routes
     app.use("/api/auth", authRoutes);
     app.use("/api/reports", reportRoutes);
