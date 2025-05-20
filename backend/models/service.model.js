@@ -73,3 +73,6 @@ const ServiceSchema = new Schema({
     default: Date.now 
   }
 });
+
+const Service = mongoose.model('Service', ServiceSchema);
+export default Service;
