@@ -40,7 +40,7 @@ const YARMain = () => {
       };
       
       const { data } = await axios.post(
-        'https://raiseyouryar-3.onrender.com/api/reports',
+        'https://raiseyouryar-j59c.onrender.com/api/reports',
         { academicYear: getCurrentAcademicYear() },
         config
       );
@@ -69,7 +69,7 @@ const YARMain = () => {
       };
       
       const { data } = await axios.get(
-        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+        `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
         config
       );
       

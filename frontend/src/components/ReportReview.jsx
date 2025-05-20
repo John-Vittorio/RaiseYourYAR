@@ -41,7 +41,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
 
       // Fetch report details
       const reportResponse = await axios.get(
-        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+        `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
         config
       );
 
@@ -64,7 +64,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       let teachingData = null;
       try {
         const teachingResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/teaching/${reportId}`,
           config
         );
 
@@ -92,7 +92,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       let researchData = null;
       try {
         const researchResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/research/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/research/${reportId}`,
           config
         );
 
@@ -110,7 +110,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
       let serviceData = [];
       try {
         const serviceResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/service/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/service/${reportId}`,
           config
         );
 
@@ -152,7 +152,7 @@ const ReportReview = ({ reportId, onSubmit, onPrevious, readOnly = false }) => {
 
       // Update report status to submitted
       await axios.put(
-        `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+        `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
         { status: 'submitted' },
         config
       );

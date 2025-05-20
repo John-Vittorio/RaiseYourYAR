@@ -77,7 +77,7 @@ const TeachingForm = ({ onNext, reportId }) => {
 
       try {
         const { data } = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/teaching/${reportId}`,
           config
         );
 
@@ -161,7 +161,7 @@ const TeachingForm = ({ onNext, reportId }) => {
 
       // Make sure we're sending expectationNotes in the request
       await axios.post(
-        `https://raiseyouryar-3.onrender.com/api/teaching/${reportId}`,
+        `https://raiseyouryar-j59c.onrender.com/api/teaching/${reportId}`,
         {
           courses: apiCourses,
           taughtOutsideDept: apiCourses.some(course => course.outsideDept),
@@ -265,7 +265,7 @@ const TeachingForm = ({ onNext, reportId }) => {
 
       // Send individual course to API
       const response = await axios.post(
-        `https://raiseyouryar-3.onrender.com/api/teaching/course/${reportId}`,
+        `https://raiseyouryar-j59c.onrender.com/api/teaching/course/${reportId}`,
         apiCourse,
         config
       );

@@ -34,7 +34,7 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
       // Get the report to check for existing notes
       try {
         const reportResponse = await axios.get(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
           config
         );
 
@@ -79,7 +79,7 @@ const GeneralNotesForm = ({ onNext, onPrevious, reportId }) => {
         };
         
         await axios.put(
-          `https://raiseyouryar-3.onrender.com/api/reports/${reportId}`,
+          `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
           { notes: generalNotes },
           config
         );

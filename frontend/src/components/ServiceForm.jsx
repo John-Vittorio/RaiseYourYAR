@@ -16,7 +16,7 @@ const ServiceForm = ({ onNext, onPrevious, reportId }) => {
   const [showStudentInput, setShowStudentInput] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
-  const API_URL = 'https://raiseyouryar-3.onrender.com/api';
+  const API_URL = 'https://raiseyouryar-j59c.onrender.com/api';
 
   const [newService, setNewService] = useState({
     type: '',
