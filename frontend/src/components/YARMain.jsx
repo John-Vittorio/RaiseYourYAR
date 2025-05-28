@@ -185,6 +185,12 @@ const YARMain = () => {
       );
     }
 
+    const handleBackToMain = () => {
+      console.log("Returning to main view and clearing active report");
+      setActiveReport(null);
+      setCurrentView('main');
+    };
+
     // Render the appropriate component based on currentView
     switch (currentView) {
       case 'main':
@@ -196,7 +202,7 @@ const YARMain = () => {
         return (
           <TeachingForm
             onNext={() => handleNext('teaching')}
-            onPrevious={() => setCurrentView('main')}
+            onPrevious={handleBackToMain}
             reportId={activeReport?._id}
           />
         );

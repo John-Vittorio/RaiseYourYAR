@@ -450,10 +450,6 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
     }
   };
 
-  // Handle navigating back to YARArchive page
-  // Handle navigating back to YARArchive page
-  // Handle navigating back to YARArchive page
-  // In frontend/src/components/TeachingForm.jsx - Update handlePrevious function
   const handlePrevious = async () => {
     if (isNavigating) return;
 
@@ -468,22 +464,21 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
         await autoSaveTeachingData();
       }
 
-      // Wait a moment before navigation to ensure save completes
-      setTimeout(() => {
-        // Call the onPrevious prop function if provided
-        if (onPrevious && typeof onPrevious === 'function') {
-          console.log("TeachingForm: Calling onPrevious handler");
-          onPrevious();
-        } else {
-          // Direct navigation fallback
-          console.log("TeachingForm: No onPrevious handler, using direct navigation");
-          navigate('/yar');
-        }
-        setIsNavigating(false);
-      }, 300);
+      // Call the onPrevious prop function immediately after saving
+      if (onPrevious && typeof onPrevious === 'function') {
+        console.log("TeachingForm: Calling onPrevious handler");
+        onPrevious();
+      } else {
+        // Direct navigation fallback
+        console.log("TeachingForm: No onPrevious handler, using direct navigation");
+        navigate('/yar');
+      }
+
     } catch (error) {
       console.error("TeachingForm: Error during navigation:", error);
       setError('Failed to save your data before proceeding. Please try again.');
+    } finally {
+      // Reset navigation state
       setIsNavigating(false);
     }
   };
@@ -805,7 +800,7 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
             onClick={handlePrevious}
             targetSection="YARArchive"
             className="yar-button-previous"
-            directPath="/yar" // Add direct path for explicit navigation
+            disabled={isNavigating || loading}
           >
             Previous
           </NavigationButton>
