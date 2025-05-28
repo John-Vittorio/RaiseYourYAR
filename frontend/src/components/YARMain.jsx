@@ -18,7 +18,7 @@ const YARMain = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false); // Track successful submission
-  
+
   const { currentUser } = useContext(AuthContext);
 
   // Debug logging for view changes
@@ -31,20 +31,20 @@ const YARMain = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       const { data } = await axios.post(
         'https://raiseyouryar-j59c.onrender.com/api/reports',
         { academicYear: getCurrentAcademicYear() },
         config
       );
-      
+
       setActiveReport(data);
       return data;
     } catch (error) {
@@ -61,18 +61,18 @@ const YARMain = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       const config = {
         headers: {
           'Authorization': `Bearer ${currentUser.token}`
         }
       };
-      
+
       const { data } = await axios.get(
         `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
         config
       );
-      
+
       setActiveReport(data);
       return data;
     } catch (error) {
@@ -89,7 +89,7 @@ const YARMain = () => {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
-    
+
     // If it's after September, then the academic year is current year to next year
     if (month >= 8) {
       return `${year}-${year + 1}`;
@@ -119,14 +119,14 @@ const YARMain = () => {
   // Move to the next section in sequence
   const handleNext = (currentSectionName) => {
     console.log("handleNext called with current section:", currentSectionName);
-    
+
     // Find the index of the current section
     const currentIndex = FORM_SECTIONS.indexOf(currentSectionName);
-    
+
     if (currentIndex !== -1 && currentIndex < FORM_SECTIONS.length - 1) {
       const nextSection = FORM_SECTIONS[currentIndex + 1];
       console.log(`Moving from ${currentSectionName} to ${nextSection}`);
-      
+
       // Force a state update with setTimeout to ensure React registers the change
       setTimeout(() => {
         setCurrentView(nextSection);
@@ -140,7 +140,7 @@ const YARMain = () => {
   const handlePrevious = (currentSectionName) => {
     // Find the index of the current section
     const currentIndex = FORM_SECTIONS.indexOf(currentSectionName);
-    
+
     if (currentIndex > 1) { // Don't go back before teaching
       const prevSection = FORM_SECTIONS[currentIndex - 1];
       console.log(`Moving from ${currentSectionName} to ${prevSection}`);
@@ -152,7 +152,7 @@ const YARMain = () => {
   const handleReportSubmitted = () => {
     setSubmitSuccess(true);
     setActiveReport(null);
-    
+
     // Return to main view after a short delay to show success message
     setTimeout(() => {
       setCurrentView('main');
@@ -163,7 +163,7 @@ const YARMain = () => {
   // Render the appropriate component based on the current view
   const renderView = () => {
     console.log("Rendering view:", currentView);
-    
+
     if (loading) {
       return <div className="loading">Loading...</div>;
     }
@@ -188,15 +188,16 @@ const YARMain = () => {
     // Render the appropriate component based on currentView
     switch (currentView) {
       case 'main':
-        return <YARArchive 
-          onStart={handleStartYAR} 
-          onEditDraft={handleEditDraft} 
+        return <YARArchive
+          onStart={handleStartYAR}
+          onEditDraft={handleEditDraft}
         />;
       case 'teaching':
         return (
-          <TeachingForm 
-            onNext={() => handleNext('teaching')} 
-            reportId={activeReport?._id} 
+          <TeachingForm
+            onNext={() => handleNext('teaching')}
+            onPrevious={() => setCurrentView('main')}
+            reportId={activeReport?._id}
           />
         );
       case 'research':
@@ -240,7 +241,7 @@ const YARMain = () => {
   return (
     <>
       {renderView()}
-      
+
       <style jsx>{`
         .success-container {
           display: flex;
