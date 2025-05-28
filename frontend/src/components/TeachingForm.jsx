@@ -5,7 +5,7 @@ import axios from 'axios';
 import ResumeNotification from './ResumeNotification';
 import NavigationButton from './NavigationButton';
 
-const TeachingForm = ({ onNext, reportId }) => {
+const TeachingForm = ({ onNext, onPrevious, reportId }) => {
   const [courses, setCourses] = useState([]);
   const [originalCourses, setOriginalCourses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -455,7 +455,7 @@ const TeachingForm = ({ onNext, reportId }) => {
   // Handle navigating back to YARArchive page
   // In frontend/src/components/TeachingForm.jsx - Update handlePrevious function
   const handlePrevious = async () => {
-    if (isNavigating) return; // Prevent double clicks
+    if (isNavigating) return;
 
     try {
       setIsNavigating(true);
@@ -464,7 +464,7 @@ const TeachingForm = ({ onNext, reportId }) => {
       // Auto-save any changes before navigating away
       if (JSON.stringify(courses) !== JSON.stringify(originalCourses) ||
         sectionNotes !== originalSectionNotes ||
-        expectationNotes !== originalExpectationNotes) { // Make sure this check is here
+        expectationNotes !== originalExpectationNotes) {
         await autoSaveTeachingData();
       }
 
