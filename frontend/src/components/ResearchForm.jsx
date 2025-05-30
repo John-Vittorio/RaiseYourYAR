@@ -125,6 +125,11 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
           config
         );
 
+        // const { data } = await axios.get(
+        //   `http://localhost:5001/api/research/${reportId}`,
+        //   config
+        // );
+
         if (data) {
           if (data.publications) {
             setPublications(data.publications);
@@ -182,6 +187,17 @@ const ResearchForm = ({ onNext, onPrevious, reportId }) => {
         },
         config
       );
+
+      // await axios.post(
+      //   `http://localhost:5001/api/research/${reportId}`,
+      //   {
+      //     publications: updatedPublications,
+      //     grants: updatedGrants,
+      //     conferences: updatedConferences,
+      //     reportId: reportId
+      //   },
+      //   config
+      // );
 
       return true;
     } catch (error) {

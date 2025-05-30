@@ -9,6 +9,12 @@ import PrivacyStatement from './components/PrivacyStatement';
 import ReportViewPage from './components/ReportViewPage';
 import Login from './components/Login';
 import Signup from './components/Signup';
+
+// Import new admin components
+import FacultyYARDirectory from './components/FacultyYARDirectory';
+import AdminFacultyReportsList from './components/AdminFacultyReportsList';
+import AdminFacultyReportView from './components/AdminFacultyReportView';
+
 import './css/style.css';
 import './css/auth-styles.css';
 import './css/report-cards.css';
@@ -68,10 +74,30 @@ function App() {
                   <Visualization />
                 </>
               } />
+              
+              {/* Faculty YAR Directory for Admins */}
+              <Route path="/admin/faculty" element={
+                <>
+                  <Navigation />
+                  <FacultyYARDirectory />
+                </>
+              } />
+              
+              {/* All reports for a specific faculty member */}
+              <Route path="/admin/faculty/:facultyId/reports" element={
+                <AdminFacultyReportsList />
+              } />
+              
+              {/* Specific report view for admin */}
+              <Route path="/admin/faculty/:facultyId/report/:reportId" element={
+                <AdminFacultyReportView />
+              } />
+              
+              {/* Original faculty route - can be repurposed or kept */}
               <Route path="/faculty" element={
                 <>
                   <Navigation />
-                  <div className="content-area">Faculty Content</div>
+                  <FacultyYARDirectory />
                 </>
               } />
             </Route>
@@ -91,7 +117,7 @@ function App() {
                 </>
               } />
               
-              {/* Route to view individual reports */}
+              {/* Route to view individual reports (faculty's own reports) */}
               <Route path="/report/:reportId" element={<ReportViewPage />} />
               
               {/* Default route for faculty users */}
@@ -114,6 +140,17 @@ function App() {
         .yar-button-next {
           z-index: 10;
           position: relative;
+        }
+        
+        .yar-button-next:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          z-index: -1;
         }
         
         .teaching-breadcrumb,

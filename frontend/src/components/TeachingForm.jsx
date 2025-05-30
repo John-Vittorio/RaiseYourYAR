@@ -81,6 +81,11 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
           config
         );
 
+        // const { data } = await axios.get(
+        //   `http://localhost:5001/api/teaching/${reportId}`,
+        //   config
+        // );
+
         if (data) {
           if (data.courses && data.courses.length > 0) {
             // Map API data to component state format
@@ -170,6 +175,17 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
         },
         config
       );
+
+      // await axios.post(
+      //   `http://localhost:5001/api/teaching/${reportId}`,
+      //   {
+      //     courses: apiCourses,
+      //     taughtOutsideDept: apiCourses.some(course => course.outsideDept),
+      //     sectionNotes: sectionNotes,
+      //     expectationNotes: expectationNotes // Make sure this is included
+      //   },
+      //   config
+      // );
 
       // Update original states to match current states
       setOriginalCourses(JSON.parse(JSON.stringify(courses)));
@@ -269,6 +285,12 @@ const TeachingForm = ({ onNext, onPrevious, reportId }) => {
         apiCourse,
         config
       );
+
+      // const response = await axios.post(
+      //   `http://localhost:5001/api/teaching/course/${reportId}`,
+      //   apiCourse,
+      //   config
+      // );
 
       // Update original courses for cancel functionality
       setOriginalCourses(prev => {

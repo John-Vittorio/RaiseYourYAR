@@ -45,6 +45,12 @@ const YARMain = () => {
         config
       );
 
+      // const { data } = await axios.post(
+      //   'http://localhost:5001/api/reports',
+      //   { academicYear: getCurrentAcademicYear() },
+      //   config
+      // );
+
       setActiveReport(data);
       return data;
     } catch (error) {
@@ -72,6 +78,11 @@ const YARMain = () => {
         `https://raiseyouryar-j59c.onrender.com/api/reports/${reportId}`,
         config
       );
+
+      // const { data } = await axios.get(
+      //   `http://localhost:5001/api/reports/${reportId}`,
+      //   config
+      // );
 
       setActiveReport(data);
       return data;

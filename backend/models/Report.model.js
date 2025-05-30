@@ -1,5 +1,30 @@
 import mongoose from "mongoose";
 
+const adminCommentSchema = new mongoose.Schema({
+    comment: {
+        type: String,
+        required: true
+    },
+    adminId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faculty",
+        required: true
+    },
+    adminName: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        enum: ["draft", "submitted", "reviewed", "approved"],
+        required: true
+    }
+});
+
 const reportSchema = new mongoose.Schema({
     facultyId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +54,9 @@ const reportSchema = new mongoose.Schema({
     submittedDate: {
         type: Date,
     },
+    reviewedDate: {
+        type: Date,
+    },
     approvedDate: {
         type: Date,
     },
@@ -56,6 +84,11 @@ const reportSchema = new mongoose.Schema({
     serviceNotes: {
         type: String,
         default: ""
+    },
+    // Admin comments for report review process
+    adminComments: {
+        type: [adminCommentSchema],
+        default: []
     },
     createdAt: { 
         type: Date, 
